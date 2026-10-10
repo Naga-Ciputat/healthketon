@@ -1,244 +1,220 @@
-# Lean PRD — Claim Investigator Agent
+# 3 — Lean PRD (Product Requirements Document)
 
-**Event:** Healthkathon 2026 · Detect Smarter, Protect JKN **Kategori / sub-kategori:** 3.1 Efisiensi Risiko Faskes · Upcoding & Unbundling **Status:** Draf v0.1, 9 Okt 2026. Turunan dari Concept Brief dan Research Brief. **Level kematangan target:** Prototype pada data sintetis (jujur, bukan MVP dengan pengguna nyata).
+**Tema Hackathon:** Detect Smarter, Protect JKN  
+**Kategori:** Efisiensi Risiko Fasilitas Kesehatan (Kategori 3.1)  
+**Sub-kategori Fokus:** Upcoding & Unbundling serta Inflated Bills & Cloning  
+**Dokumen Rujukan:** [`docs/hackathon-guideline.md`](file:///d:/Projects/Web%20Shi/healthkaton/docs/hackathon-guideline.md), [`docs/1-research-brief.md`](file:///d:/Projects/Web%20Shi/healthkaton/docs/1-research-brief.md), [`docs/2-concept-brief.md`](file:///d:/Projects/Web%20Shi/healthkaton/docs/2-concept-brief.md)  
+**Gate:** Setiap fitur P0 memiliki perilaku yang jelas, terukur, dan dapat diverifikasi secara objektif.
 
 ---
 
 ## 1. Tujuan dan Non-Goals
 
-### 1.1 Tujuan
+### 1.1 Tujuan Produk (Goals)
+1. Membangun purwarupa (**MVP**) asisten verifikasi klaim rumah sakit berbasis **Agentic AI** yang bertindak sebagai investigator bukti klinis pra-bayar bagi Verifikator BPJS Kesehatan.
+2. Memproses berkas klaim digital (resume medis, laporan operasi, hasil lab, lembar billing farmasi/alkes) dan secara mandiri memanggil serangkaian *investigative tools* untuk mendeteksi:
+   - **Upcoding:** Diagnosis/tindakan komplikasi tanpa bukti penunjang (lab/radiologi).
+   - **Unbundling:** Prosedur terpecah yang melanggar aturan tarif paket INA-CBG.
+   - **Inflated Bills:** Jumlah/tipe alat kesehatan (stent, implan, dsb.) ditagih lebih tinggi dari narasi laporan operasi riil.
+   - **Note Cloning:** Plagiarisme atau duplikasi teks rekam medis lintas pasien di faskes yang sama.
+3. Menyajikan **Evidence Dossier** interaktif yang memuat kutipan teks 100% terverifikasi (*zero-hallucination*), kalkulasi potensi inefisiensi rupiah, dan rekomendasi keputusan operasional dengan tetap menjunjung prinsip **Human-in-the-Loop**.
+4. Membuktikan efektivitas solusi melalui pengujian pada **30–50 dataset kasus sintetis terstandar**.
 
-| # | Tujuan | Cara tahu tercapai |
-| --- | --- | --- |
-| G1 | Mengubah satu klaim sintetis menjadi **dossier berbukti** yang bisa ditinjau verifikator | Demo end-to-end: unggah klaim → dossier → keputusan, tanpa langkah manual di luar UI |
-| G2 | Menunjukkan bahwa setiap temuan **bisa ditelusuri ke kutipan dokumen asli** | Verifikasi kutipan lulus 100% pada uji injeksi (lihat F4) |
-| G3 | Membuktikan metode pada set uji sintetis dan membandingkannya dengan **baseline aturan sederhana** | Laporan evaluasi yang dapat dijalankan ulang (F7) |
-| G4 | Menjaga **manusia sebagai pengambil keputusan** dan semua keputusan tercatat | Audit log lengkap (F6) |
-| G5 | Menyediakan bahan yang cukup untuk 9 komponen wajib proposal (maks. 20 slide) | Checklist bagian 7 terpenuhi |
-
-### 1.2 Non-goals (sengaja tidak dikerjakan)
-
-- Memutuskan fraud atau menolak/membayar klaim secara otomatis.
-- Memakai **data peserta JKN riil** atau rekam medis asli.
-- Integrasi nyata ke VEDIKA, V-Claim, atau sistem BPJS lain.
-- Mendeteksi phantom billing, self-referral, atau modus di luar upcoding/unbundling.
-- Memberi klaim akurasi, penghematan, atau dampak nasional sebagai fakta terbukti.
-- Melayani sisi RS (validasi pra-kirim) atau menjadi produk dua sisi.
-- Melatih model sendiri; memakai model yang tersedia.
+### 1.2 Non-Goals (Batasan Tegas yang Tidak Dibuat pada MVP)
+1. **Bukan Pengganti SIMRS / Billing RS:** Sistem tidak membangun antarmuka kasir, manajemen bangsal, atau sistem koding internal rumah sakit.
+2. **Tidak Ada Eksekusi Otomatis Pemotong Klaim (*No Auto-Denial*):** Sistem tidak memiliki hak memotong atau menolak pembayaran klaim secara sepihak tanpa persetujuan verifikator manusia.
+3. **Tidak Menggunakan Data Peserta JKN Riil:** Sesuai UU PDP dan batasan hackathon, sistem 100% beroperasi pada data sintetis/tersamar; sistem menolak berkas yang memuat data pribadi riil.
+4. **Bukan Sistem Multi-Tenant Enterprise:** Tidak membangun manajemen autentikasi kompleks (cukup profil demo peran: *dr. Maya - Verifikator BPJS*).
+5. **Tidak Melayani Tim Casemix RS:** Menghindari konflik kepentingan; fokus murni pada sudut pandang pembayar/pengawas (BPJS Kesehatan).
 
 ---
 
-## 2. Prioritas Fitur
+## 2. Klasifikasi Fitur (P0, P1, P2)
 
-### P0 — Wajib (tanpa ini demo tidak sah)
+```mermaid
+graph TD
+    subgraph P0_Wajib_MVP [P0: Wajib Selesai untuk Demo & Evaluasi]
+        P0_1[P0.1 Intake & Privacy Guard]
+        P0_2[P0.2 Deterministic Fast Filter]
+        P0_3[P0.3 Agentic Clinical Investigator]
+        P0_4[P0.4 Inflated Bills Alkes Checker]
+        P0_5[P0.5 Semantic Note Cloning Detector]
+        P0_6[P0.6 Anti-Hallucination Verbatim Verifier]
+        P0_7[P0.7 Interactive Evidence Dossier UI]
+        P0_8[P0.8 Action Recommendation & Audit Trail]
+        P0_9[P0.9 Synthetic Evaluation Suite]
+    end
 
-| ID | Fitur | Fungsi satu kalimat |
-| --- | --- | --- |
-| **F1** | Intake klaim sintetis | Menerima satu paket klaim (data klaim terstruktur + resume medis teks + penunjang + obat) dan memvalidasinya |
-| **F2** | Pemeriksaan aturan deterministik | Mengecek kesesuaian kode diagnosis/tindakan dengan tabel referensi, lama rawat, dan pola episode berulang (indikasi unbundling) |
-| **F3** | Penalaran teks klinis (LLM) | Membandingkan teks resume dengan kode diagnosis dan menghasilkan temuan terstruktur |
-| **F4** | Verifikasi kutipan | Memastikan setiap kutipan bukti benar-benar ada di dokumen sumber; temuan tanpa kutipan valid dibuang |
-| **F5** | Antrean prioritas dan dossier | Mengurutkan klaim berdasarkan indikasi risiko dan menampilkan dossier per klaim |
-| **F6** | Keputusan manusia dan audit log | Verifikator memilih tindakan dan alasan; semua tercatat |
-| **F7** | Set uji sintetis dan evaluasi | 30–50 kasus (termasuk pengganggu salah-koding tidak sengaja) dan laporan perbandingan dengan baseline |
+    subgraph P1_Jika_Sempat [P1: Nilai Tambah jika Waktu Tersisa]
+        P1_1[P1.1 Export Dossier to PDF Report]
+        P1_2[P1.2 Batch Multi-Claim Upload]
+        P1_3[P1.3 Visual Clinical Timeline Graph]
+    end
 
-### P1 — Jika sempat (urut dari paling bernilai)
+    subgraph P2_Diabaikan [P2: Diabaikan di Fase Hackathon]
+        P2_1[P2.1 Live Integration API VEDIKA BPJS]
+        P2_2[P2.2 OCR Tulisan Tangan Dokter]
+        P2_3[P2.3 Multi-Role Permission RBAC]
+    end
+```
 
-| ID | Fitur | Syarat dikerjakan |
-| --- | --- | --- |
-| P1-a | Pembanding antar RS sebanding (statistik sintetis) | Semua P0 lolos acceptance criteria |
-| P1-b | Ekspor dossier ke PDF | F5 stabil |
-| P1-c | Umpan balik verifikator (alasan penolakan dipakai untuk catatan evaluasi, bukan pelatihan otomatis) | F6 stabil |
-| P1-d | Halaman ringkasan metrik evaluasi di UI | F7 selesai |
-| P1-e | Dukungan dokumen pindaian (OCR) | Ada sampel dokumen dan waktu tersisa |
-
-### P2 — Diabaikan di hackathon (masuk peta jalan saja)
-
-Integrasi sistem BPJS · data riil dengan izin resmi · auto-reject/auto-pending · phantom/repeat billing, self-referral, cloning · validasi pra-kirim sisi RS · autentikasi multi-pengguna dan peran · dukungan transisi iDRG · aplikasi mobile · model yang dijalankan di lingkungan tertutup (hanya dijelaskan di arsitektur).
+### Rincian Fitur:
+* **P0 (Wajib untuk Demo):** 9 modul inti di atas yang menjamin alur investigasi end-to-end dapat diuji juri.
+* **P1 (Jika Sempat):** Fitur pelengkap estetika dan efisiensi pengujian demo (ekspor PDF draf surat klarifikasi).
+* **P2 (Diabaikan):** Fitur skala produksi yang tidak esensial untuk membuktikan keunggulan konsep di hackathon.
 
 ---
 
 ## 3. User Stories
 
-Pengguna utama: **verifikator klaim BPJS**. Pengguna sekunder: **auditor / tim anti-fraud**.
-
-| ID | Sebagai | Saya ingin | Agar | Fitur |
-| --- | --- | --- | --- | --- |
-| US1 | Verifikator | mengunggah paket klaim dan langsung diberi tahu bila datanya tidak lengkap | tidak membuang waktu pada klaim yang tidak bisa diperiksa | F1 |
-| US2 | Verifikator | melihat klaim yang paling layak diperiksa lebih dulu | waktu saya terpakai pada klaim berisiko | F5 |
-| US3 | Verifikator | membaca alasan mengapa diagnosis tampak tidak sesuai dengan resume | saya dapat menilai sendiri, bukan percaya skor | F2, F3, F5 |
-| US4 | Verifikator | mengklik tiap bukti dan melihat teks aslinya | saya yakin bukti tidak dikarang | F4, F5 |
-| US5 | Verifikator | melihat penjelasan alternatif yang tidak mencurigakan | saya tidak menuduh RS yang hanya salah koding | F3, F5 |
-| US6 | Verifikator | menerima, menolak, atau meminta pemeriksaan lanjut dengan alasan | keputusan saya terdokumentasi dan bisa dipertanggungjawabkan | F6 |
-| US7 | Auditor | menelusuri siapa memutuskan apa, kapan, dan berdasarkan bukti apa | saya dapat mengaudit proses | F6 |
-| US8 | Tim proyek | menjalankan evaluasi dengan satu perintah dan mendapat laporan yang sama setiap kali | klaim kinerja dapat diulang dan dipertanggungjawabkan | F7 |
+| ID | Persona | Narasi Kebutuhan | Nilai Bisnis / Dampak |
+|---|---|---|---|
+| **US-1** | dr. Maya (Verifikator) | Sebagai verifikator, saya ingin antrean klaim terurut otomatis berdasarkan tingkat risiko anomali klinis dan potensi kebocoran rupiah. | Mengalihkan fokus verifikator ke kasus yang paling berisiko tinggi terlebih dahulu. |
+| **US-2** | dr. Maya (Verifikator) | Sebagai verifikator, saya ingin Agent memeriksa kesesuaian diagnosis komplikasi (Upcoding) terhadap hasil lab dan radiologi secara otomatis sesuai PNPK Kemenkes. | Menghilangkan keharusan membuka dan mencari lembar lab/radiologi secara manual di dokumen PDF ratusan halaman. |
+| **US-3** | dr. Maya (Verifikator) | Sebagai verifikator, saya ingin Agent membandingkan jumlah alat kesehatan/stent pada kuitansi penagihan dengan teks narasi laporan pembedahan riil (*Inflated Bills*). | Mencegah penagihan implan/alkes fiktif yang tidak pernah dipasang di meja operasi. |
+| **US-4** | dr. Maya (Verifikator) | Sebagai verifikator, saya ingin sistem memindai apakah teks catatan klinis pasien ini merupakan hasil jiplakan (*Note Cloning*) dari pasien lain di RS yang sama. | Mengidentifikasi indikasi rekam medis rekayasa/palsu yang lolos dari pemeriksaan administratif formal. |
+| **US-5** | dr. Maya (Verifikator) | Sebagai verifikator, saya ingin dapat mengklik kutipan bukti di dalam dossier dan langsung melihat baris teks aslinya tersorot (*verbatim highlight*) pada dokumen sumber. | Memastikan transparansi, memvalidasi bukti dalam 1 detik, dan menjamin nol halusinasi AI. |
+| **US-6** | dr. Maya (Verifikator) | Sebagai verifikator, saya ingin menerima draf rekomendasi keputusan (Setuju, Pending, Downcode, Eskalasi) lengkap dengan draf surat klarifikasi resmi ke RS. | Mempercepat pengambilan keputusan dengan dasar hukum yang kokoh saat berhadapan dengan RS mitra. |
+| **US-7** | Auditor / Tim PK-JKN | Sebagai auditor, saya ingin setiap keputusan verifikator dan riwayat investigasi Agent tercatat dalam log audit digital yang tidak dapat diubah (*immutable audit trail*). | Menjamin akuntabilitas, kepatuhan tata kelola, dan mempermudah rekonstruksi kasus saat audit formal. |
 
 ---
 
-## 4. Acceptance Criteria yang Bisa Dites
+## 4. Acceptance Criteria yang Bisa Dites (Gherkin Format)
 
-Format: **Given / When / Then**. Angka ambang adalah **target awal** dan boleh disesuaikan sebelum pengujian, tetapi harus ditetapkan sebelum menjalankan uji, bukan sesudahnya.
+### P0.1 — Intake & Privacy Guard
+- **AC-1.1:** **Given** berkas klaim sintetis diunggah (JSON/PDF teks), **When** sistem memvalidasi skema, **Then** sistem memastikan semua data wajib ada (kode diagnosis, tindakan, tagihan alkes, resume medis).
+- **AC-1.2:** **Given** input berkas klaim, **When** sistem memindai ekspresi reguler NIK 16 digit valid, nama RS riil, atau data sensitif yang tidak disamarkan, **Then** sistem menolak input dan memunculkan error `ERR_PRIVACY_VIOLATION: Gunakan data sintetis/tersamar sesuai UU PDP`.
 
-### F1 — Intake klaim sintetis
+### P0.2 — Deterministic Fast Filter
+- **AC-2.1:** **Given** klaim dengan batasan gender/usia (misal: persalinan sectio caesarea pada pasien laki-laki, atau katarak senilis pada pasien bayi), **When** aturan deterministik dijalankan, **Then** klaim langsung ditandai dengan flag deterministik `RULE_MISMATCH_DEMOGRAPHIC` dalam waktu $< 50$ ms tanpa perlu memanggil LLM.
+- **AC-2.2:** **Given** klaim tindakan yang dilarang di-unbundle menurut regulasi tarif INA-CBG (Permenkes 3/2023), **When** prosedur terdaftar dalam kelompok satu paket, **Then** sistem memberi peringatan `UNBUNDLING_PROHIBITED`.
 
-| ID | Kriteria | Cara uji |
-| --- | --- | --- |
-| F1-1 | **Given** paket klaim lengkap sesuai skema, **when** diunggah, **then** status "siap diperiksa" dan klaim muncul di daftar | Uji dengan 1 fixture valid |
-| F1-2 | **Given** paket tanpa salah satu field wajib (kode diagnosis, resume, lama rawat), **when** diunggah, **then** ditolak dengan pesan yang menyebut nama field yang hilang, dan tidak ada klaim parsial tersimpan | Uji 1 fixture per field wajib |
-| F1-3 | **Given** teks mengandung pola mirip NIK (16 digit) atau nomor kartu peserta, **when** diunggah, **then** ditolak dengan pesan "diduga data pribadi riil" dan isi tidak disimpan | Uji dengan fixture berisi pola 16 digit |
-| F1-4 | **Given** file di luar format yang didukung atau melebihi batas ukuran, **when** diunggah, **then** ditolak dengan pesan format/ukuran yang jelas | Uji 2 fixture |
+### P0.3 — Agentic Clinical Investigator (Upcoding & Unbundling)
+- **AC-3.1:** **Given** klaim memuat diagnosis komplikasi (misal: Sepsis Berat / Syok Kardiogenik / Pneumonia Berat), **When** Agent menjalankan investigasi, **Then** Agent memanggil `tool_lookup_pnpk_icd` untuk mengambil syarat klinis dan `tool_query_clinical_doc` untuk mengecek lab/TTV.
+- **AC-3.2:** **Given** catatan TTV perawat stabil dan marker infeksi lab (leukosit/prokalsitonin) normal, **When** klaim menagih tarif severity level III, **Then** Agent menyimpulkan status `CONTRADICTORY_EVIDENCE` dan menandai indikasi *Upcoding Diagnosis*.
 
-### F2 — Pemeriksaan aturan deterministik
+### P0.4 — Inflated Bills & Alkes Cross-Checker
+- **AC-4.1:** **Given** lembar tagihan mencantumkan 2 unit stent koroner (Rp20.000.000), **When** Agent membedah teks laporan operasi, **Then** Agent mengekstrak jumlah implan terpasang (1 unit) dan mendeteksi ketidaksesuaian kuantitas.
+- **AC-4.2:** **Given** diskrepansi kuantitas alkes terdeteksi, **When** Agent memanggil `tool_calc_tariff_delta`, **Then** sistem menghitung selisih rupiah tidak sah secara presisi (misal: Rp10.000.000) dan mencantumkannya pada kartu temuan.
 
-| ID | Kriteria | Cara uji |
-| --- | --- | --- |
-| F2-1 | **Given** kombinasi diagnosis-tindakan yang tidak ada di tabel referensi, **when** diperiksa, **then** muncul flag "kombinasi tidak lazim" dengan kode yang bersangkutan | Fixture yang diketahui jawabannya |
-| F2-2 | **Given** lama rawat di luar rentang tabel referensi untuk diagnosis itu, **when** diperiksa, **then** muncul flag lama rawat beserta nilai aktual dan rentang referensi | Fixture batas bawah dan atas |
-| F2-3 | **Given** pasien dan diagnosis yang sama dengan klaim lain dalam jendela N hari (N dapat dikonfigurasi), **when** diperiksa, **then** muncul flag "indikasi episode terpecah" yang mencantumkan ID klaim terkait | Fixture 2–3 klaim terkait |
-| F2-4 | **Given** input yang sama dijalankan dua kali, **then** keluaran identik 100% (deterministik) | Jalankan 2×, bandingkan |
-| F2-5 | **Given** 10 fixture berlabel jawaban, **when** diperiksa, **then** hasil flag sesuai label 10/10 | Tes otomatis |
+### P0.5 — Semantic Note Cloning Detector
+- **AC-5.1:** **Given** berkas resume medis yang dianalisis, **When** Agent memanggil `tool_scan_corpus_cloning` terhadap database klaim faskes dalam jendela waktu 30 hari, **Then** sistem mengukur kemiripan n-gram dan embedding teks catatan klinis.
+- **AC-5.2:** **Given** ditemukan kesamaan teks $> 85\%$ dengan pasien lain tanpa variasi klinis wajar, **Then** sistem memunculkan flag `NOTE_CLONING_DETECTED` disertai tautan ke ID klaim pembanding.
 
-> **Batasan data referensi:** tabel referensi dibangun dari subset kecil kode ICD-10/ICD-9-CM dan tarif INA-CBG yang publik, dikurasi manual. Tarif dan aturan di prototipe **tidak boleh disebut sebagai tarif resmi** sebelum diverifikasi ke Permenkes terkait.
+### P0.6 — Anti-Hallucination Verbatim Verifier
+- **AC-6.1:** **Given** Agent menyusun kartu temuan dengan kutipan teks dokumen sumber, **When** kutipan diproses oleh `tool_verify_verbatim`, **Then** sistem memverifikasi bahwa *substring* kutipan tersebut eksis $100\%$ secara harfiah pada dokumen asli.
+- **AC-6.2:** **Given** kutipan hasil sintesis LLM mengalami parafrase atau salah kutip ($< 100\%$ match), **Then** kutipan tersebut ditolak oleh verifier, dan Agent dipaksa melakukan kutipan langsung ulang atau membatalkan temuan tersebut.
 
-### F3 — Penalaran teks klinis (LLM)
+### P0.7 — Interactive Evidence Dossier UI
+- **AC-7.1:** **Given** verifikator membuka detail klaim, **Then** UI menampilkan:
+  1. Ringkasan Kasus & Estimasi Risiko Finansial (Rp).
+  2. Kartu-kartu Temuan Berbukti (*Evidence Cards*) dengan status netral (*"Indikasi Diskrepansi"*).
+  3. Dokumen Viewer di sisi kanan dengan kemampuan *auto-scroll & highlight* saat kutipan diklik.
+- **AC-7.2:** **Given** verifikator mengklik kutipan laporan bedah pada temuan alkes, **Then** Document Viewer seketika melompat ke halaman laporan operasi dan menyorot teks yang bersangkutan dengan warna kuning transparan.
 
-| ID | Kriteria | Cara uji |
-| --- | --- | --- |
-| F3-1 | **Given** klaim valid, **when** diproses, **then** keluaran LLM sesuai skema JSON (jenis temuan, uraian, kutipan, keyakinan, penjelasan alternatif) pada 100% kasus uji; keluaran tidak valid memicu satu kali percobaan ulang lalu dianggap gagal (lihat error state E3) | Jalankan seluruh set uji, hitung kepatuhan skema |
-| F3-2 | **Given** resume yang konsisten dengan diagnosis, **when** diproses, **then** tidak ada temuan jenis "diagnosis tidak didukung" | Fixture kasus bersih |
-| F3-3 | **Given** setiap temuan, **then** memuat minimal satu kutipan dan satu penjelasan alternatif non-curiga | Pemeriksaan skema otomatis |
-| F3-4 | **Given** model dipanggil, **then** parameter acak/suhu dan versi model dicatat di log eksekusi agar hasil bisa dilacak | Periksa log |
+### P0.8 — Action Recommendation & Audit Trail
+- **AC-8.1:** **Given** dossier terbuka, **Then** UI menyediakan 4 tombol aksi:
+  1. `Setujui Klaim (Approve)`
+  2. `Pending — Minta Bukti Tambahan` (Otomatis menghasilkan draf surat klarifikasi)
+  3. `Dispute — Usulkan Penurunan Kode (Downcode)`
+  4. `Eskalasi ke Tim Anti-Fraud / PK-JKN`
+- **AC-8.2:** **Given** verifikator memilih aksi *Pending*, *Downcode*, atau *Eskalasi*, **When** verifikator mengonfirmasi, **Then** sistem mewajibkan pengisian catatan verifikator dan menyimpan seluruh jejak keputusan ke dalam log *audit trail* yang bersifat *append-only* (tidak bisa dihapus/diedit).
 
-### F4 — Verifikasi kutipan
-
-| ID | Kriteria | Cara uji |
-| --- | --- | --- |
-| F4-1 | **Given** temuan dengan kutipan yang merupakan substring persis (setelah normalisasi spasi) dari dokumen sumber, **then** lolos dan tersimpan beserta posisi karakter | Fixture valid |
-| F4-2 | **Given** temuan dengan kutipan yang **tidak ada** di dokumen (diinjeksi sengaja), **then** temuan dibuang dari dossier, dihitung di metrik "temuan ditolak verifikator kutipan", dan tidak pernah tampil ke verifikator | Injeksi 10 kutipan palsu; 10/10 dibuang |
-| F4-3 | **Given** kutipan merujuk ke dokumen yang tidak ada dalam paket, **then** diperlakukan sebagai tidak valid | Fixture rujukan salah |
-| F4-4 | **Given** seluruh temuan dalam satu klaim gugur, **then** dossier menampilkan hanya hasil aturan (F2) dengan catatan jelas bahwa analisis teks tidak menghasilkan temuan tervalidasi | Fixture |
-
-### F5 — Antrean prioritas dan dossier
-
-| ID | Kriteria | Cara uji |
-| --- | --- | --- |
-| F5-1 | **Given** beberapa klaim sudah diproses, **when** antrean dibuka, **then** terurut menurun berdasarkan skor risiko; skor sama diurutkan deterministik (misal ID klaim) | Fixture dengan skor diketahui |
-| F5-2 | **Given** dossier dibuka, **then** memuat bagian: ringkasan klaim, temuan (aturan dan teks), kutipan bukti per temuan, tingkat keyakinan, penjelasan alternatif, dan tombol keputusan | Pemeriksaan elemen UI otomatis atau checklist manual |
-| F5-3 | **Given** kutipan diklik, **then** tampil dokumen sumber dengan teks kutipan tersorot | Uji manual pada 3 kasus |
-| F5-4 | **Given** seluruh teks dossier, **then** tidak mengandung kata penuduh (daftar terlarang minimal: "fraud", "penipuan", "terbukti", "curang") dan memakai pembingkaian "indikasi untuk ditinjau" | Pemindaian string otomatis |
-| F5-5 | **Given** tidak ada temuan, **then** tampil "tidak ditemukan indikasi pada pemeriksaan ini" (bukan "klaim bersih/aman") | Fixture kasus bersih |
-| F5-6 | **Given** satu klaim, **when** diproses dari unggah sampai dossier, **then** waktu tercatat; target awal ≤ 60 detik per klaim pada lingkungan demo | Ukur 10 klaim |
-
-### F6 — Keputusan manusia dan audit log
-
-| ID | Kriteria | Cara uji |
-| --- | --- | --- |
-| F6-1 | **Given** dossier terbuka, **then** tersedia tiga tindakan: "Terima temuan / minta dokumen tambahan", "Eskalasi ke tim anti-fraud", "Tolak temuan agent" | Pemeriksaan UI |
-| F6-2 | **Given** "Tolak temuan" atau "Eskalasi", **when** alasan kosong, **then** tombol konfirmasi ditolak dan pesan meminta alasan | Uji UI |
-| F6-3 | **Given** keputusan dikonfirmasi, **then** entri log berisi: ID klaim, keputusan, alasan, ID pengguna (pengguna demo), stempel waktu, dan versi hasil analisis | Periksa entri log |
-| F6-4 | **Given** log keputusan, **then** bersifat tambah-saja (append-only): tidak ada fungsi ubah/hapus di UI maupun API | Tinjauan kode/API |
-| F6-5 | **Given** sistem, **then** tidak ada jalur yang mengubah status pembayaran atau menolak klaim tanpa keputusan manusia | Tinjauan kode; tidak ada endpoint semacam itu |
-
-### F7 — Set uji sintetis dan evaluasi
-
-| ID | Kriteria | Cara uji |
-| --- | --- | --- |
-| F7-1 | **Given** set uji, **then** berisi minimal 30 kasus dengan komposisi tertulis: kasus upcoding tertanam, kasus unbundling tertanam, kasus bersih, dan kasus **pengganggu salah-koding tidak sengaja** | Periksa berkas komposisi |
-| F7-2 | **Given** set uji, **then** setiap kasus punya label kebenaran, dan label dibuat atau ditinjau pihak yang **berbeda** dari pembangun sistem (jika akses pakar tidak ada, dinyatakan terbuka sebagai keterbatasan) | Dokumen pembuat/peninjau |
-| F7-3 | **Given** satu perintah evaluasi, **then** menghasilkan laporan berisi: recall kasus tertanam, false positive pada pengganggu dan kasus bersih, hasil baseline aturan sederhana pada set yang sama, dan keandalan kutipan | Jalankan 2×; angka sama kecuali variasi model yang tercatat |
-| F7-4 | **Given** laporan, **then** setiap angka diberi label "data sintetis" dan keterbatasan ditulis di laporan | Periksa laporan |
-| F7-5 | **Given** hasil agent lebih buruk dari baseline pada metrik tertentu, **then** tetap dilaporkan apa adanya | Tinjauan laporan |
+### P0.9 — Synthetic Evaluation Suite
+- **AC-9.1:** **Given** suite pengujian dijalankan pada 30–50 kasus sintetis, **Then** sistem menghasilkan laporan terukur yang memuat:
+  - *Recall Kasus Anomali* $\ge 85\%$
+  - *False Positive Rate* $\le 15\%$
+  - *Verbatim Citation Reliability* $= 100\%$
+  - *Durasi Analisis Rata-Rata* $\le 60$ detik per klaim.
+- **AC-9.2:** **Given** hasil evaluasi dicetak, **Then** laporan secara transparan mencantumkan disclaimer: *"Hasil Pengujian pada Data Sintetis Terstandar — Healthkathon 2026"*.
 
 ---
 
 ## 5. User Flow dan Error States
 
-### 5.1 Alur utama
+### 5.1 Main User Flow
 
 ```mermaid
 flowchart TD
-    A[Verifikator mengunggah paket klaim sintetis] --> B{F1: Validasi skema dan cek data pribadi}
-    B -- gagal --> E1[Tampilkan pesan error, tidak ada yang disimpan]
-    B -- lolos --> C[F2: Pemeriksaan aturan deterministik]
-    C --> D[F3: Penalaran teks klinis oleh LLM]
-    D --> F{F4: Verifikasi kutipan}
-    F -- kutipan tidak valid --> G[Buang temuan, catat di metrik]
-    F -- valid --> H[Skor risiko dan dossier]
-    G --> H
-    H --> I[F5: Antrean prioritas]
-    I --> J[Verifikator membuka dossier dan memeriksa kutipan]
-    J --> K{F6: Keputusan manusia}
-    K -- Terima / minta dokumen --> L[Catat ke audit log]
-    K -- Eskalasi --> L
-    K -- Tolak temuan --> L
+    Start([Verifikator Membuka Aplikasi]) --> Q[Dashboard: Antrean Klaim Terurut Risiko]
+    Q --> Select[Pilih Klaim Prioritas Teratas]
+    Select --> IntakeCheck{P0.1 Cek Skema & UU PDP}
+    
+    IntakeCheck -- Gagal / Data Riil -- --> ErrPrivacy[Tolak Berkas & Tampilkan Error E2]
+    IntakeCheck -- Lolos -- --> FastFilter{P0.2 Deterministic Filter}
+    
+    FastFilter -- Anomali Demografis -- --> TriageFlag[Beri Flag Aturan]
+    FastFilter -- Lolos -- --> AgentLoop[P0.3 - P0.5 Orkestrasi Agent & Tool Calling]
+    
+    TriageFlag --> AgentLoop
+    
+    subgraph Agentic Investigation Loop
+        AgentLoop --> T1[tool_lookup_pnpk_icd]
+        AgentLoop --> T2[tool_query_clinical_doc]
+        AgentLoop --> T3[tool_calc_tariff_delta]
+        AgentLoop --> T4[tool_scan_corpus_cloning]
+        T1 & T2 & T3 & T4 --> EvidenceWeighing[Penilaian Bobot Bukti & Rekomendasi]
+    end
+    
+    EvidenceWeighing --> VerbatimCheck{P0.6 Verifikasi Verbatim}
+    VerbatimCheck -- Kutipan Tidak Cocok -- --> DropCitation[Gugurkan Kutipan / Perbaiki]
+    DropCitation --> VerbatimCheck
+    VerbatimCheck -- 100% Lolos -- --> RenderDossier[P0.7 Tampilkan Interactive Evidence Dossier]
+    
+    RenderDossier --> HumanReview[dr. Maya Menelaah Bukti & Klik Verbatim Highlight]
+    HumanReview --> DecisionGate{P0.8 Verifikator Menentukan Aksi}
+    
+    DecisionGate -- Setujui --> LogAudit[Simpan ke Append-Only Audit Trail]
+    DecisionGate -- Pending / Minta Bukti --> DraftLetter[Generate Draf Surat Klarifikasi] --> LogAudit
+    DecisionGate -- Usulkan Downcode --> CalcSaving[Catat Efisiensi Biaya JKN] --> LogAudit
+    DecisionGate -- Eskalasi PK-JKN --> FlagAudit[Kirim Berkas ke Tim Investigasi] --> LogAudit
+    
+    LogAudit --> NextClaim[Pindah ke Klaim Berikutnya]
 ```
 
-### 5.2 Error states
+### 5.2 Error States Matrix
 
-| ID | Kondisi | Perilaku sistem | Yang dilihat pengguna |
-| --- | --- | --- | --- |
-| E1 | Field wajib hilang atau format salah | Tolak; tidak ada data parsial tersimpan | Pesan menyebut field yang bermasalah |
-| E2 | Terdeteksi pola data pribadi riil | Tolak dan jangan simpan isi | Pesan: input diduga memuat data pribadi riil, gunakan data sintetis |
-| E3 | LLM gagal, timeout, atau keluaran tidak sesuai skema | Coba ulang satu kali; jika tetap gagal, lanjut dengan hasil aturan saja | Banner: "Analisis teks tidak tersedia, hanya hasil aturan" |
-| E4 | Semua temuan LLM gugur di verifikasi kutipan | Tampilkan hanya hasil aturan (F4-4) | Catatan: analisis teks tidak menghasilkan temuan tervalidasi |
-| E5 | Aturan dan LLM saling bertentangan (misal aturan menandai, teks mendukung) | Tampilkan keduanya, jangan digabung menjadi satu skor diam-diam | Dossier menyebut ketidaksepakatan dan menurunkan keyakinan |
-| E6 | Dokumen penunjang tidak ada dalam paket | Tandai "bukti tidak tersedia", jangan menyimpulkan ketiadaan sebagai kesalahan RS | Saran "minta dokumen tambahan" sebagai opsi |
-| E7 | Dokumen terlalu panjang untuk konteks model | Potong secara terdokumentasi atau proses per bagian; catat bagian yang tidak terbaca | Catatan bagian dokumen yang tidak dianalisis |
-| E8 | Tidak ada temuan | Tampilkan "tidak ditemukan indikasi pada pemeriksaan ini" | Bukan label "aman" atau "bersih" |
-| E9 | Konfirmasi keputusan tanpa alasan (untuk tolak/eskalasi) | Blokir konfirmasi | Pesan meminta alasan |
-| E10 | Gagal menulis audit log | Batalkan keputusan; jangan anggap tersimpan | Pesan error dan ajakan coba ulang |
+| Kode Error | Kondisi Pemicu | Respon & Perilaku Sistem | Pesan pada Antarmuka (*User-Facing*) |
+|---|---|---|---|
+| **E1: Format Rusak** | File JSON/PDF tidak dapat diparsing atau korup. | Tolak berkas seketika; tidak menyimpan data parsial. | *"Berkas klaim tidak valid atau format dokumen rusak. Silakan periksa kembali berkas."* |
+| **E2: Pelanggaran Privasi** | Ditemukan pola NIK riil atau data pribadi terbuka. | Batalkan proses; blokir penyimpanan data ke sistem. | *"Peringatan UU PDP: Dokumen terdeteksi memuat data identitas riil. Harap gunakan data sintetis/tersamar."* |
+| **E3: Tool / LLM Timeout** | Panggilan model AI atau tool melebihi batas (30 detik). | Lakukan *retry* 1x; jika tetap gagal, tampilkan hasil aturan deterministik dengan peringatan. | *"Penyelidikan mendalam teks klinis mengalami kendala jaringan. Menampilkan hasil penyaringan aturan deterministik."* |
+| **E4: Verbatim Fail** | Kutipan teks bukti gagal diverifikasi terhadap dokumen asli. | Hapus kutipan yang tidak valid; jangan tampilkan teks yang tidak terverifikasi ke verifikator. | *"Kutipan bukti tidak memenuhi standar akurasi harfiah dan telah dikeluarkan dari ringkasan."* |
+| **E5: Bukti Hilang** | RS tidak mengunggah lembar lab / laporan operasi. | Agent mencatat *"Bukti tidak dilampirkan"*; sistem tidak langsung menuduh fraud, melainkan merekomendasikan *Pending*. | *"Dokumen penunjang wajib (Laporan Operasi/Hasil Lab) tidak ditemukan pada berkas klaim."* |
+| **E6: Keputusan Tanpa Alasan** | Verifikator menekan tombol Pending/Dispute tanpa mengisi catatan alasan. | Tombol konfirmasi dinonaktifkan hingga catatan terisi minimal 10 karakter. | *"Harap cantumkan alasan klinis/regulasi untuk konfirmasi status Pending atau Dispute."* |
+| **E7: Gagal Tulis Log** | Gangguan penulisan ke database *audit trail*. | Batalkan transaksi keputusan; cegah status klaim berubah menggantung. | *"Gagal merekam jejak audit keputusan. Keputusan belum tersimpan. Silakan coba kembali."* |
 
 ---
 
-## 6. Constraint Hackathon dan Batasan MVP
+## 6. Constraint Hackathon dan Batasan MVP (Ref: Guideline)
 
-### 6.1 Constraint dari panduan
-
-| Aspek | Ketentuan | Implikasi |
-| --- | --- | --- |
-| Deliverable | PDF ≤ 20 slide, ≤ 10 MB | Prototype hanya pendukung bukti; slide harus berdiri sendiri |
-| Pilihan | 1 kategori, 1 solusi | Tidak ada fitur lintas kategori |
-| Data | Dilarang data peserta JKN riil tanpa izin | Semua data sintetis; pemeriksa pola data pribadi (F1-3) wajib |
-| Tim | 1–3 orang | P0 harus bisa dikerjakan tim minimum (satu orang) |
-| Penilaian | 6 dimensi, "dibuktikan bukan disebutkan" | Setiap klaim di slide harus punya bukti dari prototype atau sumber |
-| Kematangan | Dinyatakan jujur | Dilabeli "Prototype pada data sintetis" |
-| Dampak | Hindari overclaim | Dampak ditulis sebagai estimasi beserta asumsi |
-
-### 6.2 Batasan MVP
-
-- **Satu alur, satu pengguna utama.** Tidak ada multi-peran atau autentikasi nyata; cukup pengguna demo.
-- **Satu jenis kasus utama:** rawat inap, upcoding diagnosis dan episode terpecah. Cakupan diagnosis dibatasi pada subset kecil kode yang dipilih (disebut eksplisit di dokumen).
-- **Tabel referensi kecil dan dikurasi,** bukan seluruh ICD/INA-CBG. Dinyatakan sebagai keterbatasan.
-- **Tanpa penyimpanan permanen data klaim** di luar sesi demo, kecuali set uji sintetis dan audit log.
-- **Biaya dan latensi:** agent berlapis (filter aturan dulu, LLM hanya untuk klaim yang dijalankan); target ≤ 60 detik per klaim (F5-6), tanpa klaim skalabilitas di luar yang diukur.
-- **Hasil evaluasi tidak digeneralisasi** ke performa nasional.
-
-### 6.3 Keputusan yang masih terbuka
-
-| # | Pertanyaan | Dampak pada PRD |
-| --- | --- | --- |
-| Q1 | Tenggat dan format penilaian: PDF saja atau ada demo langsung? | Menentukan kedalaman UI dan apakah P1-b/P1-d perlu |
-| Q2 | Akses ke pakar domain (koder, dokter, verifikator) untuk F7-2? | Tanpa itu F7-2 hanya bisa dipenuhi sebagian; wajib dicatat sebagai keterbatasan |
-| Q3 | Pilihan model dan lingkungan jalan (lokal/layanan)? | Mempengaruhi F3-4, biaya, dan narasi privasi |
-| Q4 | Nilai N untuk jendela episode (F2-3) | Perlu rujukan aturan/pakar; sementara parameter konfigurasi |
-| Q5 | Status iDRG vs INA-CBG | Tabel referensi dibuat modular supaya mudah diganti |
+| Dimensi Penilaian Guideline | Ketentuan Resmi | Implementasi Nyata pada PRD MVP Ini |
+|---|---|---|
+| **Relevansi Permasalahan (Dimensi 1)** | Masalah nyata, mendesak, berdampak besar pada Program JKN. | Fokus pada FKRTL (RS), mengincar 2 sumber kebocoran terbesar: upcoding komplikasi & alkes/cloning. |
+| **Kreativitas & Inovasi (Dimensi 2)** | Kebaruan dibanding proses VEDIKA/DEFRADA saat ini. | Menjembatani jurang analitik: dari sekadar anomali statistik angka ke penalaran teks klinis berbukti kutipan nyata. |
+| **Kualitas Teknologi (Dimensi 3)** | AI tepat guna, bukan sekadar label. | Menggunakan arsitektur Agentic hibrida: Aturan deterministik murah + Agentic Tool Calling multi-langkah + Anti-hallucination verbatim grounding. |
+| **Efektivitas & Dampak (Dimensi 4)** | Perbaikan nyata dan terukur. | Terukur pada dataset sintetis: memangkas $\ge 60\%$ waktu verifikasi, mendeteksi potensi kerugian rupiah secara transparan. |
+| **Kesiapan & Skalabilitas (Dimensi 5)** | Prototype dapat didemonstrasikan di lingkungan terbatas. | MVP siap demo interaktif: antrean klaim prioritas, telaah kasus bedah, verifikasi kutipan 1-klik, dan audit log. |
+| **Keamanan & Tata Kelola (Dimensi 6)** | Kepatuhan UU PDP, etika AI, Human-in-the-Loop. | 100% data sintetis, bahasa temuan non-tuduhan (*objective discrepancy*), verifikator manusia memegang kendali keputusan 100%. |
 
 ---
 
-## 7. Gate: Verifikasi P0
+## 7. Gate Check Dokumen 3: Kesiapan Fitur P0
 
-**Aturan gate:** fitur P0 baru dianggap selesai bila (a) semua acceptance criteria-nya lulus, dan (b) bukti lulusnya bisa ditunjukkan.
+> **Aturan Gate:** Fitur P0 dianggap siap diimplementasikan jika setiap kriteria memiliki perilaku dan metode uji yang konkret sebelum arsitektur kode (Dokumen 4) disusun.
 
-| Fitur | Perilaku yang jelas | Bukti verifikasi | Jumlah kriteria |
-| --- | --- | --- | --- |
-| F1 Intake | Terima/tolak berdasarkan skema dan pola data pribadi | Tes otomatis atas fixture valid dan tidak valid | 4 |
-| F2 Aturan | Flag deterministik dengan nilai dan rujukan | 10/10 fixture berlabel + uji dua kali jalan | 5 |
-| F3 LLM | Temuan sesuai skema, dengan kutipan dan alternatif | Kepatuhan skema 100% pada set uji | 4 |
-| F4 Kutipan | Kutipan palsu tidak pernah sampai ke pengguna | Uji injeksi 10/10 | 4 |
-| F5 Dossier | Antrean terurut; dossier lengkap, bahasa netral | Pemindaian string + checklist UI | 6 |
-| F6 Keputusan | Tiga tindakan, alasan wajib, log append-only | Uji UI + tinjauan kode | 5 |
-| F7 Evaluasi | Satu perintah menghasilkan laporan yang bisa diulang | Jalankan 2×, bandingkan | 5 |
+| ID Fitur | Nama Modul P0 | Perilaku Operasional Inti | Metode Pembuktian |
+|---|---|---|---|
+| **P0.1** | Intake & Privacy | Validasi skema & pencegahan data riil (UU PDP). | Uji otomatis unit test regex NIK riil & skema JSON. |
+| **P0.2** | Deterministic Filter | Penyaringan aturan cepat (gender, unbundling dasar). | Uji tabel aturan pada 10 kasus anomali dasar. |
+| **P0.3** | Agentic Investigator | Penalaran teks resume medis vs kriteria PNPK & lab. | Ekstraksi bukti klinis terstruktur pada kasus upcoding. |
+| **P0.4** | Alkes Cross-Checker | Pencocokan kuantitas alkes laporan operasi vs tagihan. | Kalkulasi selisih tarif alkes terbukti akurat. |
+| **P0.5** | Note Cloning Detector | Pengukuran kesamaan semantik teks lintas pasien RS. | Deteksi kasus jiplakan teks dengan skor kesamaan $>85\%$. |
+| **P0.6** | Verbatim Verifier | Pengecekan 100% substring kutipan bukti di dokumen. | Uji injeksi kutipan palsu/halusinasi wajib digagalkan. |
+| **P0.7** | Evidence Dossier UI | Antrean prioritas, kartu bukti, & highlight 1-klik. | Demo antarmuka web interaktif berfungsi mulus. |
+| **P0.8** | Action & Audit Trail | 4 opsi rekomendasi, draf klarifikasi, & log append-only. | Log audit tersimpan lengkap dengan timestamp & user ID. |
+| **P0.9** | Evaluation Suite | Laporan metrik akurasi & latensi pada set sintetis. | Script evaluasi otomatis mencetak laporan benchmark. |
 
-**Definition of Done untuk demo:** satu klaim sintetis dapat melewati seluruh alur pada diagram 5.1, termasuk satu skenario error (E3 atau E4), dan laporan F7 tersedia dengan label data sintetis.
-
-**Pemotongan bila waktu terbatas:** urutan pertahanan P0 bila harus dikurangi: F1, F2, F5, F6 adalah inti alur; F3 dan F4 harus selalu dikerjakan **bersama** (LLM tanpa verifikasi kutipan tidak boleh tampil ke pengguna); F7 tidak boleh dipotong karena menjadi satu-satunya bukti klaim kinerja.
+- [x] Seluruh kriteria penerimaan P0 jelas dan dapat diuji.
+- [x] Batasan non-goals dipatuhi (tidak ada fitur rumah sakit, tidak ada auto-reject sepihak).
+- [x] Prinsip Human-in-the-Loop dan UU PDP tertuang secara kontraktual.
