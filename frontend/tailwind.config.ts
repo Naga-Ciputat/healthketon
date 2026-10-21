@@ -10,6 +10,29 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        clarix: {
+          blue: "#2563EB",
+          "blue-hover": "#1D4ED8",
+          "blue-light": "#EFF6FF",
+          "blue-border": "#BFDBFE",
+          green: "#059669",
+          "green-hover": "#047857",
+          "green-light": "#ECFDF5",
+          "green-border": "#A7F3D0",
+          amber: "#D97706",
+          "amber-light": "#FFFBEB",
+          "amber-border": "#FDE68A",
+          rose: "#DC2626",
+          "rose-light": "#FEF2F2",
+          "rose-border": "#FECACA",
+          bg: "#FFFFFF",
+          canvas: "#F8FAFC",
+          card: "#FFFFFF",
+          border: "#E2E8F0",
+          text: "#0F172A",
+          secondary: "#475569",
+          muted: "#94A3B8",
+        },
         attio: {
           blue: "#2563EB",
           "blue-hover": "#1D4ED8",

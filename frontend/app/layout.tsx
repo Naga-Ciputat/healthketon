@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { Sidebar } from "@/components/widgets/Sidebar";
+import { ClarixSidebar } from "@/components/widgets/ClarixSidebar";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Attio CRM Workspace",
-  description: "Next-generation CRM UI recreation inspired by Attio",
+  title: "Clarix AI — JKN Claims Verification Co-Pilot",
+  description: "Agentic clinical evidence cross-examiner and dispute co-pilot for BPJS Kesehatan",
 };
 
 export default function RootLayout({
@@ -16,11 +16,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="h-full">
+    <html lang="id" className="h-full">
       <body
-        className={`${inter.className} h-full overflow-hidden flex bg-white text-gray-900 antialiased`}
+        className={`${inter.className} h-full overflow-hidden flex bg-white text-slate-900 antialiased`}
       >
-        <Sidebar />
+        <ClarixSidebar />
         <main className="flex-1 flex flex-col min-w-0 h-full overflow-hidden bg-white">
           {children}
         </main>

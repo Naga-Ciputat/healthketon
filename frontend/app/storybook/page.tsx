@@ -13,6 +13,10 @@ import { ToggleSwitch } from "@/components/widgets/ToggleSwitch";
 import { SequenceBuilder } from "@/components/widgets/SequenceBuilder";
 import { SequenceInspector } from "@/components/widgets/SequenceInspector";
 import { TaskTable } from "@/components/widgets/TaskTable";
+import { MetricHeader } from "@/components/widgets/MetricHeader";
+import { EvidenceCard } from "@/components/widgets/EvidenceCard";
+import { DossierActionBar } from "@/components/widgets/DossierActionBar";
+import { INITIAL_CLAIMS } from "@/lib/mockData";
 import {
   Layers,
   Sparkles,
@@ -35,7 +39,7 @@ interface WidgetDoc {
 
 export default function StorybookCatalogPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
-  const [activeWidgetId, setActiveWidgetId] = useState<string>("omnibox");
+  const [activeWidgetId, setActiveWidgetId] = useState<string>("evidence-card");
 
   // State for interactive widgets
   const [toggleState, setToggleState] = useState(true);
@@ -44,6 +48,7 @@ export default function StorybookCatalogPage() {
 
   const categories = [
     "All",
+    "Clarix AI Clinical",
     "Navigation",
     "AI & Input",
     "Dashboard",
@@ -53,6 +58,54 @@ export default function StorybookCatalogPage() {
   ];
 
   const widgets: WidgetDoc[] = [
+    {
+      id: "evidence-card",
+      name: "EvidenceCard",
+      category: "Clarix AI Clinical",
+      screenshotRef: "Screen 2 (Evidence Dossier)",
+      description: "Interactive clinical discrepancy card with 100% Verbatim verification badge, narrative discrepancy reasoning, and click-to-highlight quotation trigger.",
+      component: (
+        <div className="max-w-xl w-full mx-auto space-y-3">
+          <EvidenceCard
+            finding={INITIAL_CLAIMS[0].findings[0]}
+            onSelectCitation={(cit) => alert(`Selected citation in: ${cit.documentTitle}`)}
+          />
+        </div>
+      ),
+    },
+    {
+      id: "metric-header",
+      name: "MetricHeader",
+      category: "Clarix AI Clinical",
+      screenshotRef: "Screen 1 (Triage Queue)",
+      description: "Triage metrics summary showing pending claim volume, detected inefficiency rupiah, and fast-tracked clean claims.",
+      component: (
+        <div className="w-full">
+          <MetricHeader
+            totalPendingCount={24}
+            highRiskCount={4}
+            totalInefficiencyRupiah={142500000}
+            fastTrackedCount={12}
+          />
+        </div>
+      ),
+    },
+    {
+      id: "dossier-action-bar",
+      name: "DossierActionBar",
+      category: "Clarix AI Clinical",
+      screenshotRef: "Screen 2 (Dossier Workspace)",
+      description: "Fixed decision bar with Agentic AI recommendation banner (92% confidence) and 4 human-in-the-loop action buttons.",
+      component: (
+        <div className="max-w-xl w-full mx-auto border border-slate-200 rounded-xl overflow-hidden">
+          <DossierActionBar
+            recommendedActionText="Rekomendasi: PENDING — Minta Klarifikasi Jumlah Alkes & Downcode Sepsis"
+            confidenceScore={92}
+            onTriggerAction={(act) => alert(`Action triggered: ${act}`)}
+          />
+        </div>
+      ),
+    },
     {
       id: "omnibox",
       name: "OmniboxInput",
