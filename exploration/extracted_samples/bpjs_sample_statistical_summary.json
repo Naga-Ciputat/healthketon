@@ -1,0 +1,24 @@
+{
+  "total_claims_sampled": 100000,
+  "ritl_count": 15095,
+  "rjtl_count": 84905,
+  "severity_distribution": {
+    "I": {
+      "count": 12532,
+      "avg_tariff": 3884527.2661985317,
+      "total_rp": 48680895700.0
+    },
+    "II": {
+      "count": 2033,
+      "avg_tariff": 6766153.123462862,
+      "total_rp": 13755589300.0
+    },
+    "III": {
+      "count": 530,
+      "avg_tariff": 12217616.03773585,
+      "total_rp": 6475336500.0
+    }
+  },
+  "readmission_30d_count": 1895,
+  "readmission_30d_rate_pct": 12.55
+}
