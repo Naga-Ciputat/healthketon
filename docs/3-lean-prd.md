@@ -84,10 +84,12 @@ graph TD
 ### P0.1 — Intake & Privacy Guard
 - **AC-1.1:** **Given** berkas klaim sintetis diunggah (JSON/PDF teks), **When** sistem memvalidasi skema, **Then** sistem memastikan semua data wajib ada (kode diagnosis, tindakan, tagihan alkes, resume medis).
 - **AC-1.2:** **Given** input berkas klaim, **When** sistem memindai ekspresi reguler NIK 16 digit valid, nama RS riil, atau data sensitif yang tidak disamarkan, **Then** sistem menolak input dan memunculkan error `ERR_PRIVACY_VIOLATION: Gunakan data sintetis/tersamar sesuai UU PDP`.
+- **AC-1.3:** **Given** berkas RME digital masuk, **When** sistem memverifikasi integritas hash dan sertifikat tanda tangan elektronik (TTE), **Then** sistem mencatat status otentikasi dokumen (Valid PSrE-BSSN / Non-PSrE) untuk ditampilkan pada header berkas.
 
 ### P0.2 — Deterministic Fast Filter
 - **AC-2.1:** **Given** klaim dengan batasan gender/usia (misal: persalinan sectio caesarea pada pasien laki-laki, atau katarak senilis pada pasien bayi), **When** aturan deterministik dijalankan, **Then** klaim langsung ditandai dengan flag deterministik `RULE_MISMATCH_DEMOGRAPHIC` dalam waktu $< 50$ ms tanpa perlu memanggil LLM.
 - **AC-2.2:** **Given** klaim tindakan yang dilarang di-unbundle menurut regulasi tarif INA-CBG (Permenkes 3/2023), **When** prosedur terdaftar dalam kelompok satu paket, **Then** sistem memberi peringatan `UNBUNDLING_PROHIBITED`.
+- **AC-2.3:** **Given** riwayat kunjungan pasien (`PSTV01`) di faskes yang sama, **When** interval tanggal masuk baru $\le 30$ hari dari tanggal kepulangan sebelumnya dengan kelompok diagnosis serupa, **Then** sistem menyematkan indikasi `POTENSI_READMISI_CEPAT` untuk telaah verifikator.
 
 ### P0.3 — Agentic Clinical Investigator (Upcoding & Unbundling)
 - **AC-3.1:** **Given** klaim memuat diagnosis komplikasi (misal: Sepsis Berat / Syok Kardiogenik / Pneumonia Berat), **When** Agent menjalankan investigasi, **Then** Agent memanggil `tool_lookup_pnpk_icd` untuk mengambil syarat klinis dan `tool_query_clinical_doc` untuk mengecek lab/TTV.

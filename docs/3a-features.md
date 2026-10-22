@@ -2,20 +2,25 @@
 
 **Tema Hackathon:** Detect Smarter, Protect JKN  
 **Kategori:** Efisiensi Risiko Fasilitas Kesehatan (Kategori 3.1)  
-**Sub-kategori:** Upcoding & Unbundling serta Inflated Bills & Cloning  
-**Tujuan Dokumen:** Menjadi jembatan konkret antara Dokumen 3 (Lean PRD) dan Dokumen 4 (Technical Design), menjabarkan secara presisi apa yang dibangun pada sisi Frontend (UI/UX) dan Backend/AI untuk setiap fitur.
+**Sub-kategori:** Upcoding & Unbundling, Inflated Bills & Cloning, serta Tata Kelola Integritas Klaim RME  
+**Tujuan Dokumen:** Menjadi jembatan operasional antara Dokumen 3 (Lean PRD) dan Dokumen 4 (Technical Design). Menjabarkan secara terukur apa yang dibangun pada sisi Frontend (UI/UX yang fungsional dan terbebas dari dekorasi artifisial) serta Backend/Logic/AI untuk setiap fitur P0.
 
 ---
 
 ## Ringkasan Arsitektur Antarmuka & Layanan
 
-Aplikasi tersusun atas struktur rute semantik yang mengikuti siklus kerja verifikator:
-1. **Layar 1 — Triage & Queue Dashboard (`/claims/triage`):** *(redirect dari root `/`)* Tampilan daftar antrean klaim terurut risiko, ringkasan metrik efisiensi dana JKN, dan portal upload paket klaim sintetis.
-2. **Layar 2 — Interactive Evidence Dossier (`/claims/:id/dossier`):** Tampilan kerja utama (*Workspace*) verifikator dengan tata letak **Dual-Pane**:
-   - **Pane Kiri (50%):** Dossier Bukti Klinis (Kartu temuan, kalkulasi selisih rupiah, rekomendasi Agent, dan Action Bar).
-   - **Pane Kanan (50%):** Document Viewer Cerdas (PDF/RME Viewer dengan fitur *auto-scroll* dan *verbatim text highlighting* saat kutipan diklik).
-3. **Layar 3 — Audit Trail & Keputusan Resmi (`/claims/audit-trail`):** Repositori append-only seluruh keputusan verifikator dan surat klarifikasi resmi ke RS.
-4. **Layar 4 — Scientific Benchmark Suite (`/benchmark/evaluation-suite`):** Halaman eksekusi batch evaluasi 30–50 kasus sintetis untuk pembuktian ke juri.
+Aplikasi tersusun atas struktur rute semantik yang mengikuti siklus kerja verifikator klaim BPJS Kesehatan:
+
+1. **Layar 1 — Triage & Queue Dashboard (`/claims/triage`):** *(redirect dari root `/`)*  
+   Antrean berkas klaim terprioritaskan berdasarkan risiko inefisiensi klinis dan potensi selisih tarif, ringkasan metrik operasional terkalibrasi, serta intake pengunggahan berkas klaim digital.
+2. **Layar 2 — Interactive Evidence Dossier (`/claims/:id/dossier`):**  
+   Ruang kerja utama (*Workspace*) verifikator dengan tata letak **Dual-Pane** yang ergonomis:
+   - **Pane Kiri (50%):** Dossier Bukti Klinis (Status otentikasi dokumen RME-TTE, kartu temuan diskrepansi, kalkulasi selisih tarif pasti, penjelasan alternatif non-fraud, dan Action Bar keputusan).
+   - **Pane Kanan (50%):** Smart Document Viewer (Penampil dokumen rekam medis dengan fitur sinkronisasi tab, *smooth auto-scroll*, dan penyorotan teks verbatim tanpa efek glow/pendar).
+3. **Layar 3 — Audit Trail & Repositori Keputusan (`/claims/audit-trail`):**  
+   Log permanen (*append-only*) yang merekam seluruh putusan verifikator, kepatuhan penyamaran data (UU PDP No. 27/2022), serta arsip draf surat klarifikasi resmi ke faskes.
+4. **Layar 4 — Scientific Benchmark Suite (`/benchmark/evaluation-suite`):**  
+   Modul pengujian batch 30–50 kasus sintetis berlabel untuk mengevaluasi recall deteksi anomali, laju *false positive*, dan grounding keaslian kutipan.
 
 ---
 
@@ -23,315 +28,282 @@ Aplikasi tersusun atas struktur rute semantik yang mengikuti siklus kerja verifi
 
 ---
 
-### F1: Intake & Privacy Guard (UU PDP Gatekeeper)
+### F1: Intake, Privacy Guard & Keabsahan Dokumen RME-TTE
 
 #### 1. Purpose
-Menerima paket berkas klaim digital (JSON data klaim + dokumen rekam medis teks/PDF), memvalidasi kelengkapan skema, dan secara ketat memblokir/menolak dokumen yang memuat data pribadi riil (NIK 16 digit valid, nama warga asli) guna mematuhi UU No. 27/2022 (UU PDP) dan regulasi Healthkathon.
+Menerima paket berkas klaim digital rumah sakit (metadata klaim, resume medis terstruktur, CPPT, laporan operasi, lab, radiologi, kuitansi alkes), memvalidasi kelengkapan skema, memastikan kepatuhan regulasi privasi (UU PDP No. 27/2022), serta memverifikasi keabsahan tanda tangan elektronik (TTE) dan integritas dokumen RME (Permenkes 24/2022 & inisiatif *Smart Claim*).
 
 #### 2. Frontend (FE)
-- **Halaman / Komponen:**
-  - `ModalUploadClaim` di Layar Dashboard (`/claims/triage`).
-  - Komponen *Dropzone* (menerima bundle `.json` atau zip berkas klaim sintetis).
-  - Progress bar status: *"Memvalidasi Skema..."* $\rightarrow$ *"Pemeriksaan Kepatuhan UU PDP..."* $\rightarrow$ *"Selesai"*.
-- **Aksi Interaksi Pengguna:**
-  - Pengguna melakukan *drag-and-drop* file paket klaim sintetis.
-  - Jika lolos: Muncul notifikasi sukses (*toast*) dan antrean otomatis diperbarui.
-  - Jika gagal (E1/E2): Tampil modal peringatan berwarna merah terang: *"Peringatan UU PDP: Dokumen terdeteksi memuat data riil. Harap gunakan data sintetis."*
+- **Komponen UI:**
+  - `ModalUploadClaim` di `/claims/triage` (area dropzone bersih untuk paket bundle `.json` atau zip berkas klaim).
+  - Indikator proses bertahap: *Validasi Skema $\rightarrow$ Pemeriksaan Sanitasi PII $\rightarrow$ Verifikasi TTE & Hash RME*.
+  - Status Otentikasi Dokumen di Header Dossier: Strip status institusional bergaris batas 1px halus yang menampilkan validitas tanda tangan elektronik DPJP (tersertifikasi BSrE-BSSN) dan integritas berkas (tanpa modifikasi pasca-pulang).
+- **Interaksi Pengguna:**
+  - Pengguna mengunggah berkas. Jika terdeteksi NIK atau nama riil tanpa tokenisasi, sistem menolak dengan pesan peringatan privasi formal. Jika berkas valid, data masuk ke antrean triage.
 
 #### 3. Backend / AI (BE/AI)
-- **Data yang Diolah/Disimpan:**
-  - Input: Payload klaim (metadata pasien anonim, kode diagnosis primer/sekunder, daftar tindakan, kuitansi alkes/obat, teks resume medis, teks laporan operasi, teks lab/radiologi).
-  - Output: Objek `ClaimRecord` tervalidasi dengan status awal `INGESTED`, yang kemudian otomatis memicu antrean analisis investigasi (F3 $\rightarrow$ F4/F5/F6 $\rightarrow$ F7) hingga berstatus `ANALYZED`.
-- **Aksi & Orkestrasi AI:**
-  - **Regex & Heuristic Sanitizer (Non-LLM):** Pengecekan cepat pola NIK 16 digit Indonesia, nomor kartu BPJS asli, dan nomor telepon riil.
-  - Pengecekan skema tipe data wajib (Zod schema validation).
+- **Data yang Diolah:**
+  - Input: Payload klaim RME (metadata SEP, teks dokumen klinis, billing alkes/obat, hash dokumen, metadata sertifikat TTE).
+  - Output: Objek `ClaimRecord` berstatus `INGESTED`, siap diproses oleh engine investigasi.
+- **Logika & Servis:**
+  - *Heuristic Privacy Guard (Non-LLM):* Regex deteksi format NIK 16 digit aktif dan penyamaran otomatis (*pseudonymization*) sebelum teks diteruskan ke modul pemrosesan bahasa.
+  - *Cryptographic Signature Validator:* Pengecekan integritas hash SHA-256 dan masa berlaku sertifikat digital penandatangan.
 - **Layer yang Terlibat:**
-  - `Intake Controller` $\rightarrow$ `Privacy Guard Service` $\rightarrow$ `Claim Repository`.
+  - `IntakeController` $\rightarrow$ `PrivacyGuardService` $\rightarrow$ `DocumentIntegrityService` $\rightarrow$ `ClaimRepository`.
 
 ---
 
 ### F2: Priority Queue & Triage Dashboard
 
-#### 2. Purpose
-Mengubah kebiasaan verifikator memeriksa klaim secara kronologis acak menjadi **antrean prioritas berbasis risiko klinis & rupiah**, sehingga potensi kebocoran dana terbesar langsung tertangani di awal hari kerja.
+#### 1. Purpose
+Mengubah proses verifikasi manual acak menjadi **antrean kerja terprioritaskan** berdasarkan probabilitas risiko klinis, indikasi kunjungan berulang (readmisi $\le 30$ hari), dan besaran selisih tarif klaim terhadap standar INA-CBG.
 
 #### 2. Frontend (FE)
-- **Halaman / Komponen:**
-  - `DashboardView` (`/claims/triage`).
-  - `MetricHeader`: Menampilkan 3 kartu ringkasan: Total Klaim Menunggu, Estimasi Potensi Inefisiensi Terdeteksi (Rp), dan Klaim Lolos Cepat (*Fast-Tracked*).
-  - `ClaimTable`: Tabel antrean klaim dengan kolom:
-    * ID Klaim & Rumah Sakit.
-    * Diagnosis Utama (Kode ICD-10 & Nama).
-    * Total Tagihan (Rp).
-    * Status Klaim: `PERLU_TINJAUAN`, `PENDING_KLARIFIKASI_RS`, `DOWNCODE_DIUSULKAN`, `DISETUJUI`.
-    * Badge Risiko: *Tinggi (Merah)*, *Sedang (Kuning)*, *Rendah/Bersih (Hijau)*.
-    * Tag Modus Terindikasi: `Upcoding`, `Inflated Alkes`, `Note Cloning`.
-    * Estimasi Selisih Biaya (Rp).
-    * Tombol *"Buka Dossier Bukti"*.
-- **Aksi Interaksi Pengguna:**
-  - Filter berdasarkan Rumah Sakit, Status Klaim, Jenis Modus, atau Rentang Selisih Tarif.
-  - Klik baris tabel / tombol membuka Layar Dossier (`/claims/:id/dossier`).
+- **Komponen UI:**
+  - `MetricHeader`: Menampilkan 3 kartu ringkasan berbasis terminologi operasional tenang (tanpa titik bulat status dan tanpa teks eyebrow ornamental):
+    * *Antrean Telaah:* Total klaim menunggu dengan rincian kasus prioritas tinggi.
+    * *Potensi Koreksi Tagihan:* Akumulasi nominal rupiah selisih tarif yang perlu ditinjau verifikator.
+    * *Klaim Lolos Cepat (Fast-Track):* Jumlah dan persentase klaim bersih berisiko rendah yang dapat diproses instan.
+  - `ClaimTable`: Tabel antrean dengan kolom nomor SEP, rumah sakit, diagnosis primer, kode INA-CBG, status keabsahan dokumen, tag indikasi (*Upcoding, Inflated Bills, Note Cloning, Readmisi 30 Hari*), potensi selisih tarif, dan tombol aksi telaah dossier.
+- **Interaksi Pengguna:**
+  - Penyaringan antrean berdasarkan faskes, tingkat risiko (*Tinggi, Sedang, Rendah*), status telaah, dan kategori anomali. Klik baris klaim mengarahkan verifikator ke `/claims/:id/dossier`.
 
 #### 3. Backend / AI (BE/AI)
-- **Data yang Diolah/Disimpan:**
-  - Mengambil daftar klaim berstatus `ANALYZED` maupun yang sudah memiliki keputusan verifikator (`PENDING_REVIEW`, dll.).
-  - Mengurutkan klaim yang belum diputuskan menggunakan formula:  
-    $$\text{Priority Score} = w_1 \times \text{Confidence Risk} + w_2 \times \text{Delta Rupiah Tagihan}$$
-- **Aksi & Orkestrasi AI:**
-  - Agregasi data hasil kalkulasi dari modul F3, F4, F5, F6. Tidak ada panggilan LLM baru di tahap rendering tabel (menggunakan cache/database hasil telaah).
+- **Data yang Diolah:**
+  - Menghitung skor prioritas antrean menggunakan formula komposit:
+    $$\text{Priority Score} = w_1 \times \text{Confidence Anomali} + w_2 \times \text{Potensi Koreksi Rupiah} + w_3 \times \text{Faktor Readmisi}$$
+  - Data disajikan langsung dari indeks cache hasil telaah F3–F6 tanpa latensi pemanggilan model baru saat rendering tabel.
 - **Layer yang Terlibat:**
-  - `Triage Service` $\rightarrow$ `Query Cache` $\rightarrow$ `Database`.
+  - `TriageService` $\rightarrow$ `QueryCache` $\rightarrow$ `Database`.
 
 ---
 
 ### F3: Deterministic Fast-Filter Engine
 
 #### 1. Purpose
-Melakukan penyaringan anomali koding dasar dengan komputasi sangat murah ($<50$ ms) sebelum memanggil AI, seperti ketidakcocokan demografis (usia/jenis kelamin) dan aturan baku pemecahan paket klaim (*unbundling*).
+Melakukan penyaringan anomali koding dan administrasi dasar secara instan ($<50$ ms) menggunakan aturan deterministik sebelum memanggil model AI, termasuk aturan demografi, kaidah larangan pemecahan paket (*unbundling*), serta deteksi readmisi cepat.
 
 #### 2. Frontend (FE)
-- **Halaman / Komponen:**
-  - Muncul di dalam `EvidenceDossierView` sebagai Kartu Temuan bertipe `RULE-BASED ANOMALY` (ikon petir).
-  - Menampilkan nama aturan resmi, misal: *Aturan INA-CBG: Prosedur A dilarang ditagihkan terpisah dari Prosedur B (Permenkes 3/2023)*.
-- **Aksi Interaksi Pengguna:**
-  - Badge peringatan deterministik dapat di-*collapse/expand* untuk melihat rujukan pasal.
+- **Komponen UI:**
+  - Ditampilkan di dalam Dossier sebagai Kartu Temuan Administratif bertipe `ATURAN BAKU (DETERMINISTIK)` dengan batas visual 1px bersih.
+  - Memuat nama kaidah resmi (misal: *Larangan Penagihan Terpisah Paket Prosedur, Permenkes 3/2023*) serta indikasi jika pasien memiliki riwayat rawat inap di faskes yang sama dalam kurun waktu $\le 30$ hari dengan kelompok diagnosis serupa.
+- **Interaksi Pengguna:**
+  - Kartu dapat diperluas (*expand*) untuk membaca pasal regulasi dan histori kunjungan terkait.
 
 #### 3. Backend / AI (BE/AI)
-- **Data yang Diolah/Disimpan:**
-  - Input: Kode ICD-10, ICD-9-CM, Gender, Usia Pasien.
-  - Database Aturan: Matriks kode tindakan yang dilarang di-unbundle (*unbundling pair table*) dan batas demografi ICD.
-- **Aksi & Orkestrasi AI:**
-  - Evaluasi logika deterministik murni (aturan `if-else` berbasis tabel kamus).
-  - Menghasilkan daftar flag `DeterministicFlag[]`.
+- **Data yang Diolah:**
+  - Input: Kode ICD-10, ICD-9-CM, jenis kelamin, usia, tanggal masuk/pulang, dan riwayat kunjungan pasien (`PSTV01`).
+  - Kamus Aturan: Matriks pasangan kode terlarang di-unbundle (*unbundling pair registry*) dan batasan interval klaim berulang.
+- **Logika & Servis:**
+  - Evaluasi logika deterministik murni berbasis tabel referensi; menghasilkan array `DeterministicFlag[]`.
 - **Layer yang Terlibat:**
-  - `Rule Engine Service` $\rightarrow$ `INA-CBG Reference Dictionary`.
+  - `RuleEngineService` $\rightarrow$ `INACBGReferenceDictionary` $\rightarrow$ `PatientHistoryIndex`.
 
 ---
 
-### F4: Agentic Clinical Cross-Examiner (Upcoding & Unbundling)
+### F4: Agentic Clinical Cross-Examiner (Upcoding & Severity Jump)
 
 #### 1. Purpose
-Mendeteksi apakah diagnosis keparahan tinggi (*Severity Level II/III*) dan prosedur mahal yang ditagihkan faskes benar-benar didukung oleh bukti medis objektif di dalam narasi resume medis, catatan perkembangan terintegrasi (CPPT), hasil lab, dan radiologi.
+Menganalisis apakah diagnosis komplikasi sekunder berbiaya tinggi (*Severity Level II/III*, seperti gagal ginjal `N185`, hipertensi komplikasi `I119`, atau gagal jantung `I500`) yang menaikkan tarif INA-CBG secara signifikan (terbukti naik rata-rata +74% hingga +214% pada data riil) didukung secara sah oleh catatan klinis CPPT, hasil laboratorium, dan tanda-tanda vital.
 
 #### 2. Frontend (FE)
-- **Halaman / Komponen:**
-  - Komponen `EvidenceCard` bertema *Upcoding / Clinical Discrepancy*:
-    * Header: *"Indikasi Upcoding: Sepsis Berat (A41.9)"*.
-    * Status Bobot Bukti: Badge `Kontradiksi Klinis (Merah)` atau `Kurang Bukti Penunjang (Kuning)`.
-    * Narasi Diskrepansi: Ringkasan 2–3 kalimat yang menjelaskan mengapa diagnosis tidak sesuai.
-    * Kutipan Bukti (Interaktif): Blok teks dengan tanda kutip, nomor dokumen, dan halaman.
-    * Regulasi Rujukan: Tautan ringkas ke *PNPK Kemenkes No. HK.01.07/2020*.
-- **Aksi Interaksi Pengguna:**
-  - Klik pada teks kutipan: Memancarkan event `SELECT_CITATION` ke Document Viewer di pane kanan.
+- **Komponen UI:**
+  - `EvidenceCard` bertema *Ketidaksesuaian Klinis (Upcoding)*:
+    * Judul: Kode diagnosis dan nama komplikasi yang ditinjau.
+    * Status Bukti Medis: Label status terukur (`Kontradiksi Klinis` atau `Data Penunjang Tidak Ditemukan`).
+    * Ringkasan Analisis: 2–3 kalimat objektif yang menjelaskan ketidaksesuaian antara kode klaim dengan kondisi riil pasien.
+    * Kutipan Bukti Terverifikasi: Blok kutipan harfiah beserta rujukan nomor halaman dan nama dokumen.
+    * Rujukan Klausul Koding: Teks referensi ke Permenkes No. 3/2023 Bab VII Pedoman Tarif INA-CBG dan PNPK Kemenkes.
+- **Interaksi Pengguna:**
+  - Klik pada teks kutipan bukti otomatis memicu sinkronisasi ke Document Viewer di pane kanan, menggulir layar, dan menyorot baris teks sumber.
 
 #### 3. Backend / AI (BE/AI)
-- **Data yang Diolah/Disimpan:**
-  - Input: Teks resume medis, hasil lab, TTV, kode diagnosa sekunder komplikasi.
-  - Output: Objek `ClinicalFinding` (klaim kode, kriteria yang dilanggar, kutipan bukti verbatim, tingkat keyakinan 0.0–1.0, penjelasan alternatif non-fraud).
-- **Aksi & Orkestrasi AI (Agent Loop):**
-  1. Agent menerima klaim komplikasi berbiaya tinggi.
-  2. Agent memanggil `tool_lookup_pnpk_icd(code)` $\rightarrow$ mengambil kriteria inklusi/eksklusi klinis resmi Kemenkes.
-  3. Agent memanggil `tool_query_clinical_doc(section="LAB", query="marker infeksi")` dan `(section="TTV", query="tekanan darah & inotropik")`.
-  4. Agent melakukan penalaran: Membandingkan kriteria resmi vs temuan faktual rekam medis.
-  5. Agent memutuskan status korelasi (*Supported / Insufficient / Contradictory*).
+- **Data yang Diolah:**
+  - Input: Narasi resume medis, lembar CPPT dokter/perawat, hasil laboratorium, tanda vital, dan kode komplikasi sekunder.
+  - Output: Objek `ClinicalFinding` (kode klaim, kriteria inklusi yang tidak terpenuhi, kutipan teks verbatim, skor keyakinan, dan estimasi selisih tarif jika diturunkan ke Level I/II).
+- **Alur Orkestrasi Agent:**
+  1. Agent mendeteksi klaim rawat inap dengan severity level tinggi.
+  2. Agent memanggil `tool_lookup_pnpk_icd(code)` untuk mengambil kriteria diagnostik resmi Kemenkes.
+  3. Agent memanggil `tool_query_clinical_doc(section, query)` untuk menelusuri bukti penunjang (lab marker, hemodinamik, terapi obat).
+  4. Agent membandingkan kriteria vs bukti riil dan menyimpulkan status korelasi bukti secara objektif.
 - **Layer yang Terlibat:**
-  - `Agent Orchestrator` $\rightarrow$ `LLM Reasoning Engine` $\rightarrow$ `Tool Registry (PNPK, Doc Extractor)`.
+  - `AgentOrchestrator` $\rightarrow$ `ClinicalReasoningEngine` $\rightarrow$ `ToolRegistry (PNPK, ClinicalDocParser)`.
 
 ---
 
 ### F5: Operative vs Billing Alkes Cross-Checker (Inflated Bills)
 
 #### 1. Purpose
-Mendeteksi penggelembungan tagihan alat kesehatan mahal (ring jantung/stent, implan ortopedi/plat, mesh, lensa tanam/IOL) dengan cara mencocokkan jumlah unit dan spesifikasi pada lembar kuitansi penagihan dengan narasi tindakan yang tertulis di laporan operasi riil.
+Mendeteksi ketidaksesuaian penagihan alat kesehatan dan implan berbiaya mahal (ring jantung/stent, implan ortopedi/plat, mesh bedah, lensa intraokular) dengan mencocokkan jumlah unit dan spesifikasi pada kuitansi rincian biaya terhadap narasi tindakan pembedahan riil pada laporan operasi.
 
 #### 2. Frontend (FE)
-- **Halaman / Komponen:**
-  - Komponen `EvidenceCard` bertema *Alkes & Billing Discrepancy*:
-    * Header: *"Indikasi Inflated Bills: Stent Jantung Koroner (DES)"*.
-    * Tabel Komparasi Mini:
-      - Unit Ditagihkan di Kuitansi: **2 Unit** (Rp20.000.000).
-      - Unit Tercatat di Laporan Operasi: **1 Unit** (Rp10.000.000).
-      - Selisih Biaya Tidak Sah: **-Rp10.000.000**.
-    * Kutipan Bukti Laporan Operasi: *"Dilakukan pemasangan 1 unit stent LAD; cabang LCx batal dipasang..."*.
-- **Aksi Interaksi Pengguna:**
-  - Klik kutipan laporan operasi $\rightarrow$ Pane kanan langsung membuka dokumen laporan bedah dan menyorot paragraf pemasangan implan.
+- **Komponen UI:**
+  - `EvidenceCard` bertema *Diskrepansi Alat Kesehatan*:
+    * Header: Nama alat kesehatan dan kode tagihan terkait.
+    * Tabel Rekonsiliasi Singkat: Unit ditagihkan di kuitansi vs Unit terverifikasi pada laporan operasi vs Selisih rupiah tidak sah.
+    * Kutipan Laporan Operasi: Teks kutipan dokter bedah yang mendokumentasikan jumlah implan terpasang atau pembatalan tindakan di meja operasi.
+- **Interaksi Pengguna:**
+  - Klik kutipan laporan operasi langsung membuka tab *Laporan Operasi* di pane kanan dan menyorot paragraf prosedur implan.
 
 #### 3. Backend / AI (BE/AI)
-- **Data yang Diolah/Disimpan:**
-  - Input: Daftar item kuitansi billing alkes & teks dokumen `Laporan_Operasi.pdf`.
-  - Output: Objek `DeviceDiscrepancy` (nama alkes, qty tagih, qty tindakan riil, selisih tarif Rp, kutipan laporan operasi).
-- **Aksi & Orkestrasi AI:**
-  1. Agent membedah kuitansi untuk mengidentifikasi alkes khusus/implan bernilai tinggi.
-  2. Agent memanggil `tool_query_clinical_doc(section="LAPORAN_OPERASI")`.
-  3. LLM mengekstrak entitas tindakan: berapa alkes yang berhasil diimplan, apakah ada pembatalan/kegagalan pemasangan di meja operasi.
-  4. Agent memanggil `tool_calc_tariff_delta(claimed_qty, actual_qty, unit_price)` untuk menghasilkan angka rupiah pasti.
+- **Data yang Diolah:**
+  - Input: Rincian item billing farmasi/alkes dan teks dokumen laporan bedah (`Laporan_Operasi.pdf`).
+  - Output: Objek `DeviceDiscrepancy` (item name, billed qty, operative verified qty, selisih rupiah pasti, kutipan kalimat bedah).
+- **Logika & Servis:**
+  - Ekstraksi entitas tindakan bedah menggunakan model bahasa terarah + kalkulasi selisih nominal deterministik (`tool_calc_tariff_delta`). Nilai rupiah dihitung dengan formula matematika pasti, bukan perkiraan model.
 - **Layer yang Terlibat:**
-  - `Agent Orchestrator` $\rightarrow$ `Clinical Document Parser` $\rightarrow$ `Tariff Calculator Tool`.
+  - `AgentOrchestrator` $\rightarrow$ `OperativeDocParser` $\rightarrow$ `TariffCalculationService`.
 
 ---
 
 ### F6: Semantic Note-Cloning Detector
 
 #### 1. Purpose
-Mendeteksi indikasi rekam medis rekayasa/duplikasi dengan memindai kesamaan semantik dan n-gram teks catatan klinis antar-pasien di rumah sakit yang sama dalam rentang 30 hari terakhir (*copy-paste SOAP notes*).
+Mendeteksi indikasi fabrikasi atau duplikasi berkas rekam medis dengan membandingkan kesamaan semantik dan kemiripan teks catatan perkembangan pasien saat ini terhadap riwayat pasien lain di rumah sakit yang sama dalam rentang 30 hari terakhir.
 
 #### 2. Frontend (FE)
-- **Halaman / Komponen:**
-  - Komponen `EvidenceCard` bertema *Integrasi Rekam Medis (Note Cloning)*:
-    * Header: *"Peringatan Duplikasi Catatan Medis (94% Match)"*.
-    * Komponen *Diff Viewer*: Menampilkan teks pasien saat ini bersanding (*side-by-side*) dengan teks pasien pembanding (ID Pasien disamarkan).
-    * Informasi Kasus Pembanding: *Identik dengan Pasien #CLM-2026-077 (Dirawat 2 hari sebelumnya oleh DPJP yang sama)*.
-- **Aksi Interaksi Pengguna:**
-  - Tombol *Toggle Side-by-Side Diff*: Memperlihatkan kata-kata yang persis sama (warna merah/hijau).
+- **Komponen UI:**
+  - `EvidenceCard` bertema *Integritas Rekam Medis (Duplikasi Catatan)*:
+    * Header: Persentase kesamaan teks (misal: *Tingkat Kemiripan Catatan Medis: 94%*).
+    * Keterangan Komparasi: Menyebutkan kesamaan terhadap berkas donor dari DPJP yang sama tanpa membuka identitas pribadi pasien pembanding.
+    * Tombol Komparasi: Membuka modal `DiffViewerModal` yang menampilkan teks berdampingan dengan penandaan kata-kata identik.
+- **Interaksi Pengguna:**
+  - Verifikator meninjau teks perbandingan berdampingan untuk menilai apakah kesamaan disebabkan oleh *templated copy-paste* yang tidak mencerminkan kondisi faktual pasien.
 
 #### 3. Backend / AI (BE/AI)
-- **Data yang Diolah/Disimpan:**
-  - Input: Embedding vektor teks dan hash n-gram dari resume medis pasien saat ini.
-  - Korpus: Tabel database `hospital_corpus` berisi resume medis ter-anonimisasi dari rumah sakit yang sama (telah di-seed dengan kasus historis seperti Pasien #CLM-2026-077).
-  - Output: Skor kesamaan semantik (0–100%), ID klaim donor duplikasi, dan teks segmen yang identik.
-- **Aksi & Orkestrasi AI:**
-  - Algoritma: Kombinasi **MinHash / Jaccard N-gram Similarity** (cepat) dan **Cosine Similarity Dense Embedding** (semantik).
-  - Jika skor $> 85\%$, Agent memicu pembuatan temuan `NOTE_CLONING_DETECTED`.
+- **Data yang Diolah:**
+  - Input: Representasi vektor (*dense embedding*) dan n-gram dari teks resume medis/CPPT.
+  - Korpus Pembanding: Tabel `hospital_corpus` berisi catatan klinis tersamar dari rumah sakit yang sama dalam jendela waktu 30 hari.
+  - Output: Skor kemiripan (0–100%), ID berkas pembanding, dan segmen teks terduplikasi.
+- **Logika & Servis:**
+  - Skrining cepat MinHash Jaccard N-gram diikuti verifikasi Cosine Similarity embedding. Ambang batas peringatan dipatok pada $\ge 85\%$.
 - **Layer yang Terlibat:**
-  - `Corpus Vector Service` $\rightarrow$ `Similarity Engine` $\rightarrow$ `Agent Orchestrator`.
+  - `CorpusVectorService` $\rightarrow$ `SimilarityEngine` $\rightarrow$ `AgentOrchestrator`.
 
 ---
 
 ### F7: Anti-Hallucination Verbatim Verifier (Grounding Engine)
 
 #### 1. Purpose
-Menjadi benteng pertahanan integritas bukti. Memastikan bahwa setiap kutipan teks yang dicantumkan dalam dossier benar-benar eksis $100\%$ secara harfiah (*verbatim substring*) pada dokumen rekam medis asli, mencegah halusinasi AI sampai ke mata verifikator.
+Memastikan setiap kalimat kutipan bukti yang disajikan dalam dossier dan surat klarifikasi benar-benar eksis $100\%$ secara harfiah (*exact verbatim substring*) pada dokumen rekam medis sumber, menjamin sistem bebas halusinasi sebelum data ditampilkan ke verifikator.
 
 #### 2. Frontend (FE)
-- **Halaman / Komponen:**
-  - Badge pada setiap kutipan: `100% Verbatim Verified` (ikon centang hijau terverifikasi).
-  - Indikator lokasi sumber: `[Laporan Operasi — Hal 3, Paragraf 2]`.
-- **Aksi Interaksi Pengguna:**
-  - Hover pada badge menampilkan tooltip: *"Kutipan ini telah dicocokkan 100% secara otomatis dengan dokumen asli."*
+- **Komponen UI:**
+  - Label status keabsahan kutipan di setiap blok bukti: `Kutipan Terverifikasi Harfiah (Hal. X, Paragraf Y)` dengan ikon centang terenkripsi.
+- **Interaksi Pengguna:**
+  - Menjamin verifikator dapat mempercayai kutipan tanpa perlu meragukan keaslian sumber teks.
 
 #### 3. Backend / AI (BE/AI)
-- **Data yang Diolah/Disimpan:**
-  - Input: String kutipan yang dihasilkan LLM (`quote_candidate`) dan raw text dokumen sumber (`source_document_text`).
-  - Output: Boolean `is_valid`, nomor halaman, dan offset karakter awal/akhir (`start_char`, `end_char`).
-- **Aksi & Orkestrasi AI:**
-  - Pencarian string deterministik (*Exact Substring Match* / *Fuzzy Match Threshold > 98%* untuk toleransi spasi/karakter newline).
-  - Jika tidak ditemukan dalam dokumen: Agent secara otomatis menolak kutipan tersebut. Agent diinstruksikan ulang (*retry 1x*) untuk mengambil kutipan persis, atau temuan dibatalkan jika gagal.
+- **Data yang Diolah:**
+  - Input: Teks kutipan kandidat (`quote_candidate`) dan naskah lengkap dokumen sumber.
+  - Output: Status validasi (`is_valid`), offset karakter (`start_char`, `end_char`), dan nomor halaman.
+- **Logika & Servis:**
+  - Algoritma pencarian string deterministik (*Exact Substring Matching*). Jika teks gagal dicocokkan pada naskah asli, kutipan ditolak secara otomatis dan diinstruksikan ulang atau dibatalkan dari dossier temuan.
 - **Layer yang Terlibat:**
-  - `Verbatim Grounding Service` $\rightarrow$ `Document Offsets Index`.
+  - `VerbatimGroundingService` $\rightarrow$ `DocumentIndex`.
 
 ---
 
 ### F8: Interactive Evidence Dossier & 1-Click Document Viewer
 
 #### 1. Purpose
-Menyajikan seluruh temuan Agent secara ergonomis dan dapat diaudit dalam hitungan detik melalui antarmuka *Dual-Pane* terintegrasi.
+Menyediakan lingkungan kerja (*workspace*) terpadu dua panel (*Dual-Pane*) yang memungkinkan verifikator memeriksa rekam medis digital puluhan halaman, menelaah temuan diskrepansi, dan memvalidasi dasar regulasi hanya dalam hitungan detik per berkas.
 
 #### 2. Frontend (FE)
-- **Halaman / Komponen:**
-  - `WorkspaceView` (`/claims/:id/dossier`):
-    * **Pane Kiri (Dossier Panel):**
-      - Header Kasus: No Klaim, Nama RS, Diagnosa INA-CBG, Tarif Klaim vs Rekomendasi Tarif Adil.
-      - Daftar Kartu Temuan (F3, F4, F5, F6) yang tersusun rapi.
-      - Bagian Penjelasan Alternatif (*Alternative Non-Fraud Hypotheses*): Menuliskan jika ada kemungkinan salah ketik atau data belum lengkap.
-    * **Pane Kanan (Smart Document Viewer):**
-      - Tabs Dokumen: `Resume Medis`, `Laporan Operasi`, `Hasil Lab/Penunjang`, `Billing Farmasi`.
-      - Penampil Dokumen dengan fitur *Highlight Box* dinamis berbasis koordinat `(start_char, end_char)`.
-- **Aksi Interaksi Pengguna:**
-  - Klik kartu bukti atau tombol *"Lihat di Dokumen"* di pane kiri $\rightarrow$ Pane kanan otomatis beralih ke tab dokumen yang relevan, melakukan *smooth scroll* ke posisi teks, dan memberikan efek sorot (*highlight pulse* warna kuning).
-  - Verifikator dapat memperbesar (*zoom*), mencari teks (*Ctrl+F*), dan membaca konteks sebelum/sesudah kutipan.
+- **Komponen UI (`/claims/:id/dossier`):**
+  - **Pane Kiri (Dossier Temuan):**
+    * Ringkasan klaim: No SEP, kelas faskes, kode INA-CBG, tarif diajukan vs tarif hasil verifikasi.
+    * Daftar kartu temuan terstruktur (F3, F4, F5, F6) lengkap dengan kutipan dan rujukan regulasi.
+    * Bagian Penjelasan Alternatif (*Alternative Explanations*): Ruang telaah netral yang mencatat kemungkinan salah koding administratif non-fraud atau kelengkapan berkas yang tertinggal.
+  - **Pane Kanan (Smart Document Viewer):**
+    * Tab dokumen rekam medis: `Resume Medis`, `Laporan Operasi`, `CPPT Keperawatan`, `Hasil Lab & Radiologi`, `Rincian Biaya`.
+    * Penampil teks dokumen digital dengan koordinat sorotan (*highlight box*) berlatar amber lembut tanpa efek pendar neon.
+- **Interaksi Pengguna:**
+  - Klik pada kartu temuan atau tombol kutipan di pane kiri seketika mengaktifkan tab dokumen terkait di pane kanan, menggulir layar (*smooth auto-scroll*) ke baris yang bersangkutan, dan menyorot teks bukti.
 
 #### 3. Backend / AI (BE/AI)
-- **Data yang Diolah/Disimpan:**
-  - Menyajikan payload lengkap `DossierDetailResponse` yang menggabungkan metadata klaim, daftar temuan berkoordinat (*bounding box / character offsets*), dan teks dokumen lengkap.
-- **Aksi & Orkestrasi AI:**
-  - Menghitung koordinat posisi kutipan di dokumen digital untuk dikonsumsi komponen penampil FE.
+- **Data yang Diolah:**
+  - Menggabungkan payload `DossierDetailResponse` berisi metadata klaim, daftar temuan berkoordinat teks, dan teks dokumen lengkap.
 - **Layer yang Terlibat:**
-  - `Dossier Assembly Service` $\rightarrow$ `REST API Controller`.
+  - `DossierAssemblyService` $\rightarrow$ `ClaimRESTController`.
 
 ---
 
 ### F9: Action Recommendation, Dispute Drafter & Append-Only Audit Trail
 
 #### 1. Purpose
-Memfasilitasi pengambilan keputusan akhir oleh verifikator (*Human-in-the-Loop*), mengotomatisasi pembuatan draf surat klarifikasi resmi ke RS, dan merekam seluruh keputusan ke dalam log audit permanen yang tidak dapat diubah (*immutable audit trail*) serta menyediakan repositori riwayat audit.
+Memfasilitasi pengambilan keputusan akhir oleh verifikator (*Human-in-the-Loop*), menyusun draf surat permintaan klarifikasi resmi berbasis bukti dan pasal regulasi, serta mencatat seluruh riwayat penelaahan ke dalam log permanen yang tidak dapat diubah (*immutable audit trail*) guna mendukung akuntabilitas hukum.
 
 #### 2. Frontend (FE)
-- **Halaman / Komponen:**
-  - **Di Workspace (`/claims/:id/dossier`):**
-    * `ActionBar` (Fixed di bagian bawah Pane Kiri):
-      - Rekomendasi Agent Banner: *"Rekomendasi: PENDING — Minta Klarifikasi Jumlah Alkes & Downcode Sepsis"* (Tingkat Keyakinan: 92%).
-      - 4 Tombol Aksi: `Setujui (Approve)`, `Pending — Minta Dokumen`, `Usulkan Downcode`, `Eskalasi ke Tim PK-JKN`.
-    * `ModalActionConfirmation`:
-      - Field Catatan Verifikator (Wajib diisi jika Pending/Downcode/Eskalasi).
-      - Preview Draf Surat Klarifikasi Resmi ke RS: Memuat format surat formal BPJS, nomor klaim, rincian temuan diskrepansi, dan kutipan dokumen yang diminta.
-  - **Di Halaman Repositori Audit (`/claims/audit-trail`):**
-    * `AuditTrailView`: Tabel arsip seluruh riwayat verifikasi: Waktu Keputusan, ID Klaim, RS, Verifikator, Status Tindakan, dan Tombol *"Lihat Surat Klarifikasi Resmi"*.
-- **Aksi Interaksi Pengguna:**
-  - Verifikator memilih salah satu tombol aksi di `ActionBar`.
-  - Verifikator mengedit teks draf surat klarifikasi lalu menekan *"Konfirmasi Keputusan"*.
-  - Dialog sukses muncul, mengarahkan verifikator kembali ke `/claims/triage` (status klaim berubah menjadi `PENDING_KLARIFIKASI_RS`).
-  - Verifikator atau auditor dapat membuka `/claims/audit-trail` kapan saja untuk mereview arsip keputusan dan surat klarifikasi.
+- **Komponen UI:**
+  - **Di Workspace Dossier (`/claims/:id/dossier`):**
+    * `DossierActionBar` (terletak tetap di bawah panel kiri):
+      - Rekomendasi sistem yang tenang: *Rekomendasi Telaah: Usulkan Penyesuaian Kode Severity / Minta Dokumen Pendukung*.
+      - 4 Tombol Keputusan: `Setujui Klaim`, `Minta Konfirmasi RS`, `Koreksi Kode (Downcode)`, `Eskalasi Audit Investigatif`.
+    * `ModalDisputeLetter`:
+      - Kolom catatan justifikasi verifikator (wajib diisi bila status bukan persetujuan langsung).
+      - Draf surat resmi format BPJS yang otomatis terisi nomor klaim, rincian temuan diskrepansi, dan kutipan kalimat rekam medis yang memerlukan klarifikasi.
+  - **Di Halaman Jejak Audit (`/claims/audit-trail`):**
+    * `AuditTrailTable`: Tabel rekaman kronologis: Stempel waktu, No SEP, Faskes, Nama Verifikator, Status Keputusan, Catatan Justifikasi, dan Status Enkripsi PII (kepatuhan UU PDP).
+- **Interaksi Pengguna:**
+  - Verifikator memilih tindakan, meninjau/mengedit draf surat formal, lalu mengonfirmasi keputusan.
+  - Jika klaim disetujui (`SETUJUI`), status klaim bertransisi menjadi `SIAP_BAYAR` (siap direkonsiliasi pada sistem pembayaran faskes / In-Monica).
 
 #### 3. Backend / AI (BE/AI)
-- **Data yang Diolah/Disimpan:**
-  - Tabel `AuditTrail`: `id`, `claim_id`, `verifier_id` (dr. Maya), `action` (APPROVE/PENDING/DOWNCODE/ESCALATE), `verifier_notes`, `official_letter_draft`, `findings_snapshot_json`, `timestamp`.
-  - Log bersifat **Append-Only** (tidak ada API `UPDATE` atau `DELETE`).
-- **Aksi & Orkestrasi AI:**
-  - **Draft Letter Generator:** Template terstruktur berbasis aturan yang menggabungkan temuan terverifikasi dan dasar pasal Permenkes 3/2023 & Permenkes 16/2019 secara otomatis tanpa halusinasi.
+- **Data yang Diolah:**
+  - Tabel `AuditTrailLog`: `id`, `claim_id`, `verifier_id`, `action_type`, `justification_notes`, `official_letter_content`, `evidence_snapshot_json`, `created_at`.
+  - Bersifat **Append-Only** (hanya mendukung operasi `INSERT` dan `SELECT`, tanpa endpoint mutasi/penghapusan).
+- **Logika & Servis:**
+  - *Dispute Letter Assembler:* Penggabungan template korespondensi resmi dengan klausul regulasi Permenkes No. 3/2023 dan temuan bukti faktual.
 - **Layer yang Terlibat:**
-  - `Decision Controller` $\rightarrow$ `Letter Generator Service` $\rightarrow$ `Audit Trail Logger (Append-Only Store)`.
+  - `DecisionController` $\rightarrow$ `LetterGeneratorService` $\rightarrow$ `AuditTrailRepository`.
 
 ---
 
-### F10: Synthetic Evaluation & Benchmark Runner
+### F10: Scientific Benchmark Runner & Model Evaluation
 
 #### 1. Purpose
-Menyediakan modul pengujian terukur (*benchmarking suite*) yang dapat dijalankan langsung oleh pengembang atau didemonstrasikan di depan juri, untuk membuktikan akurasi deteksi anomali, laju *false positive*, dan kepatuhan *zero-hallucination* pada 30–50 dataset sintetis.
+Menyediakan modul pengujian terukur yang menjalankan evaluasi batch terhadap 30–50 dataset kasus berlabel guna mengukur sensitivitas (*recall*), laju positif palsu (*false positive rate*), dan tingkat keandalan kutipan (*grounding accuracy*) secara transparan.
 
 #### 2. Frontend (FE)
-- **Halaman / Komponen:**
-  - Halaman Khusus Evaluasi (`/benchmark/evaluation-suite`):
-    * Tombol *"Jalankan Uji Benchmark (30 Kasus Sintetis)"*.
-    * Tabel Hasil Evaluasi Realtime: Progress bar pengujian kasus 1 s/d 30.
-    * Kartu Metrik Akhir:
-      - Recall Kasus Anomali (Target $\ge 85\%$).
-      - False Positive Rate pada Kasus Wajar/Salah Koding Ringan (Target $\le 15\%$).
-      - Verbatim Grounding Rate (Target $100\%$).
-      - Rata-rata Waktu Telaah per Kasus (Target $< 60$ detik).
-    * Perbandingan dengan Baseline Aturan Sederhana (*Bar Chart*).
-- **Aksi Interaksi Pengguna:**
-  - Klik tombol *"Jalankan Benchmark"*, melihat animasi evaluasi batch, dan mendownload ringkasan JSON/Markdown laporan evaluasi.
+- **Komponen UI (`/benchmark/evaluation-suite`):**
+  - Panel kontrol eksekusi benchmark batch.
+  - Kartu metrik performa objektif:
+    * *Recall Kasus Anomali:* Target $\ge 85\%$.
+    * *False Positive Rate (FPR):* Target $\le 15\%$ (menguji agar klaim wajar tidak salah ditandai).
+    * *Verbatim Grounding Rate:* Target $100\%$ (nol halusinasi kutipan).
+    * *Rata-rata Waktu Analisis:* Target $< 60$ detik/klaim.
+  - Tabel hasil evaluasi per kasus lengkap dengan status label ground-truth vs prediksi model.
+- **Interaksi Pengguna:**
+  - Pengguna/juri dapat menekan tombol eksekusi evaluasi, memantau proses batch, dan mengekspor laporan ringkasan evaluasi.
 
 #### 3. Backend / AI (BE/AI)
-- **Data yang Diolah/Disimpan:**
-  - Input: Korpus 30–50 kasus sintetis dengan label *ground truth* (kasus upcoding sengaja, kasus inflated bills sengaja, kasus cloning, kasus salah koding ringan wajar, dan kasus klaim bersih).
+- **Data yang Diolah:**
+  - Input: Kumpulan dataset sintetis terstandar dengan label *ground truth* (mencakup kasus upcoding, inflated bills, note cloning, salah koding ringan tanpa niat, dan klaim bersih).
   - Output: Laporan evaluasi komparatif (`benchmark_results.json`).
-- **Aksi & Orkestrasi AI:**
-  - Menjalankan alur lengkap F1 hingga F7 secara batch untuk setiap kasus sintetis.
-  - Menghitung matriks konfusi (True Positive, False Positive, True Negative, False Negative).
 - **Layer yang Terlibat:**
-  - `Benchmark Runner Service` $\rightarrow$ `Batch Agent Executor` $\rightarrow$ `Metrics Calculator`.
+  - `BenchmarkRunnerService` $\rightarrow$ `BatchPipelineExecutor` $\rightarrow$ `MetricsCalculator`.
 
 ---
 
-## Matriks Hubungan Antar Fitur (Traceability Matrix)
+## Matriks Keterlacakan (Traceability Matrix)
 
-| Kode Fitur | Nama Fitur | Komponen UI Utama | Modul Backend / AI Utama | Sifat Layanan |
-|---|---|---|---|---|
-| **F1** | Intake & Privacy Guard | `ModalUploadClaim` | `PrivacyGuardService` | Deterministik / Regex |
-| **F2** | Priority Triage Queue | `DashboardView` | `TriageService` | Query / Cache |
-| **F3** | Deterministic Fast Filter | `EvidenceCard (Rule)` | `RuleEngineService` | Deterministik / Kamus |
-| **F4** | Clinical Cross-Examiner | `EvidenceCard (Upcode)` | `AgentOrchestrator` + Tools | Agentic LLM Loop |
-| **F5** | Alkes Cross-Checker | `EvidenceCard (Alkes)` | `AgentOrchestrator` + Tariff Tool | Agentic LLM + Kalkulator |
-| **F6** | Note Cloning Detector | `DiffViewerModal` | `SimilarityEngine` | Vektor / N-Gram |
-| **F7** | Verbatim Verifier | `VerbatimBadge` | `GroundingService` | String Substring Match |
-| **F8** | Dual-Pane Dossier Viewer | `WorkspaceView` | `DossierAssemblyService` | Render & Document Sync |
-| **F9** | Action Bar & Audit Trail | `ActionBar`, `ConfirmModal` | `DecisionService` + Audit Logger | Append-Only Database |
-| **F10** | Benchmark Runner | `BenchmarkView` | `BenchmarkRunnerService` | Batch Evaluator |
+| Kode Fitur | Nama Fitur | Komponen UI Utama | Modul Backend / AI | Sifat Logika | Kepatuhan Regulasi & Standar |
+|---|---|---|---|---|---|
+| **F1** | Intake, Privacy Guard & TTE | `ModalUploadClaim`, Strip Status Header | `PrivacyGuardService`, `DocumentIntegrityService` | Deterministik / Kriptografis | UU PDP No. 27/2022, Permenkes 24/2022 |
+| **F2** | Priority Triage Queue | `ClaimTable`, `MetricHeader` | `TriageService`, `QueryCache` | Algoritma Pembobotan / Cache | Alur Pra-Bayar BPJS |
+| **F3** | Deterministic Fast Filter | `EvidenceCard (Aturan Baku)` | `RuleEngineService`, `PatientHistoryIndex` | Deterministik Kamus & Riwayat | Permenkes 3/2023, Jeda Readmisi 30 Hari |
+| **F4** | Clinical Cross-Examiner | `EvidenceCard (Upcoding)` | `AgentOrchestrator`, `ToolRegistry` | Penalaran LLM Multi-Langkah | Standar Severity INA-CBG & PNPK |
+| **F5** | Alkes Cross-Checker | `EvidenceCard (Alkes Discrepancy)` | `OperativeDocParser`, `TariffCalcService` | Ekstraksi Entitas + Kalkulator | Permenkes 3/2023 (Alkes Khusus) |
+| **F6** | Note Cloning Detector | `DiffViewerModal` | `SimilarityEngine`, `CorpusVectorService` | N-Gram Jaccard & Dense Embedding | Permenkes 16/2019 (Integritas Rekam Medis) |
+| **F7** | Verbatim Grounding Verifier | Label Status Kutipan Terverifikasi | `VerbatimGroundingService` | String Substring Exact Match | Prinsip Nol Halusinasi AI |
+| **F8** | Dual-Pane Evidence Dossier | `WorkspaceView`, `SmartDocumentViewer` | `DossierAssemblyService` | Render & Sinkronisasi Dokumen | Human-in-the-Loop Ergonomics |
+| **F9** | Action Bar & Audit Trail | `DossierActionBar`, `AuditTrailTable` | `DecisionService`, `AuditLogger` | Append-Only Database | Akuntabilitas Hukum & Transisi S06 |
+| **F10** | Scientific Benchmark Suite | `BenchmarkView` | `BenchmarkRunnerService`, `MetricsCalculator` | Batch Pipeline Execution | Standar Evaluasi Ilmiah |
 
 ---
 
-## Status Gate: Kesiapan Menuju Dokumen 4 (Technical Design)
-Dengan spesifikasi di atas:
-- Developer Frontend sudah tahu pasti: komponen apa yang dibuat, tata letak layarnya (Dual-Pane), dan interaksi klik kutipan menuju highlight dokumen.
-- Developer Backend/AI sudah tahu pasti: data apa yang disimpan, algoritma apa yang dipanggil (Regex, Rule, Agent Tool Registry, Embedding, Substring), dan kapan LLM dipanggil vs kapan deterministik murni bekerja.
+## Status Gate: Kesiapan Spesifikasi
+Dengan spesifikasi yang telah diperbarui di atas:
+1. **Frontend:** Memiliki batas visual yang jelas, terbebas dari dekorasi artifisial (*no circular dots, no pill buttons, no eyebrow text, no glow*), dan berorientasi pada produktivitas verifikator medis.
+2. **Backend & AI:** Setiap alur logika terdefinisi secara presisi: kapan aturan deterministik bekerja, kapan verifikasi hash/TTE dieksekusi, bagaimana agent memanggil kamus PNPK dan kalkulator tarif, serta bagaimana jejak audit permanen tersimpan tanpa pelanggaran privasi data.
