@@ -1,7 +1,16 @@
 "use client";
 
 import React, { useState } from "react";
-import { FileCheck, Search, Clock, ArrowRight, UserCheck, Mail, ShieldAlert } from "lucide-react";
+import {
+  FileCheck,
+  Search,
+  Clock,
+  UserCheck,
+  Mail,
+  CheckCircle2,
+  Sliders,
+  AlertTriangle,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export interface AuditLogItem {
@@ -30,7 +39,7 @@ const DEFAULT_AUDIT_LOGS: AuditLogItem[] = [
     claimId: "CLM-2026-089",
     hospitalName: "RS Sejahtera Medika",
     verifierName: "dr. Maya Wulandari",
-    verifierRole: "Verifikator Utama BPJS Cabang Tangerang",
+    verifierRole: "Verifikator Utama BPJS",
     timestamp: "12 Okt 2026, 11:20 WIB",
     action: "PENDING_KLARIFIKASI_RS",
     finalTariff: 20100000,
@@ -43,7 +52,7 @@ const DEFAULT_AUDIT_LOGS: AuditLogItem[] = [
     claimId: "CLM-2026-012",
     hospitalName: "RS Mitra Sehat",
     verifierName: "dr. Maya Wulandari",
-    verifierRole: "Verifikator Utama BPJS Cabang Tangerang",
+    verifierRole: "Verifikator Utama BPJS",
     timestamp: "12 Okt 2026, 09:45 WIB",
     action: "DOWNCODE_DIUSULKAN",
     finalTariff: 8200000,
@@ -55,32 +64,32 @@ const DEFAULT_AUDIT_LOGS: AuditLogItem[] = [
     id: "AUD-2026-002",
     claimId: "CLM-2026-077",
     hospitalName: "RSUD Kota Madya",
-    verifierName: "Sistem Fast-Track AI",
-    verifierRole: "Penyaringan Otomatis Regulasi Deterministik",
+    verifierName: "Sistem Verifikasi Otomatis",
+    verifierRole: "Kaidah Koding & Aturan Dasar",
     timestamp: "12 Okt 2026, 08:15 WIB",
     action: "DISETUJUI",
     finalTariff: 6400000,
     savedDeltaRupiah: 0,
-    notes: "Klaim bersih tervalidasi 100% tanpa anomali klinis maupun administratif. Diteruskan langsung ke status Siap Bayar (In-Monica).",
+    notes: "Klaim bersih tervalidasi 100% tanpa anomali klinis maupun administratif. Diteruskan ke proses realisasi pembayaran.",
   },
   {
     id: "AUD-2026-001",
     claimId: "CLM-2026-034",
     hospitalName: "RS Sentosa Kasih",
     verifierName: "dr. Hendrawan Sp.PK",
-    verifierRole: "Dewan Pertimbangan Klinis (DPK)",
+    verifierRole: "Dewan Pertimbangan Klinis",
     timestamp: "11 Okt 2026, 16:30 WIB",
     action: "ESKALASI_PK_JKN",
     finalTariff: 18500000,
     savedDeltaRupiah: 12400000,
     officialLetterNumber: "ESK-PKJKN/2026/10-091",
-    notes: "Eskalasi ke tim Pencegahan Kecurangan JKN atas dugaan duplikasi catatan rekam medis (Note Cloning) berulang >3 kasus.",
+    notes: "Eskalasi ke tim Pencegahan Kecurangan JKN atas dugaan duplikasi catatan rekam medis (Note Cloning) berulang.",
   },
 ];
 
 export function AuditLogStream({
   entries = DEFAULT_AUDIT_LOGS,
-  title = "Jejak Audit & Rekam Putusan Verifikator",
+  title = "Jejak Audit & Riwayat Putusan Klaim",
   className,
 }: AuditLogStreamProps) {
   const [filterAction, setFilterAction] = useState<string>("ALL");
@@ -93,30 +102,35 @@ export function AuditLogStream({
       maximumFractionDigits: 0,
     }).format(val);
 
+  // Status differentiation primarily using icons + clean BPJS blue/green
   const getActionBadge = (action: AuditLogItem["action"]) => {
     switch (action) {
       case "DISETUJUI":
         return (
-          <span className="bg-emerald-50 text-emerald-800 border border-emerald-200 px-2 py-0.5 rounded text-[11px] font-medium">
-            Siap Bayar (Disetujui)
+          <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-800 border border-emerald-200 px-2 py-0.5 rounded text-[11px] font-medium">
+            <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+            Selesai (Disetujui)
           </span>
         );
       case "PENDING_KLARIFIKASI_RS":
         return (
-          <span className="bg-amber-50 text-amber-800 border border-amber-200 px-2 py-0.5 rounded text-[11px] font-medium">
+          <span className="inline-flex items-center gap-1 bg-slate-100 text-slate-800 border border-slate-200 px-2 py-0.5 rounded text-[11px] font-medium">
+            <Mail className="w-3 h-3 text-slate-600" />
             Klarifikasi Faskes
           </span>
         );
       case "DOWNCODE_DIUSULKAN":
         return (
-          <span className="bg-blue-50 text-blue-800 border border-blue-200 px-2 py-0.5 rounded text-[11px] font-medium">
+          <span className="inline-flex items-center gap-1 bg-blue-50 text-blue-800 border border-blue-200 px-2 py-0.5 rounded text-[11px] font-medium">
+            <Sliders className="w-3 h-3 text-blue-600" />
             Penyesuaian Tarif
           </span>
         );
       case "ESKALASI_PK_JKN":
         return (
-          <span className="bg-rose-50 text-rose-800 border border-rose-200 px-2 py-0.5 rounded text-[11px] font-medium">
-            Eskalasi Kecurangan
+          <span className="inline-flex items-center gap-1 bg-rose-50 text-rose-800 border border-rose-200 px-2 py-0.5 rounded text-[11px] font-medium">
+            <AlertTriangle className="w-3 h-3 text-rose-600" />
+            Eskalasi Khusus
           </span>
         );
     }
@@ -143,7 +157,7 @@ export function AuditLogStream({
       {/* Title & Toolbar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-3 border-b border-slate-100">
         <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-700">
+          <div className="w-6 h-6 rounded bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-700">
             <FileCheck className="w-3.5 h-3.5" />
           </div>
           <div>
@@ -151,7 +165,7 @@ export function AuditLogStream({
               {title}
             </h4>
             <p className="text-[11px] text-slate-500">
-              Log permanen append-only kepatuhan tata kelola BPJS Kesehatan
+              Catatan riwayat verifikasi dan surat resmi ke rumah sakit
             </p>
           </div>
         </div>
@@ -164,18 +178,18 @@ export function AuditLogStream({
               type="button"
               onClick={() => setFilterAction(status)}
               className={cn(
-                "px-2 py-0.5 text-[11px] font-medium rounded border transition-colors",
+                "px-2.5 py-1 text-[11px] font-medium rounded border transition-colors",
                 filterAction === status
                   ? "bg-slate-900 text-white border-slate-900"
                   : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
               )}
             >
               {status === "ALL"
-                ? "Semua Log"
+                ? "Semua Riwayat"
                 : status === "PENDING_KLARIFIKASI_RS"
                 ? "Klarifikasi"
                 : status === "DOWNCODE_DIUSULKAN"
-                ? "Koreksi"
+                ? "Penyesuaian"
                 : "Disetujui"}
             </button>
           ))}
@@ -189,8 +203,8 @@ export function AuditLogStream({
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Filter log berdasarkan ID klaim, RS, atau verifikator..."
-          className="w-full pl-8 pr-3 py-1.5 bg-slate-50/70 border border-slate-200 rounded text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:bg-white transition-all"
+          placeholder="Cari berkas berdasarkan ID klaim, RS, atau verifikator..."
+          className="w-full pl-8 pr-3 py-1.5 bg-slate-50/70 border border-slate-200 rounded text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-600 focus:bg-white transition-all"
         />
       </div>
 
@@ -198,7 +212,7 @@ export function AuditLogStream({
       <div className="mt-3 space-y-2.5">
         {filtered.length === 0 ? (
           <div className="p-6 text-center text-xs text-slate-500 bg-slate-50/50 border border-dashed border-slate-200 rounded">
-            Tidak ada rekaman log audit yang sesuai kriteria pencarian.
+            Tidak ada catatan riwayat yang sesuai kriteria pencarian.
           </div>
         ) : (
           filtered.map((item) => (
@@ -208,7 +222,7 @@ export function AuditLogStream({
             >
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="font-mono font-bold text-slate-900">
+                  <span className="font-semibold text-slate-900">
                     {item.claimId}
                   </span>
                   <span className="text-slate-400">·</span>
@@ -235,7 +249,7 @@ export function AuditLogStream({
                 </div>
 
                 {item.savedDeltaRupiah > 0 && (
-                  <div className="font-mono text-emerald-700 font-semibold">
+                  <div className="text-emerald-700 font-semibold tabular-nums">
                     Koreksi: {formatRupiah(item.savedDeltaRupiah)}
                   </div>
                 )}
@@ -247,9 +261,9 @@ export function AuditLogStream({
               </p>
 
               {item.officialLetterNumber && (
-                <div className="mt-2 flex items-center gap-1.5 text-[10.5px] text-blue-700 font-mono">
-                  <Mail className="w-3 h-3 text-blue-500" />
-                  <span>Nomor Surat Resmi: {item.officialLetterNumber}</span>
+                <div className="mt-2 flex items-center gap-1.5 text-[11px] text-blue-700">
+                  <Mail className="w-3.5 h-3.5 text-blue-600" />
+                  <span>Nomor Surat: {item.officialLetterNumber}</span>
                 </div>
               )}
             </div>

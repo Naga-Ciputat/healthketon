@@ -2,12 +2,13 @@
 
 import React from "react";
 import {
-  ShieldAlert,
-  AlertTriangle,
   Quote,
   CheckCircle2,
   ExternalLink,
-  Split,
+  Copy,
+  TrendingUp,
+  FileSpreadsheet,
+  AlertCircle,
   FileText,
   Scale,
 } from "lucide-react";
@@ -37,37 +38,39 @@ export function EvidenceCard({
     }).format(val);
   };
 
-  const getSeverityColors = (severity: FindingItem["severity"]) => {
-    switch (severity) {
-      case "danger":
-        return {
-          border: "border-rose-200 hover:border-rose-300",
-          badge: "bg-rose-50 text-rose-700 border-rose-200",
-          iconBg: "bg-rose-50 text-rose-600",
-        };
-      case "warning":
-        return {
-          border: "border-amber-200 hover:border-amber-300",
-          badge: "bg-amber-50 text-amber-700 border-amber-200",
-          iconBg: "bg-amber-50 text-amber-600",
-        };
-      case "info":
+  const getFindingIcon = () => {
+    switch (finding.type) {
+      case "UPCODING":
+        return <TrendingUp className="w-3.5 h-3.5 text-rose-600" />;
+      case "INFLATED_ALKES":
+        return <FileSpreadsheet className="w-3.5 h-3.5 text-amber-600" />;
+      case "NOTE_CLONING":
+        return <Copy className="w-3.5 h-3.5 text-blue-600" />;
       default:
-        return {
-          border: "border-blue-200 hover:border-blue-300",
-          badge: "bg-blue-50 text-blue-700 border-blue-200",
-          iconBg: "bg-blue-50 text-blue-600",
-        };
+        return <AlertCircle className="w-3.5 h-3.5 text-slate-600" />;
     }
   };
 
-  const colors = getSeverityColors(finding.severity);
+  // Severity styling: warning/urgent uses red/amber, neutral uses blue/slate
+  const getSeverityBadge = () => {
+    if (finding.severity === "danger") {
+      return "bg-rose-50 text-rose-700 border-rose-200";
+    }
+    if (finding.severity === "warning") {
+      return "bg-amber-50 text-amber-800 border-amber-200";
+    }
+    return "bg-blue-50 text-blue-800 border-blue-200";
+  };
 
   return (
     <div
       className={cn(
-        "bg-white border rounded-xl p-4 shadow-2xs transition-all space-y-3",
-        colors.border,
+        "bg-white border rounded-md p-4 shadow-2xs transition-all space-y-3",
+        finding.severity === "danger"
+          ? "border-rose-200 hover:border-rose-300"
+          : finding.severity === "warning"
+          ? "border-amber-200 hover:border-amber-300"
+          : "border-slate-200 hover:border-slate-300",
         isSelected && "ring-2 ring-blue-500 border-blue-500",
         className
       )}
@@ -78,23 +81,24 @@ export function EvidenceCard({
           <div className="flex items-center gap-2 flex-wrap">
             <span
               className={cn(
-                "px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border",
-                colors.badge
+                "inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-semibold border",
+                getSeverityBadge()
               )}
             >
-              {finding.badgeLabel}
+              {getFindingIcon()}
+              <span>{finding.badgeLabel}</span>
             </span>
 
-            {/* 100% Verbatim Badge (F7) */}
+            {/* Verbatim Verified Badge */}
             {finding.isVerbatim100 && (
-              <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+              <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10.5px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
                 <CheckCircle2 className="w-3 h-3 text-emerald-600" />
-                <span>100% Verbatim Verified</span>
+                <span>Kutipan Terverifikasi</span>
               </span>
             )}
 
             {finding.deltaRupiah && (
-              <span className="font-mono text-[11px] font-bold text-rose-600 bg-rose-50 px-1.5 py-0.2 rounded border border-rose-200">
+              <span className="text-[11px] font-semibold text-rose-700 bg-rose-50 px-1.5 py-0.5 rounded border border-rose-200 tabular-nums">
                 -{formatRupiah(finding.deltaRupiah)}
               </span>
             )}
@@ -111,29 +115,29 @@ export function EvidenceCard({
         {finding.description}
       </p>
 
-      {/* Mini Comparison Table for Inflated Alkes (F5) */}
+      {/* Mini Comparison Table for Inflated Alkes */}
       {finding.type === "INFLATED_ALKES" && finding.comparisonDetails && (
-        <div className="bg-slate-50 border border-slate-200/80 rounded-lg p-2.5 text-xs space-y-1.5">
-          <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500 flex items-center justify-between">
-            <span>Komparasi Fisik vs Tagihan</span>
-            <span className="text-rose-600 font-mono font-bold">Selisih 1 Unit</span>
+        <div className="bg-slate-50/80 border border-slate-200/80 rounded p-2.5 text-xs space-y-1.5">
+          <div className="text-[11px] font-semibold text-slate-600 flex items-center justify-between">
+            <span>Komparasi Tagihan vs Narasi Tindakan</span>
+            <span className="text-rose-700 font-semibold">Selisih 1 Unit</span>
           </div>
           <div className="grid grid-cols-3 gap-2 text-center pt-1 border-t border-slate-200 text-[11px]">
             <div className="bg-white p-1.5 rounded border border-slate-200">
               <span className="text-slate-400 block text-[10px]">Ditagihkan RS</span>
-              <span className="font-bold text-slate-900">
+              <span className="font-semibold text-slate-900 tabular-nums">
                 {finding.comparisonDetails.claimedQty} Unit (Rp 20 Jt)
               </span>
             </div>
             <div className="bg-white p-1.5 rounded border border-slate-200">
-              <span className="text-slate-400 block text-[10px]">Laporan Bedah Riil</span>
-              <span className="font-bold text-emerald-700">
+              <span className="text-slate-400 block text-[10px]">Laporan Bedah</span>
+              <span className="font-semibold text-emerald-700 tabular-nums">
                 {finding.comparisonDetails.actualQty} Unit (Rp 10 Jt)
               </span>
             </div>
             <div className="bg-rose-50 p-1.5 rounded border border-rose-200">
-              <span className="text-rose-500 block text-[10px]">Inefisiensi Tidak Sah</span>
-              <span className="font-bold text-rose-700 font-mono">
+              <span className="text-rose-600 block text-[10px]">Selisih Tagihan</span>
+              <span className="font-semibold text-rose-700 tabular-nums">
                 -Rp 10.000.000
               </span>
             </div>
@@ -141,18 +145,18 @@ export function EvidenceCard({
         </div>
       )}
 
-      {/* Note Cloning Similarity & Diff Trigger (F6) */}
+      {/* Note Cloning Similarity & Diff Trigger */}
       {finding.type === "NOTE_CLONING" && finding.comparisonDetails && (
-        <div className="bg-indigo-50/60 border border-indigo-200/80 rounded-lg p-2.5 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-md bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-xs font-mono">
+        <div className="bg-blue-50/50 border border-blue-200/80 rounded p-2.5 flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-xs tabular-nums">
               {finding.comparisonDetails.similarityScore}%
             </div>
             <div>
-              <span className="text-xs font-bold text-indigo-900 block">
+              <span className="text-xs font-semibold text-slate-900 block">
                 Identik dengan Pasien #{finding.comparisonDetails.donorClaimId}
               </span>
-              <span className="text-[10px] text-indigo-700">
+              <span className="text-[11px] text-slate-600">
                 Dirawat {finding.comparisonDetails.donorDate} oleh DPJP yang sama
               </span>
             </div>
@@ -160,46 +164,42 @@ export function EvidenceCard({
           <button
             type="button"
             onClick={() => onOpenDiffViewer?.(finding.comparisonDetails)}
-            className="inline-flex items-center gap-1 px-2.5 py-1 bg-white hover:bg-indigo-50 border border-indigo-300 text-indigo-700 text-xs font-medium rounded-md shadow-2xs transition-colors"
+            className="px-2.5 py-1 text-xs bg-white hover:bg-slate-50 text-blue-700 font-medium border border-blue-200 rounded transition-all inline-flex items-center gap-1 shadow-2xs"
           >
-            <Split className="w-3.5 h-3.5" />
-            <span>Lihat Diff Teks</span>
+            <span>Bandingkan Teks</span>
+            <ExternalLink className="w-3 h-3 text-blue-600" />
           </button>
         </div>
       )}
 
-      {/* Interactive Quotation Trigger (F7 & F8) */}
-      {finding.citation && (
-        <div
-          onClick={() => onSelectCitation?.(finding.citation)}
-          className="group/quote bg-amber-50/50 hover:bg-amber-100/60 border border-amber-200/90 rounded-lg p-3 cursor-pointer transition-all space-y-1.5"
-          title="Klik untuk membuka dokumen dan menyorot kutipan di pane kanan"
-        >
-          <div className="flex items-center justify-between text-[11px] text-amber-800 font-semibold">
-            <div className="flex items-center gap-1.5">
-              <Quote className="w-3.5 h-3.5 text-amber-600 rotate-180" />
-              <span>
-                {finding.citation.documentTitle} — Hal {finding.citation.pageNumber}
-              </span>
-            </div>
-            <span className="text-[10px] text-amber-700 group-hover/quote:text-amber-900 underline flex items-center gap-0.5">
-              <span>Sorot di Dokumen</span>
-              <ExternalLink className="w-3 h-3" />
-            </span>
-          </div>
-          <p className="text-xs text-slate-800 italic font-serif leading-relaxed pl-2 border-l-2 border-amber-400">
-            "{finding.citation.exactSubstring}"
+      {/* Citation Snippet & Deep-Link */}
+      <div
+        onClick={() => onSelectCitation?.(finding.citation)}
+        className="bg-slate-50 hover:bg-blue-50/40 border border-slate-200/80 rounded p-2.5 transition-colors cursor-pointer group"
+      >
+        <div className="flex items-center justify-between text-[11px] text-slate-500 mb-1">
+          <span className="font-semibold text-slate-700 flex items-center gap-1">
+            <FileText className="w-3 h-3 text-blue-600" />
+            {finding.citation.documentTitle} · Halaman {finding.citation.pageNumber}
+          </span>
+          <span className="text-blue-700 font-medium group-hover:underline flex items-center gap-0.5">
+            <span>Lihat Kutipan</span>
+            <ExternalLink className="w-2.5 h-2.5" />
+          </span>
+        </div>
+        <div className="flex items-start gap-1.5 text-xs text-slate-700 italic">
+          <Quote className="w-3.5 h-3.5 text-slate-400 flex-shrink-0 mt-0.5" />
+          <p className="line-clamp-2">
+            &ldquo;{finding.citation.exactSubstring}&rdquo;
           </p>
         </div>
-      )}
+      </div>
 
-      {/* Legal & PNPK Reference Footer */}
+      {/* Regulation Reference */}
       {finding.regulationReference && (
-        <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
-          <div className="flex items-center gap-1">
-            <Scale className="w-3 h-3 text-slate-400" />
-            <span className="truncate">{finding.regulationReference}</span>
-          </div>
+        <div className="flex items-center gap-1.5 text-[11px] text-slate-500 pt-1 border-t border-slate-100">
+          <Scale className="w-3 h-3 text-slate-400 flex-shrink-0" />
+          <span className="truncate">{finding.regulationReference}</span>
         </div>
       )}
     </div>

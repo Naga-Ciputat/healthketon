@@ -48,6 +48,8 @@ const config: Config = {
       },
       fontFamily: {
         sans: [
+          "var(--font-plus-jakarta)",
+          "Plus Jakarta Sans",
           "Inter",
           "-apple-system",
           "BlinkMacSystemFont",
