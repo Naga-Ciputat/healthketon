@@ -45,10 +45,16 @@ export function ClarixSidebar({
       badgeText: "Jury Track",
     },
     {
-      label: "Storybook Catalog",
-      href: "/storybook",
+      label: "Example Dashboard",
+      href: "/example-dashboard",
+      icon: LayoutDashboard,
+      badgeText: "New",
+    },
+    {
+      label: "Storybook (Port 6006)",
+      href: "http://localhost:6006",
       icon: Layers,
-      badgeText: "Widgets",
+      badgeText: "Dev",
     },
   ];
 

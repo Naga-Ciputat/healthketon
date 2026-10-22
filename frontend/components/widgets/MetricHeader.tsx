@@ -46,9 +46,11 @@ export function MetricHeader({
             </h3>
             <span className="text-xs text-slate-500">Klaim</span>
           </div>
-          <div className="flex items-center gap-1.5 mt-1 text-xs text-rose-600 font-medium">
-            <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
-            <span>{highRiskCount} kasus anomali prioritas tinggi</span>
+          <div className="flex items-center gap-1.5 mt-1 text-xs text-rose-700 font-medium">
+            <span className="bg-rose-50 text-rose-700 border border-rose-200 px-1.5 py-0.5 rounded text-[10.5px] font-medium">
+              {highRiskCount} Prioritas Tinggi
+            </span>
+            <span className="text-slate-500 text-[11px]">perlu telaah manual</span>
           </div>
         </div>
       </div>
