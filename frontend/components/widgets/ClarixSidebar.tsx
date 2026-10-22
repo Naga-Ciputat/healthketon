@@ -8,10 +8,7 @@ import {
   LayoutDashboard,
   FileCheck2,
   FlaskConical,
-  Layers,
-  ChevronRight,
-  ShieldAlert,
-  Sparkles,
+  Activity,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -28,9 +25,14 @@ export function ClarixSidebar({
 
   const navItems = [
     {
-      label: "Triage & Queue",
-      href: "/claims/triage",
+      label: "Example Dashboard",
+      href: "/example-dashboard",
       icon: LayoutDashboard,
+    },
+    {
+      label: "Triage & Antrean Klaim",
+      href: "/claims/triage",
+      icon: Activity,
       badge: pendingClaimsCount > 0 ? pendingClaimsCount : undefined,
     },
     {
@@ -39,22 +41,9 @@ export function ClarixSidebar({
       icon: FileCheck2,
     },
     {
-      label: "Scientific Benchmark",
+      label: "Uji Kasus Benchmark",
       href: "/benchmark/evaluation-suite",
       icon: FlaskConical,
-      badgeText: "Jury Track",
-    },
-    {
-      label: "Example Dashboard",
-      href: "/example-dashboard",
-      icon: LayoutDashboard,
-      badgeText: "New",
-    },
-    {
-      label: "Storybook (Port 6006)",
-      href: "http://localhost:6006",
-      icon: Layers,
-      badgeText: "Dev",
     },
   ];
 
@@ -65,12 +54,12 @@ export function ClarixSidebar({
         className
       )}
     >
-      {/* Top Branding & Workspace */}
+      {/* Top Branding & Navigation */}
       <div className="flex flex-col">
         {/* Brand Header */}
-        <div className="px-4 py-4 flex items-center justify-between border-b border-slate-100 bg-white">
+        <div className="px-4 py-3.5 flex items-center justify-between border-b border-slate-100 bg-white">
           <div className="flex items-center gap-2.5 min-w-0">
-            <div className="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center font-bold shadow-sm flex-shrink-0">
+            <div className="w-7 h-7 rounded-md bg-blue-600 text-white flex items-center justify-center shadow-2xs flex-shrink-0">
               <Shield className="w-4 h-4 text-white" />
             </div>
             <div className="flex flex-col min-w-0">
@@ -78,28 +67,28 @@ export function ClarixSidebar({
                 <span className="font-bold text-slate-900 text-sm tracking-tight truncate">
                   Clarix AI
                 </span>
-                <span className="text-[10px] bg-emerald-50 text-emerald-700 font-semibold px-1.5 py-0.2 rounded border border-emerald-200">
+                <span className="text-[10.5px] bg-emerald-50 text-emerald-800 font-semibold px-1.5 py-0.2 rounded border border-emerald-200">
                   BPJS
                 </span>
               </div>
               <span className="text-[11px] text-slate-500 truncate">
-                Clinical Evidence Co-Pilot
+                Verifikasi Klaim Faskes
               </span>
             </div>
           </div>
         </div>
 
-        {/* Verifier Profile Header */}
+        {/* Verifier Profile Strip */}
         <div className="px-4 py-2.5 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
           <div className="flex items-center gap-2 min-w-0">
-            <div className="w-6 h-6 rounded-full bg-blue-100 text-blue-700 border border-blue-200 flex items-center justify-center text-xs font-bold flex-shrink-0">
+            <div className="w-6 h-6 rounded-full bg-blue-100 text-blue-800 border border-blue-200 flex items-center justify-center text-xs font-semibold flex-shrink-0">
               M
             </div>
             <div className="flex flex-col min-w-0">
               <span className="text-xs font-semibold text-slate-900 truncate">
                 dr. Maya Indriati
               </span>
-              <span className="text-[10px] text-slate-500 truncate">
+              <span className="text-[10.5px] text-slate-500 truncate">
                 Verifikator Medis KCU
               </span>
             </div>
@@ -107,8 +96,8 @@ export function ClarixSidebar({
         </div>
 
         {/* Section Label */}
-        <div className="px-4 pt-4 pb-1.5">
-          <span className="text-[10px] font-semibold tracking-wider text-slate-400 uppercase">
+        <div className="px-4 pt-3.5 pb-1.5">
+          <span className="text-[10.5px] font-medium text-slate-400">
             Menu Operasional
           </span>
         </div>
@@ -118,8 +107,8 @@ export function ClarixSidebar({
           {navItems.map((item) => {
             const isActive =
               pathname === item.href ||
-              (item.href === "/claims/triage" && pathname.startsWith("/claims")) ||
-              pathname.startsWith(item.href);
+              (item.href === "/example-dashboard" && (pathname === "/" || pathname === "/example-dashboard")) ||
+              (item.href === "/claims/triage" && pathname.startsWith("/claims"));
             const Icon = item.icon;
 
             return (
@@ -127,10 +116,10 @@ export function ClarixSidebar({
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "flex items-center justify-between px-3 py-2 rounded-lg transition-colors font-medium text-xs group",
+                  "flex items-center justify-between px-3 py-2 rounded-md transition-colors text-xs group",
                   isActive
-                    ? "bg-blue-50/80 text-blue-700 font-semibold"
-                    : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                    ? "bg-blue-50/80 text-blue-800 font-semibold"
+                    : "text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium"
                 )}
               >
                 <div className="flex items-center gap-2.5 min-w-0">
@@ -144,14 +133,8 @@ export function ClarixSidebar({
                 </div>
 
                 {item.badge !== undefined && (
-                  <span className="bg-rose-500 text-white text-[10px] font-semibold px-1.5 py-0.2 rounded-full min-w-[18px] text-center leading-4">
+                  <span className="bg-rose-50 text-rose-700 border border-rose-200 text-[10.5px] font-semibold px-1.5 py-0.5 rounded tabular-nums">
                     {item.badge}
-                  </span>
-                )}
-
-                {item.badgeText && (
-                  <span className="bg-emerald-50 text-emerald-700 text-[10px] font-medium px-1.5 py-0.2 rounded border border-emerald-200/60">
-                    {item.badgeText}
                   </span>
                 )}
               </Link>
@@ -160,28 +143,20 @@ export function ClarixSidebar({
         </nav>
       </div>
 
-      {/* Bottom Security & Efficiency Summary */}
-      <div className="p-3 border-t border-slate-200 bg-white space-y-2">
-        {/* UU PDP Compliance Pill */}
-        <div className="flex items-center justify-between px-2.5 py-1.5 bg-emerald-50/60 border border-emerald-200/70 rounded-md text-[11px] text-emerald-800">
-          <div className="flex items-center gap-1.5 min-w-0">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="font-semibold truncate">UU PDP 27/2022</span>
+      {/* Bottom Summary Card */}
+      <div className="p-3 border-t border-slate-200 bg-white">
+        <div className="p-2.5 bg-slate-50 border border-slate-200 rounded-md text-xs space-y-1.5">
+          <div className="flex items-center justify-between text-slate-600 text-[11px]">
+            <span>Koreksi Tarif Terdeteksi</span>
+            <span className="font-semibold text-emerald-700 tabular-nums">
+              +Rp 142,5 Jt
+            </span>
           </div>
-          <span className="text-[10px] text-emerald-700">Protected</span>
-        </div>
-
-        {/* Efficiency Metric Banner */}
-        <div className="p-2.5 bg-slate-50 border border-slate-200/80 rounded-lg text-xs space-y-1">
-          <div className="flex items-center justify-between text-slate-500 text-[10px]">
-            <span>Efisiensi Terdeteksi</span>
-            <span className="font-semibold text-emerald-600 font-mono">+Rp142.5M</span>
+          <div className="w-full bg-slate-200 rounded h-1.5 overflow-hidden">
+            <div className="bg-blue-600 h-1.5 rounded w-[75%]" />
           </div>
-          <div className="w-full bg-slate-200 rounded-full h-1.5 overflow-hidden">
-            <div className="bg-blue-600 h-1.5 rounded-full w-[78%]" />
-          </div>
-          <div className="flex justify-between items-center text-[10px] text-slate-400 pt-0.5">
-            <span>24 Klaim Diperiksa</span>
+          <div className="flex justify-between items-center text-[10.5px] text-slate-500 pt-0.5">
+            <span className="tabular-nums">24 Klaim Diperiksa</span>
             <span className="font-medium text-slate-600">Bulan Ini</span>
           </div>
         </div>
