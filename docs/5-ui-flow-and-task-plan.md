@@ -32,25 +32,25 @@ graph TD
 ```
 
 ### Urutan Interaksi Pengguna (User Journey):
-1. **Verifikator Masuk:** Membuka `/claims/triage`. Melihat total kebocoran dana yang terdeteksi dan memilih klaim berisiko tinggi teratas.
-2. **Masuk ke Ruang Telaah:** Membuka `/claims/:id/dossier`. Membaca temuan Upcoding, Inflated Bills, dan Note Cloning.
-3. **Verifikasi Bukti:** Mengklik kutipan pada kartu temuan $\rightarrow$ Teks laporan operasi atau resume medis di pane kanan langsung tersorot (*yellow pulse highlight*).
-4. **Eksekusi Keputusan:** Menekan tombol `Pending — Minta Dokumen` $\rightarrow$ Muncul draf surat resmi ke RS $\rightarrow$ Konfirmasi $\rightarrow$ Kembali ke antrean dengan status terbarui.
-5. **Auditor Memeriksa Arsip:** Membuka `/claims/audit-trail` untuk melihat seluruh rekaman waktu, catatan verifikator, dan draf surat resmi.
+1. **Verifikator Masuk:** Membuka `/claims/triage`. Melihat ringkasan metrik operasional yang tenang dan memilih klaim berisiko tinggi teratas.
+2. **Masuk ke Ruang Telaah:** Membuka `/claims/:id/dossier`. Membaca kartu temuan diskrepansi Upcoding, Inflated Bills, dan Note Cloning pada pane kiri yang berbatas 1px bersih.
+3. **Verifikasi Bukti:** Mengklik kutipan pada kartu temuan $\rightarrow$ Teks laporan operasi atau resume medis di pane kanan langsung tersorot secara statis (`bg-amber-100/80`) dengan *smooth scroll* (**tanpa animasi berdenyut / strictly no pulse animation** dan **tanpa efek glow**).
+4. **Eksekusi Keputusan:** Menekan tombol keputusan solid ber-radius 4px (`Minta Konfirmasi RS` / `Koreksi Kode`) $\rightarrow$ Muncul draf surat resmi ke RS $\rightarrow$ Verifikator mengisi catatan justifikasi $\rightarrow$ Konfirmasi $\rightarrow$ Kembali ke antrean dengan status terbarui.
+5. **Auditor Memeriksa Arsip:** Membuka `/claims/audit-trail` untuk melihat seluruh rekaman waktu, catatan verifikator, dan draf surat resmi dalam format tabel yang tenang dan terbebas dari chip ornamen kepatuhan palsu.
 
 ---
 
 ## 2. Spesifikasi UI States (Loading, Empty, Success, Error)
 
-Untuk menjamin kenyamanan pengguna dan mencegah tampilan antarmuka yang rusak:
+Untuk menjamin kenyamanan pengguna dan mencegah tampilan antarmuka yang rusak, seluruh state mengikuti **UI Styling Guidelines** dan **Antislop Rules**:
 
 | Halaman | Loading State | Empty State | Success State | Error State |
 |---|---|---|---|---|
-| **Layar 1: Triage Queue** (`/claims/triage`) | Skeleton table (5 baris shimmer) & 3 skeleton metrics card. | Ilustrasi bersih: *"Belum ada klaim yang memerlukan verifikasi. Semua klaim telah diproses."* | Tabel antrean terisi lengkap dengan badge warna risiko (`HIGH`, `MEDIUM`, `CLEAN`). | Banner merah: *"Gagal memuat antrean klaim. Periksa koneksi backend."* + Tombol *Coba Lagi*. |
-| **Layar 2: Dual-Pane Dossier** (`/claims/[id]/dossier`) | Dual skeleton: Pane kiri shimmer cards, pane kanan placeholder dokumen loading. | Teks netral: *"Tidak ditemukan diskrepansi anomali pada klaim ini."* | Dossier kartu temuan terisi rapi, teks dokumen termuat, tombol aksi aktif. | Banner peringatan: *"Gagal memuat berkas rekam medis klaim ini."* |
-| **Modal Upload** (F1) | Progress bar animasi: `Validasi Skema (30%)` $\rightarrow$ `Cek UU PDP (70%)` $\rightarrow$ `Analisis (100%)`. | Dropzone area siap menerima file `.json` / bundle. | Toast hijau: *"Berkas klaim berhasil diunggah dan lolos verifikasi UU PDP."* | Modal merah terang: *"Peringatan UU PDP: Dokumen memuat NIK/data riil. Ditolak."* |
-| **Layar 3: Audit Trail** (`/claims/audit-trail`) | Skeleton baris log riwayat verifikasi. | Teks informasi: *"Belum ada riwayat keputusan verifikasi yang terekam."* | Daftar tabel log append-only lengkap dengan badge status dan timestamp. | Banner error database audit log. |
-| **Layar 4: Benchmark Suite** (`/benchmark/evaluation-suite`) | Progress bar pengujian batch kasus 1 s/d 30 berjalan realtime. | Kartu awal: *"Siap menjalankan pengujian batch pada 30 dataset sintetis terstandar."* | Kartu metrik muncul: Recall $\ge 85\%$, FPR $\le 15\%$, Verbatim $100\%$, grafik komparasi. | Pesan error jika salah satu kasus gagal diproses. |
+| **Layar 1: Triage Queue** (`/claims/triage`) | Skeleton table (5 baris netral) & 3 skeleton metrics card berbatas 1px. | Card netral tenang: *"Belum ada klaim yang memerlukan verifikasi. Seluruh klaim telah selesai ditelaah."* | Tabel antrean terisi lengkap dengan badge persegi panjang ber-radius 4px yang didiferensiasi dengan ikon fungsional dan teks ringkas (tanpa titik bulat status `●` dan tanpa rainbow badges). | Banner netral 1px beraksen merah terkontrol: *"Gagal memuat antrean klaim. Periksa koneksi backend."* + Tombol *Coba Lagi*. |
+| **Layar 2: Dual-Pane Dossier** (`/claims/[id]/dossier`) | Dual skeleton: Pane kiri skeleton cards, pane kanan placeholder dokumen loading. | Teks netral: *"Tidak ditemukan diskrepansi anomali pada klaim ini."* | Dossier kartu temuan terisi rapi, teks dokumen termuat, tombol aksi aktif ber-radius 4px. | Banner peringatan 1px: *"Gagal memuat berkas rekam medis klaim ini."* |
+| **Modal Upload** (F1) | Progres bar tenang: `Validasi Skema (30%)` $\rightarrow$ `Sanitasi PII (70%)` $\rightarrow$ `Integritas Berkas (100%)`. | Dropzone area bersih dengan garis putus-putus netral 1px. | Banner konfirmasi hijau tenang: *"Berkas klaim berhasil diunggah dan lolos sanitasi data."* | Banner peringatan: *"Validasi Gagal: Dokumen terdeteksi memuat identitas riil tanpa sanitasi PII."* |
+| **Layar 3: Audit Trail** (`/claims/audit-trail`) | Skeleton baris log riwayat verifikasi. | Teks informasi: *"Belum ada riwayat keputusan verifikasi yang terekam."* | Daftar tabel log append-only dengan nomor referensi `tabular-nums` dan badge status persegi panjang yang bersih (tanpa chip dekoratif "UU PDP Valid"). | Banner error sistem pencatatan log. |
+| **Layar 4: Benchmark Suite** (`/benchmark/evaluation-suite`) | Progres eksekusi batch kasus 1 s/d 30 berjalan transparan. | Panel awal: *"Siap menjalankan pengujian batch pada 30 dataset sintetis terstandar."* | Kartu metrik objektif (Recall $\ge 85\%$, FPR $\le 15\%$, Verbatim $100\%$, Latency $<60$s) dengan tipografi Plus Jakarta Sans angka `tabular-nums`. | Banner error jika eksekusi batch terputus. |
 
 ---
 
@@ -90,12 +90,12 @@ gantt
 
 | Task ID | Nama Task & Spesifikasi | Estimasi | Dependensi | Kriteria Lolos (DoD) |
 |---|---|---|---|---|
-| **FE-1** | **Setup Project Next.js 15 & Design System**<br>- Inisialisasi Next.js 15 App Router + Tailwind CSS.<br>- Pasang `shadcn/ui` (Table, Badge, Card, Tabs, Dialog, Tooltip) + `lucide-react`.<br>- Buat Layout Shell utama (Header BPJS, Navbar dengan navigasi semantik). | 0.5 Hari | Tidak ada | Project jalan di `localhost:3000`, navbar aktif mengarah ke rute semantik. |
-| **FE-2** | **Layar 1: Triage Dashboard (`/claims/triage`)**<br>- Buat komponen `MetricHeader` (3 kartu ringkasan).<br>- Buat `ClaimTable` dengan badge risiko dan status.<br>- Implementasikan filter dropdown (RS, status, modus).<br>- Buat `ModalUploadClaim` dengan area dropzone. | 1 Hari | FE-1, BE-1 (Mock) | Tabel menampilkan data antrean, sorting prioritas berjalan, klik baris memicu navigasi ke `/claims/:id/dossier`. |
-| **FE-3** | **Layar 2: Dual-Pane Workspace (`/claims/[id]/dossier`)**<br>- Susun layout split 50:50 (Pane Kiri = Dossier, Pane Kanan = Doc Viewer).<br>- Buat komponen `EvidenceCard` dengan status bobot bukti dan kutipan interaktif.<br>- Implementasikan `ActionBar` fixed bottom dengan 4 tombol aksi. | 1.5 Hari | FE-1 | Tata letak Dual-Pane responsif, kartu bukti ter-render rapi sesuai desain enterprise. |
-| **FE-4** | **Fitur 1-Click Verbatim Text Highlight**<br>- Render teks dokumen RME dengan pembagian paragraf.<br>- Buat event handler: Klik kutipan di kartu bukti memicu pembungkusan `<mark className="animate-pulse">` dan `scrollIntoView`. | 1 Hari | FE-3 | Mengklik kutipan seketika menggulir dokumen kanan ke posisi teks yang bersangkutan dengan efek sorot kuning. |
-| **FE-5** | **Modal Aksi Keputusan & Dispute Letter Preview**<br>- Buat `ModalActionConfirmation` dengan field catatan wajib verifikator.<br>- Tampilkan preview draf surat resmi klarifikasi BPJS.<br>- Hubungkan submit ke endpoint `POST /api/v1/claims/{id}/decide`. | 0.5 Hari | FE-3, BE-5 | Verifikator bisa mengedit draf surat dan submit keputusan berhasil mengarahkan ke antrean. |
-| **FE-6** | **Layar 3: Audit Trail (`/claims/audit-trail`) & Layar 4: Benchmark (`/benchmark/evaluation-suite`)**<br>- Buat tabel riwayat keputusan verifikator append-only.<br>- Buat dashboard benchmark dengan tombol eksekusi, progress bar realtime, dan kartu metrik (Recall, FPR, Grounding). | 1 Hari | FE-1, BE-6 | Halaman audit menampilkan log historis; halaman benchmark menampilkan visualisasi hasil uji batch. |
+| **FE-1** | **Setup Project Next.js 15 & Design System (Strict Anti-Slop & Attio Aesthetic)**<br>- Inisialisasi Next.js 15 App Router + Tailwind CSS.<br>- Pasang `shadcn/ui` + `lucide-react`.<br>- **Standar Styling:** Terapkan tipografi **Plus Jakarta Sans** untuk seluruh teks, kode referensi, dan angka (`tabular-nums`, tanpa font mono kaku).<br>- **Palet Warna BPJS:** Dominasi BPJS Green (`emerald-600/700`) dan BPJS Blue (`blue-600/700`); warna amber/red terisolasi hanya untuk anomali klinis riil.<br>- **Bentuk Komponen:** Kontainer persegi panjang ber-radius 4px - 6px, **tanpa tombol/badge bentuk pil (`no rounded-full`)**, **tanpa titik bulat status (`no circular dots`)**, **tanpa teks eyebrow ornamental**, dan **tanpa garis aksen samping sepihak (`no border-left 3px`)**.<br>- **Zero Fake Compliance Theater:** Menghilangkan ornamen banner "BSrE-BSSN" atau badge "UU PDP Valid". | 0.5 Hari | Tidak ada | Project berjalan di Next 15, lolos build tanpa error, design tokens terpasang rapi sesuai panduan styling. |
+| **FE-2** | **Layar 1: Triage Dashboard (`/claims/triage`)**<br>- Buat komponen `MetricHeader` (3 kartu ringkasan berbatas 1px netral, angka `tabular-nums`).<br>- Buat `ClaimTable` dengan diferensiasi status berbasis ikon fungsional dan teks ringkas di dalam kontainer persegi panjang bersudut terkontrol.<br>- Implementasikan filter dropdown kustom (RS, status risiko, modus anomali).<br>- Buat `ModalUploadClaim` dengan area dropzone bersih. | 1 Hari | FE-1, BE-1 (Mock) | Tabel menampilkan data antrean, sorting prioritas berjalan, klik baris memicu navigasi ke `/claims/:id/dossier`. |
+| **FE-3** | **Layar 2: Dual-Pane Workspace (`/claims/[id]/dossier`)**<br>- Susun layout split 50:50 (Pane Kiri = Dossier, Pane Kanan = Doc Viewer).<br>- Buat komponen `EvidenceCard` dengan status bobot bukti dan kutipan interaktif.<br>- Implementasikan `ActionBar` fixed bottom dengan 4 tombol solid ber-radius 4px. | 1.5 Hari | FE-1 | Tata letak Dual-Pane responsif, kartu bukti ter-render rapi dengan border 1px halus tanpa efek pendar neon. |
+| **FE-4** | **Fitur 1-Click Verbatim Text Highlight (Static & Non-Pulsing)**<br>- Render teks dokumen RME dengan pembagian paragraf.<br>- Buat event handler: Klik kutipan di kartu bukti memicu pembungkusan `<mark className="bg-amber-100/80 text-amber-950 px-1 py-0.5 rounded-[3px] border border-amber-200">` dan `scrollIntoView({ behavior: 'smooth', block: 'center' })`.<br>- **Larangan AI Slop:** Dilarang keras menggunakan animasi denyut (`animate-pulse`) atau efek pendar neon (glow). | 1 Hari | FE-3 | Mengklik kutipan seketika menggulir dokumen kanan ke posisi teks yang bersangkutan dengan sorotan statis yang tenang dan berkontras tinggi. |
+| **FE-5** | **Modal Aksi Keputusan & Dispute Letter Preview**<br>- Buat `ModalActionConfirmation` dengan field catatan wajib verifikator.<br>- Tampilkan preview draf surat resmi klarifikasi BPJS berformat standar korespondensi institusional.<br>- Hubungkan submit ke endpoint `POST /api/v1/claims/{id}/decide`. | 0.5 Hari | FE-3, BE-5 | Verifikator bisa mengedit draf surat dan submit keputusan berhasil memperbarui antrean. |
+| **FE-6** | **Layar 3: Audit Trail (`/claims/audit-trail`) & Layar 4: Benchmark (`/benchmark/evaluation-suite`)**<br>- Buat tabel riwayat keputusan verifikator append-only (nomor referensi `tabular-nums`, tanpa chip dekoratif).<br>- Buat dashboard benchmark dengan tombol eksekusi solid green, progress bar tenang, dan kartu metrik objektif (Recall, FPR, Grounding, Latency). | 1 Hari | FE-1, BE-6 | Halaman audit menampilkan log historis; halaman benchmark menampilkan visualisasi hasil uji batch tanpa grafik neon yang bising. |
 
 ---
 
@@ -129,21 +129,29 @@ gantt
 ### DoD per Fitur:
 1. Kode berhasil dikompilasi tanpa error (TypeScript lolos type check, Python lolos Pydantic validation).
 2. Endpoint merespon sesuai skema JSON di Dokumen 4.
-3. Fitur teruji dengan data sintetis; tidak ada kebocoran data pribadi (patuh UU PDP).
+3. Fitur teruji dengan data sintetis; tidak ada kebocoran data pribadi (patuh sanitasi PII).
 4. Tidak ada kutipan halusinasi (*100% verbatim grounded*).
+5. **Kepatuhan Penuh Styling & Anti-Slop (Mandatory UI Gate):**
+   - Wajib mematuhi seluruh klausul di `.agents/skills/ui-styling-and-design-guidelines.md`.
+   - Menggunakan tipografi **Plus Jakarta Sans** dengan `tabular-nums` untuk semua angka dan kode identifikasi (tanpa font kaku/mono).
+   - Palet warna berdisiplin tinggi: **BPJS Green (`emerald-600/700`)** dan **BPJS Blue (`blue-600/700`)**; warna peringatan hanya untuk anomali klinis faktual.
+   - Kontainer persegi panjang bersudut terkontrol (`rounded-[4px]`), **tanpa bentuk pil (`no rounded-full`)**, **tanpa titik bulat status (`no circular dots`)**, **tanpa teks eyebrow kickers**, **tanpa garis aksen samping sepihak (`no border-left 3px`)**, dan **tanpa animasi berdenyut (`no animate-pulse`)**.
+   - Bebas dari ornamen kepatuhan palsu (*no fake BSrE-BSSN or UU PDP banners/chips*).
 
 ### DoD untuk Hackathon Release (Ready to Present):
 1. **The Closed-Loop Golden Path Berfungsi Sempurna:**
-   Verifikator dapat membuka `/claims/triage` $\rightarrow$ memilih klaim #CLM-089 $\rightarrow$ melihat 3 kartu temuan di `/claims/CLM-2026-089/dossier` $\rightarrow$ mengklik kutipan alkes dan melihat sorotan kuning di dokumen $\rightarrow$ menekan tombol Pending $\rightarrow$ menyetujui surat klarifikasi $\rightarrow$ status klaim terbarui di antrean.
+   Verifikator dapat membuka `/claims/triage` $\rightarrow$ memilih klaim #CLM-089 $\rightarrow$ melihat 3 kartu temuan di `/claims/CLM-2026-089/dossier` $\rightarrow$ mengklik kutipan alkes dan melihat sorotan statis amber lembut di dokumen rekam medis $\rightarrow$ menekan tombol `Minta Konfirmasi RS` $\rightarrow$ menyetujui surat klarifikasi $\rightarrow$ status klaim terbarui di antrean.
 2. **Nol Menit Menunggu (Zero Latency Demo):** Data seed awal sudah termuat di Neon Database, sehingga aplikasi langsung interaktif saat dibuka di depan juri.
-3. **Halaman Benchmark Siap:** Rute `/benchmark/evaluation-suite` dapat dieksekusi 1-klik untuk menampilkan bukti ilmiah kepada juri teknis.
+3. **Halaman Benchmark Siap:** Rute `/benchmark/evaluation-suite` dapat dieksekusi 1-klik untuk menampilkan bukti ilmiah kepada juri teknis dengan metrik objektif.
+4. **Lolos Audit Visual & Ergonomi Attio:** Seluruh antarmuka terasa tenang, solid, editorial, dan profesional selayaknya produk enterprise matang.
 
 ---
 
 ## Status Gate Dokumen 5
 - [x] Alur navigasi (Screen Map) dan interaksi Dual-Pane telah ditetapkan.
-- [x] Seluruh state antarmuka (Loading, Empty, Success, Error) telah didefinisikan.
+- [x] Seluruh state antarmuka (Loading, Empty, Success, Error) telah didefinisikan dengan standar Anti-Slop.
 - [x] Seluruh task telah dibagi secara adil dan paralel kepada 3 developer (Maul = FE, Ojan = BE Core/Gemini, Koh Ariq = BE AI/Groq/Seeding).
+- [x] Standar UI Styling Guidelines (Attio simplicity, Plus Jakarta Sans, BPJS colors, no pill/dot/pulse slop) telah terkunci ke dalam DoD.
 - [x] Dependensi antartask dan Definition of Done telah disepakati.
 
 **Tim kini siap memasuki tahap implementasi kode!**

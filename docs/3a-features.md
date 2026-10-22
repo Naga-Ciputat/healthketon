@@ -31,15 +31,15 @@ Aplikasi tersusun atas struktur rute semantik yang mengikuti siklus kerja verifi
 ### F1: Intake, Privacy Guard & Keabsahan Dokumen RME-TTE
 
 #### 1. Purpose
-Menerima paket berkas klaim digital rumah sakit (metadata klaim, resume medis terstruktur, CPPT, laporan operasi, lab, radiologi, kuitansi alkes), memvalidasi kelengkapan skema, memastikan kepatuhan regulasi privasi (UU PDP No. 27/2022), serta memverifikasi keabsahan tanda tangan elektronik (TTE) dan integritas dokumen RME (Permenkes 24/2022 & inisiatif *Smart Claim*).
+Menerima paket berkas klaim digital rumah sakit (metadata klaim, resume medis terstruktur, CPPT, laporan operasi, lab, radiologi, kuitansi alkes), memvalidasi kelengkapan skema, memastikan sanitasi data pribadi (PII masking) secara otomatis di pipeline backend, serta memverifikasi integritas dokumen rekam medis elektronik (Permenkes 24/2022).
 
 #### 2. Frontend (FE)
 - **Komponen UI:**
-  - `ModalUploadClaim` di `/claims/triage` (area dropzone bersih untuk paket bundle `.json` atau zip berkas klaim).
-  - Indikator proses bertahap: *Validasi Skema $\rightarrow$ Pemeriksaan Sanitasi PII $\rightarrow$ Verifikasi TTE & Hash RME*.
-  - Status Otentikasi Dokumen di Header Dossier: Strip status institusional bergaris batas 1px halus yang menampilkan validitas tanda tangan elektronik DPJP (tersertifikasi BSrE-BSSN) dan integritas berkas (tanpa modifikasi pasca-pulang).
+  - `ModalUploadClaim` di `/claims/triage` (area dropzone bersih bergaris batas 1px netral untuk paket bundle `.json` atau zip berkas klaim).
+  - Status pemrosesan bertahap sederhana dalam banner progres tenang: *Validasi Skema $\rightarrow$ Sanitasi PII $\rightarrow$ Pengecekan Integritas Berkas*.
+  - Header Dossier yang Bersih: Menampilkan metadata klaim faktual (No SEP, Pasien, Tanggal Layanan, RS Pengaju, Kelas Rawat) menggunakan tipografi Plus Jakarta Sans dengan `tabular-nums` pada nomor referensi. **Bebas dari strip jargon teatrikal** (tidak menggunakan ornamen banner "BSrE-BSSN Terverifikasi" atau badge "UU PDP Valid").
 - **Interaksi Pengguna:**
-  - Pengguna mengunggah berkas. Jika terdeteksi NIK atau nama riil tanpa tokenisasi, sistem menolak dengan pesan peringatan privasi formal. Jika berkas valid, data masuk ke antrean triage.
+  - Pengguna mengunggah berkas. Jika terdeteksi berkas tanpa sanitasi PII atau skema korup, sistem menampilkan pesan peringatan terukur dalam banner alert netral berbatas 1px. Jika berkas valid, klaim otomatis masuk ke antrean triage.
 
 #### 3. Backend / AI (BE/AI)
 - **Data yang Diolah:**
@@ -60,11 +60,14 @@ Mengubah proses verifikasi manual acak menjadi **antrean kerja terprioritaskan**
 
 #### 2. Frontend (FE)
 - **Komponen UI:**
-  - `MetricHeader`: Menampilkan 3 kartu ringkasan berbasis terminologi operasional tenang (tanpa titik bulat status dan tanpa teks eyebrow ornamental):
+  - `MetricHeader`: Menampilkan 3 kartu ringkasan berbasis terminologi operasional tenang, bergaris batas 1px netral, menggunakan tipografi Plus Jakarta Sans dengan `tabular-nums` untuk angka rupiah/kasus (tanpa titik bulat status, tanpa teks eyebrow ornamental, dan tanpa kartu ber-shadow tebal):
     * *Antrean Telaah:* Total klaim menunggu dengan rincian kasus prioritas tinggi.
     * *Potensi Koreksi Tagihan:* Akumulasi nominal rupiah selisih tarif yang perlu ditinjau verifikator.
     * *Klaim Lolos Cepat (Fast-Track):* Jumlah dan persentase klaim bersih berisiko rendah yang dapat diproses instan.
-  - `ClaimTable`: Tabel antrean dengan kolom nomor SEP, rumah sakit, diagnosis primer, kode INA-CBG, status keabsahan dokumen, tag indikasi (*Upcoding, Inflated Bills, Note Cloning, Readmisi 30 Hari*), potensi selisih tarif, dan tombol aksi telaah dossier.
+  - `ClaimTable`: Tabel antrean bergaya Attio (bersih, rapat, batas 1px halus, padding terukur):
+    * Kolom: Nomor SEP, rumah sakit, diagnosis primer, kode INA-CBG, tag indikasi (*Upcoding, Inflated Bills, Note Cloning, Readmisi 30 Hari*), potensi selisih tarif, dan tombol aksi telaah dossier.
+    * **Aturan Diferensiasi Status & Tipe:** Status dan tingkat risiko tidak menggunakan warna-warni pelangi (rainbow badges) atau dot bulat (`‚óè`). Diferensiasi dilakukan melalui **kombinasi ikon fungsional yang presisi** (misal `AlertTriangle`, `Clock`, `CheckCircle2`) dan teks ringkas di dalam kontainer persegi panjang bersudut terkontrol (`rounded-[4px]`).
+    * **Disiplin Warna BPJS:** Palet didominasi oleh BPJS Green (`emerald-600/700`) sebagai warna aksi utama dan BPJS Blue (`blue-600/700`) untuk elemen informasional/navigasi. Warna amber atau merah secara ketat hanya dipakai untuk anomali klinis riil atau peringatan mendesak.
 - **Interaksi Pengguna:**
   - Penyaringan antrean berdasarkan faskes, tingkat risiko (*Tinggi, Sedang, Rendah*), status telaah, dan kategori anomali. Klik baris klaim mengarahkan verifikator ke `/claims/:id/dossier`.
 
@@ -189,7 +192,7 @@ Memastikan setiap kalimat kutipan bukti yang disajikan dalam dossier dan surat k
 
 #### 2. Frontend (FE)
 - **Komponen UI:**
-  - Label status keabsahan kutipan di setiap blok bukti: `Kutipan Terverifikasi Harfiah (Hal. X, Paragraf Y)` dengan ikon centang terenkripsi.
+  - Label status keabsahan kutipan di setiap blok bukti: Teks mikro ringkas `Kutipan Terverifikasi (Hal. X, Paragraf Y)` dipadukan dengan ikon `CheckCheck` (12px) di dalam kontainer persegi panjang bersudut 3px (`rounded-[3px]`), bergaris batas 1px netral tanpa efek pendar glow, dot bulat, atau badge tebal.
 - **Interaksi Pengguna:**
   - Menjamin verifikator dapat mempercayai kutipan tanpa perlu meragukan keaslian sumber teks.
 
@@ -212,14 +215,14 @@ Menyediakan lingkungan kerja (*workspace*) terpadu dua panel (*Dual-Pane*) yang 
 #### 2. Frontend (FE)
 - **Komponen UI (`/claims/:id/dossier`):**
   - **Pane Kiri (Dossier Temuan):**
-    * Ringkasan klaim: No SEP, kelas faskes, kode INA-CBG, tarif diajukan vs tarif hasil verifikasi.
-    * Daftar kartu temuan terstruktur (F3, F4, F5, F6) lengkap dengan kutipan dan rujukan regulasi.
+    * Ringkasan klaim: No SEP, kelas faskes, kode INA-CBG, tarif diajukan vs tarif hasil verifikasi (angka berformat `tabular-nums`).
+    * Daftar kartu temuan terstruktur (F3, F4, F5, F6) lengkap dengan kutipan dan rujukan regulasi. Permukaan kartu solid netral bergaris batas 1px halus, tanpa glowing shadow atau aksen garis samping sepihak.
     * Bagian Penjelasan Alternatif (*Alternative Explanations*): Ruang telaah netral yang mencatat kemungkinan salah koding administratif non-fraud atau kelengkapan berkas yang tertinggal.
   - **Pane Kanan (Smart Document Viewer):**
-    * Tab dokumen rekam medis: `Resume Medis`, `Laporan Operasi`, `CPPT Keperawatan`, `Hasil Lab & Radiologi`, `Rincian Biaya`.
-    * Penampil teks dokumen digital dengan koordinat sorotan (*highlight box*) berlatar amber lembut tanpa efek pendar neon.
+    * Tab dokumen rekam medis: `Resume Medis`, `Laporan Operasi`, `CPPT Keperawatan`, `Hasil Lab & Radiologi`, `Rincian Biaya`. State aktif tab menggunakan kontras permukaan (surface contrast) dan tipografi tebal, **sama sekali tanpa garis aksen dekoratif sepihak (`no border-bottom/left 3px`)**.
+    * Penampil teks dokumen digital dengan koordinat sorotan (*highlight box*) statis berlatar amber lembut (`bg-amber-100/80` dengan teks berkontras tinggi), **tanpa efek pendar neon (no glow)** dan **tanpa animasi denyut (strictly no pulse animation)**.
 - **Interaksi Pengguna:**
-  - Klik pada kartu temuan atau tombol kutipan di pane kiri seketika mengaktifkan tab dokumen terkait di pane kanan, menggulir layar (*smooth auto-scroll*) ke baris yang bersangkutan, dan menyorot teks bukti.
+  - Klik pada kartu temuan atau tombol kutipan di pane kiri seketika mengaktifkan tab dokumen terkait di pane kanan, menggulir layar secara mulus (*smooth auto-scroll*), dan menyorot teks bukti secara statis.
 
 #### 3. Backend / AI (BE/AI)
 - **Data yang Diolah:**
@@ -239,12 +242,12 @@ Memfasilitasi pengambilan keputusan akhir oleh verifikator (*Human-in-the-Loop*)
   - **Di Workspace Dossier (`/claims/:id/dossier`):**
     * `DossierActionBar` (terletak tetap di bawah panel kiri):
       - Rekomendasi sistem yang tenang: *Rekomendasi Telaah: Usulkan Penyesuaian Kode Severity / Minta Dokumen Pendukung*.
-      - 4 Tombol Keputusan: `Setujui Klaim`, `Minta Konfirmasi RS`, `Koreksi Kode (Downcode)`, `Eskalasi Audit Investigatif`.
+      - 4 Tombol Keputusan: `Setujui Klaim`, `Minta Konfirmasi RS`, `Koreksi Kode (Downcode)`, `Eskalasi Audit Investigatif`. Tombol berbentuk persegi panjang terkontrol (`rounded-[4px]`), **tanpa bentuk pil (`no rounded-full`)**.
     * `ModalDisputeLetter`:
       - Kolom catatan justifikasi verifikator (wajib diisi bila status bukan persetujuan langsung).
       - Draf surat resmi format BPJS yang otomatis terisi nomor klaim, rincian temuan diskrepansi, dan kutipan kalimat rekam medis yang memerlukan klarifikasi.
   - **Di Halaman Jejak Audit (`/claims/audit-trail`):**
-    * `AuditTrailTable`: Tabel rekaman kronologis: Stempel waktu, No SEP, Faskes, Nama Verifikator, Status Keputusan, Catatan Justifikasi, dan Status Enkripsi PII (kepatuhan UU PDP).
+    * `AuditTrailTable`: Tabel rekaman kronologis: Stempel waktu, No SEP, Faskes, Nama Verifikator, Status Keputusan, dan Catatan Justifikasi. Seluruh kolom nomor referensi menggunakan `tabular-nums`. **Bebas dari chip ornamen buatan** (tidak memuat badge dekoratif seperti "UU PDP Valid").
 - **Interaksi Pengguna:**
   - Verifikator memilih tindakan, meninjau/mengedit draf surat formal, lalu mengonfirmasi keputusan.
   - Jika klaim disetujui (`SETUJUI`), status klaim bertransisi menjadi `SIAP_BAYAR` (siap direkonsiliasi pada sistem pembayaran faskes / In-Monica).
@@ -267,8 +270,8 @@ Menyediakan modul pengujian terukur yang menjalankan evaluasi batch terhadap 30‚
 
 #### 2. Frontend (FE)
 - **Komponen UI (`/benchmark/evaluation-suite`):**
-  - Panel kontrol eksekusi benchmark batch.
-  - Kartu metrik performa objektif:
+  - Panel kontrol eksekusi benchmark batch dengan tombol solid BPJS Green ber-radius 4px.
+  - Kartu metrik performa objektif (berbatas 1px netral, angka `tabular-nums` tanpa efek glow neon):
     * *Recall Kasus Anomali:* Target $\ge 85\%$.
     * *False Positive Rate (FPR):* Target $\le 15\%$ (menguji agar klaim wajar tidak salah ditandai).
     * *Verbatim Grounding Rate:* Target $100\%$ (nol halusinasi kutipan).
@@ -290,7 +293,7 @@ Menyediakan modul pengujian terukur yang menjalankan evaluasi batch terhadap 30‚
 
 | Kode Fitur | Nama Fitur | Komponen UI Utama | Modul Backend / AI | Sifat Logika | Kepatuhan Regulasi & Standar |
 |---|---|---|---|---|---|
-| **F1** | Intake, Privacy Guard & TTE | `ModalUploadClaim`, Strip Status Header | `PrivacyGuardService`, `DocumentIntegrityService` | Deterministik / Kriptografis | UU PDP No. 27/2022, Permenkes 24/2022 |
+| **F1** | Intake, Privacy Guard & TTE | `ModalUploadClaim`, Header Metadata Bersih | `PrivacyGuardService`, `DocumentIntegrityService` | Deterministik / Kriptografis | UU PDP No. 27/2022, Permenkes 24/2022 |
 | **F2** | Priority Triage Queue | `ClaimTable`, `MetricHeader` | `TriageService`, `QueryCache` | Algoritma Pembobotan / Cache | Alur Pra-Bayar BPJS |
 | **F3** | Deterministic Fast Filter | `EvidenceCard (Aturan Baku)` | `RuleEngineService`, `PatientHistoryIndex` | Deterministik Kamus & Riwayat | Permenkes 3/2023, Jeda Readmisi 30 Hari |
 | **F4** | Clinical Cross-Examiner | `EvidenceCard (Upcoding)` | `AgentOrchestrator`, `ToolRegistry` | Penalaran LLM Multi-Langkah | Standar Severity INA-CBG & PNPK |
@@ -303,7 +306,12 @@ Menyediakan modul pengujian terukur yang menjalankan evaluasi batch terhadap 30‚
 
 ---
 
-## Status Gate: Kesiapan Spesifikasi
+## Status Gate: Kesiapan Spesifikasi & Kepatuhan Anti-Slop
 Dengan spesifikasi yang telah diperbarui di atas:
-1. **Frontend:** Memiliki batas visual yang jelas, terbebas dari dekorasi artifisial (*no circular dots, no pill buttons, no eyebrow text, no glow*), dan berorientasi pada produktivitas verifikator medis.
-2. **Backend & AI:** Setiap alur logika terdefinisi secara presisi: kapan aturan deterministik bekerja, kapan verifikasi hash/TTE dieksekusi, bagaimana agent memanggil kamus PNPK dan kalkulator tarif, serta bagaimana jejak audit permanen tersimpan tanpa pelanggaran privasi data.
+1. **Frontend:** Mematuhi secara ketat panduan `.agents/skills/ui-styling-and-design-guidelines.md` dan antislop core rules:
+   - Menggunakan tipografi **Plus Jakarta Sans** dengan `tabular-nums` untuk semua angka dan kode identifikasi (tanpa font kaku/mono).
+   - Palet warna berdisiplin tinggi: **BPJS Green (`emerald-600/700`)** dan **BPJS Blue (`blue-600/700`)**, dengan warna peringatan (amber/rose) terisolasi ketat hanya untuk diskrepansi dan urgensi faktual.
+   - Diferensiasi status/tipe berbasis ikon fungsional dan teks ringkas dalam wadah persegi panjang (`rounded-[4px]`).
+   - Terbebas total dari AI slop: *no circular dots, no pill buttons, no eyebrow text/kickers, no decorative side borders, no glowing effects, no pulsing highlights*.
+   - Bebas dari jargon teatrikal kepatuhan palsu (*no fake BSrE-BSSN banner or decorative UU PDP chips*).
+2. **Backend & AI:** Setiap alur logika terdefinisi secara presisi: kapan aturan deterministik bekerja, kapan verifikasi hash/TTE dieksekusi di pipeline backend, bagaimana agent memanggil kamus PNPK dan kalkulator tarif dengan formula matematika pasti, serta bagaimana jejak audit permanen tersimpan secara terstruktur.

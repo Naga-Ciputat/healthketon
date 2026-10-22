@@ -14,7 +14,7 @@ Sistem dibagi menjadi **3 Jalur Terpisah dengan Tanggung Jawab Khusus**:
 ```mermaid
 flowchart TD
     subgraph Track_2 [Track 2: Ingestion & Investigation Pipeline (Background / Seeded)]
-        F1[F1: Upload Intake, UU PDP Check & Verifikasi TTE] --> F3[F3: Deterministic Fast Filter & Cek Readmisi]
+        F1[F1: Upload Intake, Sanitasi PII & Cek Integritas Dokumen] --> F3[F3: Deterministic Fast Filter & Cek Readmisi]
         F3 --> AgentLoop[Agentic Multi-Tool Loop: F4 Upcoding + F5 Alkes + F6 Cloning]
         AgentLoop --> F7[F7: Verbatim Grounding Check]
         F7 --> DB[(Database Klaim & Hasil Analisis)]
@@ -23,7 +23,7 @@ flowchart TD
     subgraph Track_1 [Track 1: The Operational Golden Path (Closed-Loop Utama)]
         DB --> F2[F2: Triage Queue Dashboard]
         F2 -->|1. Pilih Klaim Prioritas| F8[F8: Dual-Pane Evidence Dossier]
-        F8 -->|2. Klik Kutipan Bukti| F8_High[Highlight Teks Verbatim di Rekam Medis]
+        F8 -->|2. Klik Kutipan Bukti| F8_High[Highlight Teks Statis di Dokumen Rekam Medis]
         F8_High -->|3. Ambil Tindakan| F9[F9: Action Bar & Draf Klarifikasi]
         F9 -->|4. Simpan Keputusan| F9_Audit[(Append-Only Audit Trail)]
         F9_Audit -->|5a. Status Siap Bayar| S06[(Modul Keuangan In-Monica)]
@@ -44,8 +44,8 @@ Rute URL disusun secara ekspresif mengikuti siklus hidup (*lifecycle*) klaim di 
 
 | Tahap Siklus Klaim | Rute URL Semantik | Peran & Tanggung Jawab Halaman |
 |---|---|---|
-| **1. Intake & Pemilahan Risiko** | `/claims/triage`<br>*(redirect dari `/`)* | Antrean prioritas berbasis risiko klinis & rupiah, kartu metrik operasional terkalibrasi, status TTE faskes, dan portal upload paket klaim. |
-| **2. Investigasi & Telaah Bukti** | `/claims/:id/dossier` | Workspace interaktif Dual-Pane: kartu temuan bukti AI di kiri, penampil dokumen rekam medis dengan sinkronisasi teks verbatim di kanan. |
+| **1. Intake & Pemilahan Risiko** | `/claims/triage`<br>*(redirect dari `/`)* | Antrean prioritas berbasis risiko klinis & rupiah, kartu metrik operasional terkalibrasi, dan portal upload paket klaim. Bersih dari ornamen kickers atau dots. |
+| **2. Investigasi & Telaah Bukti** | `/claims/:id/dossier` | Workspace interaktif Dual-Pane: kartu temuan bukti terstruktur di kiri, penampil dokumen rekam medis dengan sinkronisasi teks statis di kanan. |
 | **3. Tata Kelola & Jejak Audit** | `/claims/audit-trail` | Arsip riwayat keputusan append-only, log verifikator, rekam kepatuhan penyamaran data (UU PDP), dan repositori surat klarifikasi resmi. |
 | **4. Pembuktian Ilmiah Juri** | `/benchmark/evaluation-suite` | Halaman eksekusi batch benchmark 30–50 kasus sintetis dengan metrik recall, FPR, dan zero-hallucination. |
 
@@ -57,23 +57,28 @@ Jalur ini adalah **pengalaman utama pengguna (dr. Maya)** dan merupakan alur yan
 
 $$\mathbf{/claims/triage \rightarrow /claims/:id/dossier \rightarrow (F4 + F5 + F6 + F7) \rightarrow F9 \rightarrow /claims/triage}$$
 
+### Prinsip Styling & Desain Antislop pada Golden Path:
+- **Tipografi:** Wajib menggunakan **Plus Jakarta Sans** dengan format `tabular-nums` pada seluruh angka rupiah, jumlah unit, dan kode identifikasi (menghindari font kaku/mono).
+- **Palet Warna BPJS:** Dominan **BPJS Green (`emerald-600/700`)** untuk aksi utama dan **BPJS Blue (`blue-600/700`)** untuk navigasi/informasi. Warna amber atau merah secara ketat hanya dipakai untuk anomali klinis riil atau peringatan mendesak.
+- **Bentuk Komponen:** Sudut terkontrol (`rounded-[4px]`), tanpa bentuk pil (`no rounded-full`), tanpa titik bulat status (`no circular dots`), tanpa teks eyebrow ornamental, dan tanpa garis aksen samping sepihak (`no single-sided border-left/right`).
+
 ### Langkah demi Langkah Alur Tertutup (*Closed-Loop Sequence*):
 1. **Langkah 1 — Triage Dashboard (F2):**
    - dr. Maya membuka dashboard di `/claims/triage` (atau `/`).
-   - Memeriksa metrik operasional yang tenang: Antrean Telaah (24 kasus), Potensi Koreksi Tagihan (Rp 24.900.000 pada kasus prioritas), Klaim Lolos Cepat / Fast-Tracked (12 kasus bersih).
-   - Memilih baris teratas: *Klaim #CLM-2026-089 — Pasien Bedah RS Sejahtera — Tagihan Rp 45.000.000 — Indikasi: Upcoding Komplikasi & Inflated Stent — TTE Valid*.
+   - Memeriksa metrik operasional yang tenang: Antrean Telaah (24 kasus), Potensi Koreksi Tagihan (Rp 24.900.000 pada kasus prioritas), Klaim Lolos Cepat / Fast-Tracked (12 kasus bersih) dengan format angka `tabular-nums`.
+   - Memilih baris teratas: *Klaim #CLM-2026-089 — Pasien Bedah RS Sejahtera — Tagihan Rp 45.000.000 — Indikasi: Upcoding Komplikasi & Inflated Stent*.
 2. **Langkah 2 — Membuka Dual-Pane Workspace (F8):**
    - Antarmuka beralih ke `/claims/CLM-2026-089/dossier`.
-   - **Header:** Menampilkan strip status otentikasi dokumen: *TTE dr. Hendra Sp.JP Terverifikasi (BSrE-BSSN) · Integritas Hash SHA-256 Valid*.
-   - **Pane Kiri:** Menampilkan kartu-kartu temuan berbasis bukti yang dihasilkan oleh AI (F4, F5, F6) lengkap dengan kalkulasi selisih biaya dan dasar pasal regulasi koding.
+   - **Header:** Menampilkan ringkasan metadata klaim faktual (No SEP, Nama Pasien, RS Pengaju, Tanggal Masuk/Keluar, Kode INA-CBG) secara bersih. **Bebas dari strip jargon teatrikal** (tidak menggunakan banner sertifikasi seperti "BSrE-BSSN Terverifikasi").
+   - **Pane Kiri:** Menampilkan kartu-kartu temuan berbasis bukti (F4, F5, F6) lengkap dengan kalkulasi selisih biaya matematis pasti dan dasar pasal regulasi koding.
    - **Pane Kanan:** Menampilkan dokumen asli (Laporan Operasi, Resume Medis, Hasil Lab, Billing).
 3. **Langkah 3 — Verifikasi Bukti 1-Klik (F7 $\rightarrow$ F8):**
    - dr. Maya melihat Kartu Temuan F5: *"Tagihan 2 unit stent DES, narasi bedah hanya pasang 1 unit (Selisih Rp 10.000.000)"*.
    - dr. Maya mengklik kutipan teks: *"[Laporan Operasi — Hal 3]"*.
-   - Pane Kanan seketika melompat otomatis (*smooth scroll*) ke halaman 3 laporan bedah, dan baris kalimat asli tersorot berlatar amber lembut (*verbatim highlight*).
+   - Pane Kanan seketika melompat otomatis (*smooth scroll*) ke halaman 3 laporan bedah, dan baris kalimat asli tersorot berlatar amber lembut statis (`bg-amber-100/80` berbatas 1px halus, **tanpa animasi berdenyut / strictly no pulse animation** dan **tanpa efek glow**).
 4. **Langkah 4 — Penentuan Keputusan & Dispute Drafting (F9):**
    - dr. Maya melihat rekomendasi sistem: `Rekomendasi Telaah: Usulkan Penyesuaian Kode Severity / Minta Dokumen Pendukung`.
-   - dr. Maya menekan tombol `Minta Konfirmasi RS` atau `Koreksi Kode (Downcode)`.
+   - dr. Maya menekan tombol `Minta Konfirmasi RS` atau `Koreksi Kode (Downcode)`. Tombol berdesain solid dengan sudut terkontrol 4px.
    - Muncul modal konfirmasi yang sudah otomatis memuat **Draf Surat Klarifikasi Resmi ke RS** lengkap dengan kutipan pasal Permenkes 3/2023 dan temuan diskrepansi faktual.
    - dr. Maya melengkapi catatan justifikasi verifikator dan menekan *"Konfirmasi Keputusan"*.
 5. **Langkah 5 — Penutupan Siklus & Rekonsiliasi Status:**
