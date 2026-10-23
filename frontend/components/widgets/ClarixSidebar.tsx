@@ -29,13 +29,7 @@ export function ClarixSidebar({
       href: "/claims/triage",
       icon: Activity,
       badge: pendingClaimsCount > 0 ? pendingClaimsCount : undefined,
-      match: (path: string) => path === "/claims/triage" || path === "/",
-    },
-    {
-      label: "Telaah Bukti (Dossier)",
-      href: "/claims/CLM-2026-089/dossier",
-      icon: FileText,
-      match: (path: string) => path.includes("/dossier"),
+      match: (path: string) => path === "/claims/triage" || path === "/" || path.includes("/dossier"),
     },
     {
       label: "Audit Trail & Arsip",
@@ -111,34 +105,47 @@ export function ClarixSidebar({
           {navItems.map((item) => {
             const isActive = item.match ? item.match(pathname) : pathname === item.href;
             const Icon = item.icon;
+            const isTriage = item.href === "/claims/triage";
+            const isInDossier = Boolean(pathname?.includes("/dossier"));
+            const currentClaimId = isInDossier ? pathname.split("/")[2] : null;
 
             return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  "flex items-center justify-between px-3 py-2 rounded-[4px] transition-colors text-xs group",
-                  isActive
-                    ? "bg-blue-50/80 text-blue-800 font-semibold"
-                    : "text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium"
-                )}
-              >
-                <div className="flex items-center gap-2.5 min-w-0">
-                  <Icon
-                    className={cn(
-                      "w-4 h-4 flex-shrink-0",
-                      isActive ? "text-blue-600" : "text-slate-400 group-hover:text-slate-600"
-                    )}
-                  />
-                  <span className="truncate">{item.label}</span>
-                </div>
+              <React.Fragment key={item.href}>
+                <Link
+                  href={item.href}
+                  className={cn(
+                    "flex items-center justify-between px-3 py-2 rounded-[4px] transition-colors text-xs group",
+                    isActive
+                      ? "bg-blue-50/80 text-blue-800 font-semibold"
+                      : "text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium"
+                  )}
+                >
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <Icon
+                      className={cn(
+                        "w-4 h-4 flex-shrink-0",
+                        isActive ? "text-blue-600" : "text-slate-400 group-hover:text-slate-600"
+                      )}
+                    />
+                    <span className="truncate">{item.label}</span>
+                  </div>
 
-                {item.badge !== undefined && (
-                  <span className="bg-rose-50 text-rose-700 border border-rose-200 text-[10.5px] font-semibold px-1.5 py-0.5 rounded-[4px] tabular-nums">
-                    {item.badge}
-                  </span>
+                  {item.badge !== undefined && (
+                    <span className="bg-rose-50 text-rose-700 border border-rose-200 text-[10.5px] font-semibold px-1.5 py-0.5 rounded-[4px] tabular-nums">
+                      {item.badge}
+                    </span>
+                  )}
+                </Link>
+
+                {isTriage && isInDossier && currentClaimId && (
+                  <div className="ml-5 pl-2.5 border-l-2 border-blue-400 my-1 py-0.5">
+                    <div className="text-[11px] font-semibold text-blue-700 flex items-center gap-1.5 truncate">
+                      <FileText className="w-3.5 h-3.5 text-blue-600 flex-shrink-0" />
+                      <span className="truncate tabular-nums">Ruang Telaah: {currentClaimId}</span>
+                    </div>
+                  </div>
                 )}
-              </Link>
+              </React.Fragment>
             );
           })}
         </nav>

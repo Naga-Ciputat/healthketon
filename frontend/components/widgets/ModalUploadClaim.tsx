@@ -279,8 +279,8 @@ export function ModalUploadClaim({
 
             const cleanParagraphs = content
               .split(/\r?\n\r?\n/)
-              .map((p) => p.trim())
-              .filter((p) => p.length > 0);
+              .map((p: string) => p.trim())
+              .filter((p: string) => p.length > 0);
 
             extractedDocuments.push({
               id: docId,

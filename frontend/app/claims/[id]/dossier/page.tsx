@@ -14,6 +14,8 @@ import { ClaimItem, CitationLocation, FindingItem, INITIAL_CLAIMS } from "@/lib/
 import { getStoredClaims, updateClaimStatus, addAuditLogEntry } from "@/lib/claimStore";
 import {
   ArrowLeft,
+  ChevronLeft,
+  ChevronRight,
   Building2,
   User,
   Stethoscope,
@@ -158,6 +160,10 @@ export default function DossierPage() {
     router.push("/claims/audit-trail");
   };
 
+  const currentIndex = claims.findIndex((c) => c.id.toLowerCase() === activeClaim.id.toLowerCase());
+  const prevClaim = currentIndex > 0 ? claims[currentIndex - 1] : null;
+  const nextClaim = currentIndex >= 0 && currentIndex < claims.length - 1 ? claims[currentIndex + 1] : null;
+
   return (
     <div className="flex flex-col h-full bg-slate-50/50">
       {/* Top Header */}
@@ -167,10 +173,11 @@ export default function DossierPage() {
             <button
               type="button"
               onClick={() => router.push("/claims/triage")}
-              className="p-1 rounded-[4px] hover:bg-slate-100 text-slate-500 hover:text-slate-800 transition-colors"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[4px] border border-slate-200 bg-white hover:bg-slate-100 text-slate-700 text-xs font-semibold transition-colors shadow-2xs mr-1"
               title="Kembali ke Antrean Triage"
             >
-              <ArrowLeft className="w-4 h-4" />
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>Antrean Triage</span>
             </button>
             <span>Dossier Telaah Bukti</span>
           </div>
@@ -182,6 +189,45 @@ export default function DossierPage() {
             <span className="text-[11px] font-semibold bg-emerald-50 text-emerald-800 px-2 py-0.5 rounded-[4px] border border-emerald-200">
               Layar 2 (Dual-Pane)
             </span>
+          </div>
+        }
+        rightActions={
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 border border-slate-200 bg-white rounded-[4px] px-2.5 py-1 text-xs shadow-2xs">
+              <span className="text-slate-400 text-[11px] font-medium">Beralih Klaim:</span>
+              <select
+                value={activeClaim.id}
+                onChange={(e) => router.push(`/claims/${e.target.value}/dossier`)}
+                className="bg-transparent font-semibold text-slate-800 text-xs focus:outline-none cursor-pointer tabular-nums"
+              >
+                {claims.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.id} — {c.hospitalName} ({c.riskLevel})
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="flex items-center gap-0.5">
+              <button
+                type="button"
+                disabled={!prevClaim}
+                onClick={() => prevClaim && router.push(`/claims/${prevClaim.id}/dossier`)}
+                className="p-1 rounded-[4px] border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 disabled:opacity-40 disabled:hover:bg-white transition-colors"
+                title={prevClaim ? `Klaim Sebelumnya: ${prevClaim.id}` : "Tidak ada klaim sebelumnya"}
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              <button
+                type="button"
+                disabled={!nextClaim}
+                onClick={() => nextClaim && router.push(`/claims/${nextClaim.id}/dossier`)}
+                className="p-1 rounded-[4px] border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 disabled:opacity-40 disabled:hover:bg-white transition-colors"
+                title={nextClaim ? `Klaim Berikutnya: ${nextClaim.id}` : "Tidak ada klaim berikutnya"}
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
           </div>
         }
       />
