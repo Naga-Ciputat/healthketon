@@ -5,6 +5,7 @@ import { TopHeader } from "@/components/widgets/TopHeader";
 import { ConfusionMatrixCard } from "@/components/widgets/ConfusionMatrixCard";
 import { ModalBenchmarkDetail } from "@/components/widgets/ModalBenchmarkDetail";
 import { INITIAL_BENCHMARK_RESULTS, BenchmarkCaseResult } from "@/lib/mockData";
+import { fetchBenchmarkFromBackend } from "@/lib/api";
 import {
   FlaskConical,
   Play,
@@ -26,7 +27,16 @@ export default function BenchmarkSuitePage() {
   const [progress, setProgress] = useState(100);
   const [currentEvalIndex, setCurrentEvalIndex] = useState<number | null>(null);
   const [isExported, setIsExported] = useState(false);
-  const [results] = useState<BenchmarkCaseResult[]>(INITIAL_BENCHMARK_RESULTS);
+  const [results, setResults] = useState<BenchmarkCaseResult[]>(INITIAL_BENCHMARK_RESULTS);
+
+  // Fetch live benchmark cases from backend
+  React.useEffect(() => {
+    fetchBenchmarkFromBackend().then((data) => {
+      if (data && data.cases && data.cases.length > 0) {
+        setResults(data.cases);
+      }
+    });
+  }, []);
 
   // Filters & Search
   const [selectedClassification, setSelectedClassification] = useState<string>("ALL");

@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { TopHeader } from "@/components/widgets/TopHeader";
 import { AuditLogStream, AuditLogItem } from "@/components/widgets/AuditLogStream";
 import { getStoredAuditLogs, resetStoreToDefault } from "@/lib/claimStore";
+import { fetchAuditLogsFromBackend } from "@/lib/api";
 import { ShieldCheck, Download, RotateCcw, Check, Banknote } from "lucide-react";
 
 export default function AuditTrailPage() {
@@ -11,7 +12,19 @@ export default function AuditTrailPage() {
   const [isExported, setIsExported] = useState(false);
 
   useEffect(() => {
+    // 1. Initial fast local load
     setLogs(getStoredAuditLogs());
+
+    // 2. Fetch live audit trail from PostgreSQL
+    fetchAuditLogsFromBackend().then((liveLogs) => {
+      if (liveLogs && liveLogs.length > 0) {
+        setLogs(liveLogs);
+        if (typeof window !== "undefined") {
+          localStorage.setItem("clarix_bpjs_audit_logs_v1", JSON.stringify(liveLogs));
+        }
+      }
+    });
+
     const handleUpdate = () => {
       setLogs(getStoredAuditLogs());
     };

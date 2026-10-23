@@ -90,7 +90,7 @@ export function saveClaims(claims: ClaimItem[]): void {
 }
 
 // Update a single claim status
-export function updateClaimStatus(claimId: string, newStatus: ClaimItem["status"]): void {
+export function updateClaimStatus(claimId: string, newStatus: ClaimItem["status"], notes?: string): void {
   const currentClaims = getStoredClaims();
   const updated = currentClaims.map((claim) => {
     if (claim.id.toLowerCase() === claimId.toLowerCase()) {
@@ -99,6 +99,13 @@ export function updateClaimStatus(claimId: string, newStatus: ClaimItem["status"
     return claim;
   });
   saveClaims(updated);
+
+  // Asynchronously sync with PostgreSQL backend
+  import("@/lib/api").then(({ updateClaimStatusInBackend }) => {
+    updateClaimStatusInBackend(claimId, newStatus, notes).catch((err) =>
+      console.warn("Syncing status to backend failed:", err)
+    );
+  });
 }
 
 // Add a new claim (from upload)
@@ -138,6 +145,13 @@ export function addAuditLogEntry(entry: AuditLogItem): void {
     const updated = [entry, ...currentLogs];
     localStorage.setItem(AUDIT_STORAGE_KEY, JSON.stringify(updated));
     window.dispatchEvent(new Event("clarix_audit_updated"));
+
+    // Asynchronously append to PostgreSQL backend
+    import("@/lib/api").then(({ appendAuditLogInBackend }) => {
+      appendAuditLogInBackend(entry).catch((err) =>
+        console.warn("Appending audit log to backend failed:", err)
+      );
+    });
   } catch (err) {
     console.error("Failed to add audit log entry:", err);
   }

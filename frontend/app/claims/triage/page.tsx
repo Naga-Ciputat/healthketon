@@ -8,16 +8,27 @@ import { ClaimFilterBar } from "@/components/widgets/ClaimFilterBar";
 import { ClaimTable } from "@/components/widgets/ClaimTable";
 import { ModalUploadClaim } from "@/components/widgets/ModalUploadClaim";
 import { INITIAL_CLAIMS, ClaimItem } from "@/lib/mockData";
-import { getStoredClaims, prependClaim } from "@/lib/claimStore";
+import { getStoredClaims, prependClaim, saveClaims } from "@/lib/claimStore";
+import { fetchClaimsFromBackend } from "@/lib/api";
 import { UploadCloud, Layers, CheckCircle2, ArrowRight, X } from "lucide-react";
 
 export default function TriagePage() {
   const router = useRouter();
   const [claims, setClaims] = useState<ClaimItem[]>(INITIAL_CLAIMS);
 
-  // Synchronize with client store
+  // Synchronize with client store & fetch live from PostgreSQL backend
   useEffect(() => {
+    // 1. Initial fast load from local store
     setClaims(getStoredClaims());
+
+    // 2. Fetch live data from FastAPI / PostgreSQL backend
+    fetchClaimsFromBackend().then((liveClaims) => {
+      if (liveClaims && liveClaims.length > 0) {
+        setClaims(liveClaims);
+        saveClaims(liveClaims);
+      }
+    });
+
     const handleUpdate = () => {
       setClaims(getStoredClaims());
     };

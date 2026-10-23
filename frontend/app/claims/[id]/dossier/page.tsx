@@ -12,7 +12,8 @@ import { DiffViewerModal } from "@/components/widgets/DiffViewerModal";
 import { ClaimSwitcher } from "@/components/widgets/ClaimSwitcher";
 import { AuditLogItem } from "@/components/widgets/AuditLogStream";
 import { ClaimItem, CitationLocation, FindingItem, INITIAL_CLAIMS } from "@/lib/mockData";
-import { getStoredClaims, updateClaimStatus, addAuditLogEntry } from "@/lib/claimStore";
+import { getStoredClaims, updateClaimStatus, addAuditLogEntry, saveClaims } from "@/lib/claimStore";
+import { fetchClaimDetailFromBackend } from "@/lib/api";
 import {
   ArrowLeft,
   ChevronLeft,
@@ -35,9 +36,29 @@ export default function DossierPage() {
 
   const [claims, setClaims] = useState<ClaimItem[]>(INITIAL_CLAIMS);
 
-  // Synchronize with client store
+  // Synchronize with client store & fetch live from PostgreSQL
   useEffect(() => {
+    // 1. Initial fast local load
     setClaims(getStoredClaims());
+
+    // 2. Fetch specific live dossier from backend
+    fetchClaimDetailFromBackend(claimId).then((liveDetail) => {
+      if (liveDetail) {
+        setClaims((prev) => {
+          const idx = prev.findIndex((c) => c.id.toLowerCase() === liveDetail.id.toLowerCase());
+          let next;
+          if (idx >= 0) {
+            next = [...prev];
+            next[idx] = liveDetail;
+          } else {
+            next = [liveDetail, ...prev];
+          }
+          saveClaims(next);
+          return next;
+        });
+      }
+    });
+
     const handleUpdate = () => {
       setClaims(getStoredClaims());
     };
@@ -45,7 +66,7 @@ export default function DossierPage() {
     return () => {
       window.removeEventListener("clarix_claims_updated", handleUpdate);
     };
-  }, []);
+  }, [claimId]);
 
   // Active Claim
   const activeClaim = useMemo(() => {
