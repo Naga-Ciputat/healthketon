@@ -170,28 +170,19 @@ export default function DossierPage() {
       {/* Top Header */}
       <TopHeader
         title={
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2.5">
             <button
               type="button"
               onClick={() => router.push("/claims/triage")}
-              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[4px] border border-slate-200 bg-white hover:bg-slate-100 text-slate-700 text-xs font-semibold transition-colors shadow-2xs mr-1"
+              className="p-1.5 rounded-[4px] border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-900 transition-colors shadow-2xs"
               title="Kembali ke Antrean Triage"
             >
-              <ArrowLeft className="w-3.5 h-3.5" />
-              <span>Antrean Triage</span>
+              <ArrowLeft className="w-4 h-4" />
             </button>
-            <span>Dossier Telaah Bukti</span>
-          </div>
-        }
-        subtitle={activeClaim.id}
-        badge={
-          <div className="flex items-center gap-2">
             {getStatusBadge(activeClaim.status)}
-            <span className="text-[11px] font-semibold bg-emerald-50 text-emerald-800 px-2 py-0.5 rounded-[4px] border border-emerald-200">
-              Layar 2 (Dual-Pane)
-            </span>
           </div>
         }
+        showBranchTag={false}
         rightActions={
           <div className="flex items-center gap-2">
             <ClaimSwitcher

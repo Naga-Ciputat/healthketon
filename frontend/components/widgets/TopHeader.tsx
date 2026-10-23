@@ -11,6 +11,7 @@ export interface TopHeaderProps {
   showHelp?: boolean;
   showShare?: boolean;
   showAskAttio?: boolean;
+  showBranchTag?: boolean;
   rightActions?: React.ReactNode;
   className?: string;
 }
@@ -20,6 +21,7 @@ export function TopHeader({
   subtitle,
   badge,
   showHelp = true,
+  showBranchTag = true,
   rightActions,
   className,
 }: TopHeaderProps) {
@@ -66,10 +68,12 @@ export function TopHeader({
           </button>
         )}
 
-        <div className="flex items-center gap-1.5 px-2 py-1 text-xs text-slate-500 border border-slate-200 rounded-[4px] bg-slate-50">
-          <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-          <span className="font-medium text-slate-700">KCU JKN</span>
-        </div>
+        {showBranchTag && (
+          <div className="flex items-center gap-1.5 px-2 py-1 text-xs text-slate-500 border border-slate-200 rounded-[4px] bg-slate-50">
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+            <span className="font-medium text-slate-700">KCU JKN</span>
+          </div>
+        )}
       </div>
     </header>
   );
