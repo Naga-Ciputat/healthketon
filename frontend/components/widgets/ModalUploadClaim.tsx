@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useRef } from "react";
-import JSZip from "jszip";
 import {
   X,
   UploadCloud,
@@ -207,8 +206,10 @@ export function ModalUploadClaim({
           return;
         }
       } else if (isZip) {
+        const JSZipModule = await import("jszip");
+        const JSZip = JSZipModule.default || JSZipModule;
         const arrayBuffer = await file.arrayBuffer();
-        let zip: JSZip;
+        let zip: any;
         try {
           zip = await JSZip.loadAsync(arrayBuffer);
         } catch {
