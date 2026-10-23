@@ -22,28 +22,28 @@ export function ModalBenchmarkDetail({
     switch (label) {
       case "UPCODING_SEPSIS":
         return {
-          model: "Google Gemini 2.0 Flash",
-          purpose: "Clinical Reasoning & Anomaly Detection",
-          temp: "0.1",
+          model: "Modul Analisis Klinis & Penalaran Rekam Medis",
+          purpose: "Validasi Kriteria Klinis Diagnosis & Penanda Sepsis",
+          temp: "Standar Regulasi Baku",
         };
       case "INFLATED_STENT":
       case "UNBUNDLING_PROC":
         return {
-          model: "Llama 3.3 70B Versatile (Groq LPU)",
-          purpose: "Surgical Report Alkes Extraction & Tariff Delta",
-          temp: "0.0",
+          model: "Modul Ekstraksi Laporan Operasi & Tarif",
+          purpose: "Verifikasi Penggunaan Alkes & Selisih Tarif INA-CBG",
+          temp: "Standar Regulasi Baku",
         };
       case "NOTE_CLONING":
         return {
-          model: "NVIDIA NIM (nv-embedqa-e5-v5) + pgvector",
-          purpose: "Cosine Similarity Vector Embedding (>85%)",
-          temp: "0.0",
+          model: "Modul Deteksi Duplikasi Catatan Medis (Note Cloning)",
+          purpose: "Pemeriksaan Kesamaan Teks Catatan Medis (>85%)",
+          temp: "Standar Regulasi Baku",
         };
       default:
         return {
-          model: "Deterministic Fast-Filter Engine",
-          purpose: "Rule-Based Demographic & Permenkes Boundary Filter",
-          temp: "N/A",
+          model: "Modul Penyaringan Batas Regulasi Permenkes",
+          purpose: "Verifikasi Administratif & Batas Manfaat JKN",
+          temp: "Standar Regulasi Baku",
         };
     }
   };
@@ -62,7 +62,7 @@ export function ModalBenchmarkDetail({
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="text-xs font-semibold text-slate-900">
-                  Rincian Telemetri Uji Kasus
+                  Rincian Parameter Telaah Kasus
                 </h3>
                 <span className="text-slate-300">·</span>
                 <span className="text-xs font-bold text-slate-800 tabular-nums">
@@ -85,16 +85,16 @@ export function ModalBenchmarkDetail({
 
         {/* Content Body */}
         <div className="p-5 overflow-y-auto space-y-4 flex-1 text-xs">
-          {/* Comparison Cards: Ground Truth vs Model Prediction */}
+          {/* Comparison Cards: Verifier Benchmark vs System Detection */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {/* Ground Truth */}
             <div className="p-3 rounded-[4px] border border-slate-200 bg-slate-50/50 space-y-1.5">
               <span className="text-[11px] font-semibold text-slate-500 block uppercase tracking-wide">
-                Ground Truth (Anotasi Ahli)
+                Standar Telaah Verifikator Ahli
               </span>
               <div className="flex items-center gap-2">
                 <span className="font-bold text-slate-900 text-sm">
-                  {item.expectedAnomaly ? "Anomali Terkonfirmasi" : "Klaim Wajar (Clean)"}
+                  {item.expectedAnomaly ? "Anomali Terkonfirmasi" : "Klaim Wajar (Sesuai Regulasi)"}
                 </span>
               </div>
               <p className="text-[11.5px] text-slate-600">
@@ -105,11 +105,11 @@ export function ModalBenchmarkDetail({
             {/* Model Detection */}
             <div className="p-3 rounded-[4px] border border-slate-200 bg-slate-50/50 space-y-1.5">
               <span className="text-[11px] font-semibold text-slate-500 block uppercase tracking-wide">
-                Hasil Prediksi Sistem
+                Hasil Verifikasi Sistem
               </span>
               <div className="flex items-center gap-2">
                 <span className="font-bold text-slate-900 text-sm">
-                  {item.detectedAnomaly ? "Anomali Terdeteksi" : "Lolos Jalur Cepat (Clean)"}
+                  {item.detectedAnomaly ? "Anomali Terdeteksi" : "Lolos Jalur Cepat (Wajar)"}
                 </span>
               </div>
               <p className="text-[11.5px] text-slate-600">
@@ -139,35 +139,35 @@ export function ModalBenchmarkDetail({
               </span>
             </div>
             <span className="text-[11px] font-semibold tabular-nums">
-              Verbatim Grounded: 100%
+              Kutipan Berkas Asli: 100%
             </span>
           </div>
 
-          {/* Engine & Pipeline Telemetry */}
+          {/* Verification Module Parameters */}
           <div className="border border-slate-200 rounded-[4px] p-3.5 space-y-2.5 bg-slate-50/30">
             <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-800 pb-1.5 border-b border-slate-200">
               <Cpu className="w-3.5 h-3.5 text-blue-600" />
-              <span>Telemetri Pipeline Evaluasi AI</span>
+              <span>Parameter Modul Evaluasi Sistem</span>
             </div>
 
             <div className="grid grid-cols-2 gap-3 text-xs">
               <div>
-                <span className="text-slate-500 block text-[11px]">Model Engine:</span>
+                <span className="text-slate-500 block text-[11px]">Modul Verifikasi:</span>
                 <span className="font-medium text-slate-900">{engine.model}</span>
               </div>
               <div>
-                <span className="text-slate-500 block text-[11px]">Waktu Inferensi:</span>
+                <span className="text-slate-500 block text-[11px]">Kecepatan Pemrosesan:</span>
                 <span className="font-medium text-slate-900 tabular-nums">
                   {item.processingTimeMs} ms ({(item.processingTimeMs / 1000).toFixed(2)} detik)
                 </span>
               </div>
               <div>
-                <span className="text-slate-500 block text-[11px]">Fungsi Pipeline:</span>
+                <span className="text-slate-500 block text-[11px]">Cakupan Pemeriksaan:</span>
                 <span className="font-medium text-slate-900">{engine.purpose}</span>
               </div>
               <div>
-                <span className="text-slate-500 block text-[11px]">Temperatur / Sampling:</span>
-                <span className="font-medium text-slate-900 tabular-nums">{engine.temp} (Deterministik)</span>
+                <span className="text-slate-500 block text-[11px]">Karakteristik Telaah:</span>
+                <span className="font-medium text-slate-900 tabular-nums">{engine.temp}</span>
               </div>
             </div>
           </div>
@@ -175,10 +175,10 @@ export function ModalBenchmarkDetail({
           {/* Grounding & Evidence Note */}
           <div className="p-3 bg-slate-50 border border-slate-200 rounded-[4px] text-[11.5px] text-slate-600 space-y-1">
             <span className="font-semibold text-slate-800 block">
-              Jaminan Anti-Halusinasi (100% Verbatim Grounding):
+              Validasi Kutipan Asli Berkas (100% Verbatim):
             </span>
             <p className="leading-relaxed">
-              Seluruh kutipan teks dalam temuan ini diverifikasi dengan algoritma pencarian substring eksak pada dokumen rekam medis asli faskes. Temuan yang tidak memiliki koordinat dokumen 100% identik ditolak secara otomatis oleh sistem sebelum disajikan ke verifikator.
+              Seluruh kutipan teks dalam telaah ini diverifikasi secara langsung pada berkas rekam medis asli faskes. Temuan yang tidak memiliki kesesuaian dokumen 100% identik ditolak secara otomatis oleh sistem sebelum disajikan ke verifikator.
             </p>
           </div>
         </div>

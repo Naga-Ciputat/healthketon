@@ -205,7 +205,7 @@ export default function BenchmarkSuitePage() {
               <div className="flex items-center gap-2">
                 <Activity className="w-4 h-4 text-blue-600" />
                 <span className="font-semibold text-slate-900">
-                  Pipeline Inferensi Sedang Berjalan:
+                  Pengujian Validasi Kasus Sedang Berjalan:
                 </span>
                 {currentEvalIndex !== null && results[currentEvalIndex] && (
                   <span className="text-slate-600 truncate">
@@ -274,7 +274,7 @@ export default function BenchmarkSuitePage() {
               {verbatimRate}%
             </div>
             <span className="text-[11px] text-slate-500 block">
-              0% halusinasi (Exact match)
+              100% kutipan teks rekam medis asli
             </span>
           </div>
 
@@ -290,7 +290,7 @@ export default function BenchmarkSuitePage() {
               {(avgLatencyMs / 1000).toFixed(2)}s
             </div>
             <span className="text-[11px] text-slate-500 block">
-              Sub-detik via Groq &amp; Flash
+              Pemrosesan otomatis instan
             </span>
           </div>
         </div>
@@ -314,7 +314,7 @@ export default function BenchmarkSuitePage() {
                   Daftar Kasus Berlabel ({filteredResults.length} dari {results.length} Kasus)
                 </h4>
                 <p className="text-[11px] text-slate-500">
-                  Uji silang komparatif antara ground truth ahli vs inferensi sistem
+                  Uji silang komparatif antara standar telaah ahli vs hasil verifikasi sistem
                 </p>
               </div>
             </div>
@@ -364,7 +364,7 @@ export default function BenchmarkSuitePage() {
                 <tr>
                   <th className="px-3.5 py-2">ID Kasus</th>
                   <th className="px-3.5 py-2">Faskes / RS</th>
-                  <th className="px-3.5 py-2">Label Ground Truth</th>
+                  <th className="px-3.5 py-2">Standar Baku Verifikator</th>
                   <th className="px-3.5 py-2">Hasil Deteksi Sistem</th>
                   <th className="px-3.5 py-2 text-center">Grounding</th>
                   <th className="px-3.5 py-2 text-right">Latensi</th>

@@ -65,33 +65,33 @@ export function TariffDeltaCalculator({
 
   const breakdowns: TariffItemBreakdown[] = claim
     ? claim.findings
-        .filter((f) => f.deltaRupiah && f.deltaRupiah > 0)
-        .map((f) => ({
-          label: f.title,
-          category: f.type === "INFLATED_ALKES" ? "INFLATED_ALKES" : "UPCODING",
-          originalAmount: f.deltaRupiah || 0,
-          adjustedAmount: 0,
-          deltaRupiah: f.deltaRupiah || 0,
-          note: f.regulationReference || "Permenkes RI No. 3/2023",
-        }))
+      .filter((f) => f.deltaRupiah && f.deltaRupiah > 0)
+      .map((f) => ({
+        label: f.title,
+        category: f.type === "INFLATED_ALKES" ? "INFLATED_ALKES" : "UPCODING",
+        originalAmount: f.deltaRupiah || 0,
+        adjustedAmount: 0,
+        deltaRupiah: f.deltaRupiah || 0,
+        note: f.regulationReference || "Permenkes RI No. 3/2023",
+      }))
     : propBreakdowns || [
-        {
-          label: "Severity Downcode (A41.9 Sepsis tidak memenuhi kriteria klinis/lab)",
-          category: "UPCODING",
-          originalAmount: 35000000,
-          adjustedAmount: 20100000,
-          deltaRupiah: 14900000,
-          note: "Permenkes 3/2023 Bab VII Pedoman Tarif INA-CBG",
-        },
-        {
-          label: "Alkes Stent DES (Kuitansi 2 unit vs Laporan Operasi pasang 1 unit)",
-          category: "INFLATED_ALKES",
-          originalAmount: 10000000,
-          adjustedAmount: 0,
-          deltaRupiah: 10000000,
-          note: "Lampiran Berita Acara Rekonsiliasi Tindakan Bedah",
-        },
-      ];
+      {
+        label: "Severity Downcode (A41.9 Sepsis tidak memenuhi kriteria klinis/lab)",
+        category: "UPCODING",
+        originalAmount: 35000000,
+        adjustedAmount: 20100000,
+        deltaRupiah: 14900000,
+        note: "Permenkes 3/2023 Bab VII Pedoman Tarif INA-CBG",
+      },
+      {
+        label: "Alkes Stent DES (Kuitansi 2 unit vs Laporan Operasi pasang 1 unit)",
+        category: "INFLATED_ALKES",
+        originalAmount: 10000000,
+        adjustedAmount: 0,
+        deltaRupiah: 10000000,
+        note: "Lampiran Berita Acara Rekonsiliasi Tindakan Bedah",
+      },
+    ];
 
   const renderCategoryIcon = (cat: TariffItemBreakdown["category"]) => {
     switch (cat) {
@@ -173,7 +173,7 @@ export function TariffDeltaCalculator({
             Potensi Koreksi Biaya (Efisiensi Beban JKN)
           </span>
           <p className="text-[11px] text-emerald-700 mt-0.5">
-            Kalkulasi deterministik berlandaskan bukti resume medis objektif
+            Kalkulasi selisih berlandaskan bukti rekam medis objektif
           </p>
         </div>
         <div className="text-right">
@@ -191,18 +191,16 @@ export function TariffDeltaCalculator({
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-semibold text-slate-800 block">
-              Daftar Bukti Temuan yang Mendasari Penyesuaian Paket:
+              Temuan Anomali Bukti &amp; Estimasi Nilai Discrepancy Faskes:
             </span>
             <span className="text-[10.5px] text-slate-500 font-normal">
-              Alat Bukti Telaah Substantif
+              Bukti Fisik Overbilling
             </span>
           </div>
 
           <div className="space-y-1.5">
             {breakdowns.map((item, idx) => {
-              const isPackageCorrection = item.category === "UPCODING";
-              const isAlkes = item.category === "INFLATED_ALKES";
-
+              const isPackageCorrection = item.deltaRupiah === totalDelta;
               return (
                 <div
                   key={idx}
@@ -219,8 +217,8 @@ export function TariffDeltaCalculator({
                           item.category === "INFLATED_ALKES"
                             ? "bg-amber-50 text-amber-800 border-amber-200"
                             : item.category === "UPCODING"
-                            ? "bg-rose-50 text-rose-800 border-rose-200"
-                            : "bg-blue-50 text-blue-800 border-blue-200"
+                              ? "bg-rose-50 text-rose-800 border-rose-200"
+                              : "bg-blue-50 text-blue-800 border-blue-200"
                         )}
                       >
                         {renderCategoryIcon(item.category)}
@@ -232,42 +230,18 @@ export function TariffDeltaCalculator({
                       {!isPackageCorrection && (
                         <>
                           <span>•</span>
-                          <span className="text-amber-800 font-medium">Tercakup dalam tarif paket INA-CBG</span>
+                          <span className="text-amber-800 font-medium">Tercakup dalam rekonsiliasi paket INA-CBG</span>
                         </>
                       )}
                     </div>
                   </div>
-
-                  {/* Differentiated Right Metric: Standalone Rupiah only for Package Downcode */}
                   <div className="text-right flex-shrink-0">
-                    {isPackageCorrection ? (
-                      <div>
-                        <span className="font-bold text-sm text-emerald-900 tabular-nums block">
-                          {formatRupiah(totalDelta)}
-                        </span>
-                        <span className="text-[9.5px] text-emerald-700 font-medium block">
-                          Koreksi Tarif Paket
-                        </span>
-                      </div>
-                    ) : isAlkes ? (
-                      <div>
-                        <span className="font-semibold text-xs text-amber-900 tabular-nums block bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded-[4px]">
-                          Selisih Fisik: +1 Unit
-                        </span>
-                        <span className="text-[10px] text-slate-500 block mt-0.5">
-                          Kuitansi RS: {formatRupiah(item.deltaRupiah)}
-                        </span>
-                      </div>
-                    ) : (
-                      <div>
-                        <span className="font-semibold text-xs text-blue-900 tabular-nums block bg-blue-50 border border-blue-200 px-1.5 py-0.5 rounded-[4px]">
-                          Koding Terpisah
-                        </span>
-                        <span className="text-[10px] text-slate-500 block mt-0.5">
-                          Kuitansi RS: {formatRupiah(item.deltaRupiah)}
-                        </span>
-                      </div>
-                    )}
+                    <span className="font-semibold text-slate-900 tabular-nums block">
+                      {formatRupiah(item.deltaRupiah)}
+                    </span>
+                    <span className="text-[9.5px] text-slate-500 block">
+                      {isPackageCorrection ? "Koreksi Tarif Paket" : "Discrepancy Kuitansi RS"}
+                    </span>
                   </div>
                 </div>
               );
@@ -278,7 +252,7 @@ export function TariffDeltaCalculator({
           <div className="p-2.5 bg-slate-50 border border-slate-200 rounded-[4px] text-[10.5px] text-slate-600 flex items-start gap-2 leading-relaxed">
             <Info className="w-3.5 h-3.5 text-slate-500 flex-shrink-0 mt-0.5" />
             <span>
-              <strong>Kaidah Pembayaran Prospektif (INA-CBG):</strong> Pembayaran klaim BPJS dilakukan per paket utuh episode rawat. Nilai <strong>Rp 24.900.000</strong> adalah satu-satunya efisiensi dana yang direalisasikan dari penurunan kode paket. Temuan selisih alkes kuitansi &amp; unbundling berfungsi sebagai alat bukti fisik pendukung telaah substantif verifikator, bukan biaya terpisah di luar paket.
+              <strong>Kaidah Pembayaran Prospektif (INA-CBG):</strong> Klaim dibayarkan berbasis satu paket utuh per episode rawat. Nilai selisih kuitansi alkes &amp; unbundling di atas adalah bukti fisik temuan diskrepansi yang mendasari penyesuaian tingkat keparahan (*downcoding*), bukan tagihan tambahan terpisah di luar paket.
             </span>
           </div>
         </div>

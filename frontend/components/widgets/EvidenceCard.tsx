@@ -99,7 +99,7 @@ export function EvidenceCard({
 
             {finding.deltaRupiah && (
               <span className="text-[11px] font-semibold text-rose-700 bg-rose-50 px-1.5 py-0.5 rounded-[4px] border border-rose-200 tabular-nums">
-                -{formatRupiah(finding.deltaRupiah)}
+                Selisih: {formatRupiah(finding.deltaRupiah)}
               </span>
             )}
           </div>
@@ -138,7 +138,7 @@ export function EvidenceCard({
             <div className="bg-rose-50 p-1.5 rounded-[4px] border border-rose-200 shadow-2xs">
               <span className="text-rose-600 block text-[10px]">Selisih Tagihan</span>
               <span className="font-semibold text-rose-700 tabular-nums">
-                -Rp 10.000.000
+                Rp 10.000.000
               </span>
             </div>
           </div>

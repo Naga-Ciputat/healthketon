@@ -198,7 +198,7 @@ export const INITIAL_CLAIMS: ClaimItem[] = [
         id: "FND-03",
         type: "NOTE_CLONING",
         title: "Peringatan Duplikasi Catatan Medis (94% Match Antar-Pasien)",
-        badgeLabel: "Rekam Medis Terindikasi Cloning",
+        badgeLabel: "Duplikasi Catatan Medis",
         severity: "warning",
         description:
           "Teks riwayat penyakit dan catatan perkembangan SOAP pada resume medis memiliki kemiripan semantik 94% dengan Pasien #CLM-2026-077 yang dirawat 2 hari sebelumnya oleh DPJP yang sama, mengindikasikan copy-paste narasi tanpa pemeriksaan individual yang komprehensif.",
@@ -226,7 +226,7 @@ export const INITIAL_CLAIMS: ClaimItem[] = [
         id: "FND-04",
         type: "RULE_ANOMALY",
         title: "Aturan Kodifikasi INA-CBG: Batas Pemecahan Paket Angiografi",
-        badgeLabel: "Rule Engine INA-CBG",
+        badgeLabel: "Kaidah Koding INA-CBG",
         severity: "info",
         description:
           "Tindakan diagnostik arteriografi koroner (88.57) yang ditagihkan telah masuk dalam paket pembiayaan prosedur kateterisasi terapeutik utama (00.66) dan dilarang ditagihkan terpisah sesuai klausul unbundling INA-CBG.",

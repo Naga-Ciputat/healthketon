@@ -80,7 +80,7 @@ export function OmniboxInput({
             <button
               type="button"
               className="text-gray-400 hover:text-gray-600 p-1 rounded hover:bg-gray-100 transition-colors"
-              title="Model Information"
+              title="Informasi Modul Verifikasi"
             >
               <Info className="w-3.5 h-3.5" />
             </button>

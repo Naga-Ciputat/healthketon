@@ -137,7 +137,7 @@ export function ClaimFilterBar({
               onChange={(e) => onSortByChange(e.target.value)}
               className="appearance-none pl-7 pr-7 py-1.5 bg-white border border-slate-200 rounded-[4px] text-xs font-medium text-slate-700 hover:border-slate-300 focus:outline-none focus:ring-1 focus:ring-blue-600 cursor-pointer shadow-2xs"
             >
-              <option value="priority">Urut: Prioritas Risiko AI</option>
+              <option value="priority">Urut: Prioritas Risiko Verifikasi</option>
               <option value="delta">Urut: Selisih Tarif Terbesar</option>
               <option value="tariff">Urut: Nilai Tagihan Terbesar</option>
               <option value="date">Urut: Tanggal Masuk Pasien</option>

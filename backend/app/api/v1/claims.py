@@ -199,11 +199,14 @@ async def get_claim_detail(claim_id: str):
         }
         mapped_doc_id = doc_map.get(f["source_document_id"], "resumeMedis")
 
+        raw_badge = f["badge_label"] or ""
+        sanitized_badge = "Kaidah Koding INA-CBG" if "rule engine" in raw_badge.lower() else raw_badge
+
         findings.append({
             "id": f["id"],
             "type": f["finding_type"],
             "title": f["title"],
-            "badgeLabel": f["badge_label"],
+            "badgeLabel": sanitized_badge,
             "severity": "danger" if f["severity"] == "HIGH" else ("warning" if f["severity"] == "MEDIUM" else "info"),
             "description": f["description"],
             "citation": {

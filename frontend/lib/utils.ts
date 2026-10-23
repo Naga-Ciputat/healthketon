@@ -17,7 +17,8 @@ export function formatAnomalyCategory(category: string): string {
     case "NOTE_CLONING":
       return "Duplikasi Catatan Medis";
     case "RULE_ANOMALY":
-      return "Ketidaksesuaian Aturan Klinis";
+    case "RULE_ENGINE":
+      return "Kaidah Koding INA-CBG";
     case "UNBUNDLING":
     case "UNBUNDLING_PROC":
       return "Pemecahan Prosedur (Unbundling)";
@@ -36,11 +37,11 @@ export function formatBenchmarkLabel(label: string): string {
     case "INFLATED_STENT":
       return "Penggelembungan Stent Jantung";
     case "NOTE_CLONING":
-      return "Duplikasi Catatan Medis (Cloning)";
+      return "Duplikasi Catatan Medis";
     case "UNBUNDLING_PROC":
       return "Pemecahan Prosedur (Unbundling)";
     case "CLEAN_CLAIM":
-      return "Klaim Wajar (Clean Claim)";
+      return "Klaim Wajar (Sesuai Regulasi)";
     default:
       return label.replace(/_/g, " ");
   }

@@ -74,15 +74,15 @@ export function ConfusionMatrixCard({
         {/* Table Structure */}
         <div className="border border-slate-200 rounded-[4px] overflow-hidden text-xs">
           <div className="grid grid-cols-3 bg-slate-50/80 border-b border-slate-200 text-slate-600 font-semibold text-[11px] text-center py-2">
-            <div>Aktual \ Prediksi</div>
-            <div>Prediksi Anomali</div>
-            <div>Prediksi Wajar</div>
+            <div>Standar Baku \ Hasil Verifikasi</div>
+            <div>Terdeteksi Anomali</div>
+            <div>Terdeteksi Wajar</div>
           </div>
 
-          {/* Row 1: Actual Positive (Anomaly) */}
+          {/* Row 1: Standard Positive (Anomaly) */}
           <div className="grid grid-cols-3 border-b border-slate-200 divide-x divide-slate-200">
             <div className="p-2.5 bg-slate-50/50 flex flex-col justify-center font-semibold text-slate-700 text-[11px]">
-              <span>Aktual: Anomali</span>
+              <span>Standar: Anomali</span>
               <span className="text-[10px] text-slate-400 font-normal">({truePositives + falseNegatives} Kasus)</span>
             </div>
             {/* TP */}
@@ -107,10 +107,10 @@ export function ConfusionMatrixCard({
             </div>
           </div>
 
-          {/* Row 2: Actual Negative (Clean) */}
+          {/* Row 2: Standard Negative (Clean) */}
           <div className="grid grid-cols-3 divide-x divide-slate-200">
             <div className="p-2.5 bg-slate-50/50 flex flex-col justify-center font-semibold text-slate-700 text-[11px]">
-              <span>Aktual: Wajar</span>
+              <span>Standar: Wajar</span>
               <span className="text-[10px] text-slate-400 font-normal">({falsePositives + trueNegatives} Kasus)</span>
             </div>
             {/* FP */}
@@ -121,7 +121,7 @@ export function ConfusionMatrixCard({
               <span className="text-[10px] font-semibold text-amber-700">
                 False Positive (FP)
               </span>
-              <span className="text-[10px] text-slate-500">Klaim Wajar Dituduh</span>
+              <span className="text-[10px] text-slate-500">Klaim Wajar Tertandai</span>
             </div>
             {/* TN */}
             <div className="p-3 bg-blue-50/40 hover:bg-blue-50 transition-colors flex flex-col items-center justify-center text-center">
@@ -139,7 +139,7 @@ export function ConfusionMatrixCard({
         {/* Statistical Summary Column */}
         <div className="flex flex-col justify-between space-y-2 border border-slate-200 rounded-[4px] p-3 bg-slate-50/30">
           <div className="text-[11px] font-semibold text-slate-800 pb-1 border-b border-slate-200 flex items-center justify-between">
-            <span>Metrik Diagnostik Model</span>
+            <span>Metrik Evaluasi Verifikasi</span>
             <span className="text-[10px] font-normal text-slate-500">Formula Mediko-Legal</span>
           </div>
 
@@ -172,7 +172,7 @@ export function ConfusionMatrixCard({
 
           <div className="p-2 bg-white border border-slate-200 rounded-[4px] text-[10.5px] text-slate-600 flex items-center gap-1.5">
             <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
-            <span>Kinerja model melampaui batas ambang kelayakan implementasi klinis BPJS.</span>
+            <span>Akurasi sistem verifikasi melampaui batas ambang kendali mutu & biaya BPJS.</span>
           </div>
         </div>
       </div>

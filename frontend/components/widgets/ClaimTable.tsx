@@ -329,7 +329,7 @@ export function ClaimTable({
                   <td className="py-2.5 px-3.5 text-right">
                     {claim.deltaTariff > 0 ? (
                       <span className="font-semibold text-rose-700 tabular-nums">
-                        -{formatRupiah(claim.deltaTariff)}
+                        {formatRupiah(claim.deltaTariff)}
                       </span>
                     ) : (
                       <span className="text-slate-400 tabular-nums">Rp 0</span>
