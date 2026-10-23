@@ -9,6 +9,7 @@ import { SmartDocumentViewer } from "@/components/widgets/SmartDocumentViewer";
 import { DossierActionBar, ActionType } from "@/components/widgets/DossierActionBar";
 import { ModalDisputeLetter } from "@/components/widgets/ModalDisputeLetter";
 import { DiffViewerModal } from "@/components/widgets/DiffViewerModal";
+import { ClaimSwitcher } from "@/components/widgets/ClaimSwitcher";
 import { AuditLogItem } from "@/components/widgets/AuditLogStream";
 import { ClaimItem, CitationLocation, FindingItem, INITIAL_CLAIMS } from "@/lib/mockData";
 import { getStoredClaims, updateClaimStatus, addAuditLogEntry } from "@/lib/claimStore";
@@ -193,20 +194,11 @@ export default function DossierPage() {
         }
         rightActions={
           <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1.5 border border-slate-200 bg-white rounded-[4px] px-2.5 py-1 text-xs shadow-2xs">
-              <span className="text-slate-400 text-[11px] font-medium">Beralih Klaim:</span>
-              <select
-                value={activeClaim.id}
-                onChange={(e) => router.push(`/claims/${e.target.value}/dossier`)}
-                className="bg-transparent font-semibold text-slate-800 text-xs focus:outline-none cursor-pointer tabular-nums"
-              >
-                {claims.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.id} — {c.hospitalName} ({c.riskLevel})
-                  </option>
-                ))}
-              </select>
-            </div>
+            <ClaimSwitcher
+              claims={claims}
+              activeClaim={activeClaim}
+              onSelectClaim={(id) => router.push(`/claims/${id}/dossier`)}
+            />
 
             <div className="flex items-center gap-0.5">
               <button
