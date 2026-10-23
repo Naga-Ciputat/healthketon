@@ -90,9 +90,9 @@ graph TD
   4. **1-Click Verbatim Highlight:**
      - Mengklik tombol kutipan di kartu bukti memicu *smooth auto-scroll* ke posisi teks dokumen di pane kanan dan menyorot teks dengan penanda statis amber lembut (`bg-amber-100/80` bergaris batas 1px netral, **tanpa animasi berdenyut / strictly no pulse animation**).
 - **Kriteria Lolos (DoD):**
-  - [ ] Dual-Pane terpasang ergonomis dan responsif.
-  - [ ] Interaksi 1-klik kutipan bukti berhasil menggulir dan menyorot teks pada dokumen yang tepat.
-  - [ ] Lolos verifikasi anti-slop visual.
+  - [x] Dual-Pane terpasang ergonomis dan responsif.
+  - [x] Interaksi 1-klik kutipan bukti berhasil menggulir dan menyorot teks pada dokumen yang tepat.
+  - [x] Lolos verifikasi anti-slop visual.
 
 ---
 
@@ -138,6 +138,6 @@ graph TD
 |---|---|---|---|
 | **Increment 1** | Shell Navigasi, Design System & Kontrak Mock Data | `/`, Shell Global, `/types/` | `COMPLETED` |
 | **Increment 2** | Layar 1: Triage Dashboard & Modal Upload | `/claims/triage` | `COMPLETED` |
-| **Increment 3** | Layar 2: Dual-Pane Dossier & Document Viewer | `/claims/:id/dossier` | `READY TO START` |
-| **Increment 4** | Action Bar, Dispute Drafter & Layar 3: Audit Trail | `/claims/audit-trail` | `PENDING` |
+| **Increment 3** | Layar 2: Dual-Pane Dossier & Document Viewer | `/claims/:id/dossier` | `COMPLETED` |
+| **Increment 4** | Action Bar, Dispute Drafter & Layar 3: Audit Trail | `/claims/audit-trail` | `READY TO START` |
 | **Increment 5** | Layar 4: Scientific Benchmark Suite & Final Polish | `/benchmark/evaluation-suite` | `PENDING` |

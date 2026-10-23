@@ -9,7 +9,7 @@ import { SmartDocumentViewer } from "@/components/widgets/SmartDocumentViewer";
 import { DossierActionBar, ActionType } from "@/components/widgets/DossierActionBar";
 import { ModalDisputeLetter } from "@/components/widgets/ModalDisputeLetter";
 import { DiffViewerModal } from "@/components/widgets/DiffViewerModal";
-import { INITIAL_CLAIMS, ClaimItem, CitationLocation } from "@/lib/mockData";
+import { INITIAL_CLAIMS, ClaimItem, CitationLocation, FindingItem } from "@/lib/mockData";
 import {
   ArrowLeft,
   Building2,
@@ -27,7 +27,10 @@ export default function DossierPage() {
 
   // Active Claim
   const activeClaim = useMemo(() => {
-    return claims.find((c) => c.id === claimId) || claims[0];
+    return (
+      claims.find((c) => c.id.toLowerCase() === claimId.toLowerCase()) ||
+      claims[0]
+    );
   }, [claims, claimId]);
 
   // Document Viewer states
@@ -36,11 +39,19 @@ export default function DossierPage() {
   // Modals
   const [isDisputeOpen, setIsDisputeOpen] = useState(false);
   const [isDiffOpen, setIsDiffOpen] = useState(false);
+  const [diffDetails, setDiffDetails] = useState<FindingItem["comparisonDetails"] | null>(null);
   const [selectedActionType, setSelectedActionType] = useState<ActionType>("PENDING_KLARIFIKASI_RS");
 
   // Handle jump from Citation click to Document Viewer
   const handleJumpToCitation = (citation: CitationLocation) => {
     setActiveCitation(citation);
+  };
+
+  const handleOpenDiffViewer = (details?: FindingItem["comparisonDetails"]) => {
+    if (details) {
+      setDiffDetails(details);
+    }
+    setIsDiffOpen(true);
   };
 
   const handleActionClick = (action: ActionType) => {
@@ -74,24 +85,24 @@ export default function DossierPage() {
       />
 
       {/* Institutional Metadata Strip */}
-      <div className="bg-white border-b border-slate-200 px-6 py-2 flex items-center justify-between text-xs text-slate-600 flex-shrink-0">
-        <div className="flex items-center gap-4 min-w-0">
+      <div className="bg-white border-b border-slate-200 px-5 py-2 flex items-center justify-between text-xs text-slate-600 flex-shrink-0">
+        <div className="flex items-center gap-3.5 min-w-0">
           <div className="flex items-center gap-1.5 font-medium text-slate-900">
-            <Building2 className="w-3.5 h-3.5 text-slate-400" />
+            <Building2 className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
             <span className="truncate">{activeClaim.hospitalName}</span>
           </div>
           <span className="text-slate-300">|</span>
           <div className="flex items-center gap-1.5">
-            <User className="w-3.5 h-3.5 text-slate-400" />
+            <User className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
             <span>
-              Pasien: {activeClaim.patientAge} th ({activeClaim.patientGender}) · DPJP: {activeClaim.dpjpName}
+              Pasien: {activeClaim.patientAge} th ({activeClaim.patientGender === "L" ? "Laki-laki" : "Perempuan"}) · DPJP: {activeClaim.dpjpName}
             </span>
           </div>
           <span className="text-slate-300">|</span>
           <div className="flex items-center gap-1.5">
-            <Stethoscope className="w-3.5 h-3.5 text-slate-400" />
+            <Stethoscope className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
             <span>
-              INA-CBG: <strong className="font-semibold text-slate-800">{activeClaim.inacbgCode}</strong>
+              INA-CBG: <strong className="font-semibold text-slate-800 tabular-nums">{activeClaim.inacbgCode}</strong>
             </span>
           </div>
         </div>
@@ -111,9 +122,9 @@ export default function DossierPage() {
       <div className="flex-1 flex min-h-0 overflow-hidden">
         {/* Left Pane (50%): Evidence Dossier */}
         <div className="w-1/2 border-r border-slate-200 flex flex-col bg-white overflow-hidden">
-          <div className="px-4 py-2 border-b border-slate-100 bg-slate-50/70 flex items-center justify-between flex-shrink-0">
+          <div className="px-4 py-2 border-b border-slate-200 bg-slate-50/70 flex items-center justify-between flex-shrink-0">
             <div className="flex items-center gap-2">
-              <ShieldAlert className="w-4 h-4 text-rose-600" />
+              <ShieldAlert className="w-4 h-4 text-rose-600 flex-shrink-0" />
               <span className="text-xs font-semibold text-slate-900">
                 Temuan Diskrepansi Bukti Klinis ({activeClaim.findings.length})
               </span>
@@ -134,18 +145,18 @@ export default function DossierPage() {
                   key={finding.id}
                   finding={finding}
                   onSelectCitation={handleJumpToCitation}
-                  onOpenDiffViewer={() => setIsDiffOpen(true)}
+                  onOpenDiffViewer={() => handleOpenDiffViewer(finding.comparisonDetails)}
                 />
               ))}
             </div>
 
             {/* Alternative Explanations */}
             {activeClaim.alternativeHypotheses && (
-              <div className="p-3.5 rounded-md border border-slate-200 bg-slate-50/60 text-xs space-y-1.5">
+              <div className="p-3.5 rounded-[4px] border border-slate-200 bg-slate-50/70 text-xs space-y-1.5">
                 <span className="font-semibold text-slate-800">
                   Kemungkinan Penjelasan Alternatif (Non-Fraud):
                 </span>
-                <p className="text-slate-600 leading-relaxed">
+                <p className="text-slate-600 leading-relaxed text-[11.5px]">
                   {activeClaim.alternativeHypotheses}
                 </p>
               </div>
@@ -175,7 +186,7 @@ export default function DossierPage() {
         onClose={() => setIsDisputeOpen(false)}
         claim={activeClaim}
         actionType={selectedActionType}
-        onConfirmDecision={(notes: string) => {
+        onConfirmDecision={() => {
           setIsDisputeOpen(false);
           router.push("/claims/audit-trail");
         }}
@@ -185,8 +196,10 @@ export default function DossierPage() {
       <DiffViewerModal
         isOpen={isDiffOpen}
         onClose={() => setIsDiffOpen(false)}
-        donorClaimId="CLM-2026-077"
-        similarityScore={94}
+        donorClaimId={diffDetails?.donorClaimId || "CLM-2026-077"}
+        similarityScore={diffDetails?.similarityScore || 94}
+        donorText={diffDetails?.donorText}
+        currentText={diffDetails?.currentText}
       />
     </div>
   );
