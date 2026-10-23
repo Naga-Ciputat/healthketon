@@ -52,9 +52,9 @@ graph TD
      - Dataset 10–20 kasus klaim riil BPJS terstruktur (termasuk kasus unggulan bedah `#CLM-2026-089` dan kasus donor cloning `#CLM-2026-077`).
   4. **Auto-redirect:** Rute root `/` otomatis mengarah ke `/claims/triage`.
 - **Kriteria Lolos (DoD):**
-  - [ ] `npm run build` sukses tanpa error TypeScript/Webpack.
-  - [ ] Navigasi sidebar berfungsi mulus berpindah antar-halaman.
-  - [ ] Seluruh data mock terpetakan sesuai skema data Dokumen 4.
+  - [x] `npm run build` sukses tanpa error TypeScript/Webpack (Next.js 15.5.28 production build).
+  - [x] Navigasi sidebar berfungsi mulus berpindah antar-halaman.
+  - [x] Seluruh data mock terpetakan sesuai skema data Dokumen 4.
 
 ---
 
@@ -136,8 +136,8 @@ graph TD
 
 | Step | Deskripsi Increment | Rute Terkait | Status |
 |---|---|---|---|
-| **Increment 1** | Shell Navigasi, Design System & Kontrak Mock Data | `/`, Shell Global, `/types/` | `READY TO START` |
-| **Increment 2** | Layar 1: Triage Dashboard & Modal Upload | `/claims/triage` | `PENDING` |
+| **Increment 1** | Shell Navigasi, Design System & Kontrak Mock Data | `/`, Shell Global, `/types/` | `COMPLETED` |
+| **Increment 2** | Layar 1: Triage Dashboard & Modal Upload | `/claims/triage` | `READY TO START` |
 | **Increment 3** | Layar 2: Dual-Pane Dossier & Document Viewer | `/claims/:id/dossier` | `PENDING` |
 | **Increment 4** | Action Bar, Dispute Drafter & Layar 3: Audit Trail | `/claims/audit-trail` | `PENDING` |
 | **Increment 5** | Layar 4: Scientific Benchmark Suite & Final Polish | `/benchmark/evaluation-suite` | `PENDING` |

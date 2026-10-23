@@ -13,6 +13,8 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+import { ClaimItem } from "@/lib/mockData";
+
 export interface TariffItemBreakdown {
   label: string;
   category: "UPCODING" | "INFLATED_ALKES" | "UNBUNDLING";
@@ -23,6 +25,7 @@ export interface TariffItemBreakdown {
 }
 
 export interface TariffDeltaCalculatorProps {
+  claim?: ClaimItem;
   claimedCode?: string;
   claimedDescription?: string;
   claimedTariff?: number;
@@ -35,6 +38,7 @@ export interface TariffDeltaCalculatorProps {
 }
 
 export function TariffDeltaCalculator({
+  claim,
   claimedCode = "I-4-10-III",
   claimedDescription = "Infark Miokard Akut dengan Komplikasi Berat (Severity Level III)",
   claimedTariff = 45000000,

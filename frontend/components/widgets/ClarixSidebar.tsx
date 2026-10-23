@@ -9,6 +9,7 @@ import {
   FileCheck2,
   FlaskConical,
   Activity,
+  FileText,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -25,25 +26,35 @@ export function ClarixSidebar({
 
   const navItems = [
     {
-      label: "Example Dashboard",
-      href: "/example-dashboard",
-      icon: LayoutDashboard,
-    },
-    {
       label: "Triage & Antrean Klaim",
       href: "/claims/triage",
       icon: Activity,
       badge: pendingClaimsCount > 0 ? pendingClaimsCount : undefined,
+      match: (path: string) => path === "/claims/triage" || path === "/",
+    },
+    {
+      label: "Telaah Bukti (Dossier)",
+      href: "/claims/CLM-2026-089/dossier",
+      icon: FileText,
+      match: (path: string) => path.includes("/dossier"),
     },
     {
       label: "Audit Trail & Arsip",
       href: "/claims/audit-trail",
       icon: FileCheck2,
+      match: (path: string) => path.startsWith("/claims/audit-trail"),
     },
     {
       label: "Uji Kasus Benchmark",
       href: "/benchmark/evaluation-suite",
       icon: FlaskConical,
+      match: (path: string) => path.startsWith("/benchmark"),
+    },
+    {
+      label: "Katalog Komponen",
+      href: "/example-dashboard",
+      icon: LayoutDashboard,
+      match: (path: string) => path === "/example-dashboard",
     },
   ];
 
@@ -105,10 +116,7 @@ export function ClarixSidebar({
         {/* Navigation Items */}
         <nav className="px-2 space-y-1">
           {navItems.map((item) => {
-            const isActive =
-              pathname === item.href ||
-              (item.href === "/example-dashboard" && (pathname === "/" || pathname === "/example-dashboard")) ||
-              (item.href === "/claims/triage" && pathname.startsWith("/claims"));
+            const isActive = item.match ? item.match(pathname) : pathname === item.href;
             const Icon = item.icon;
 
             return (

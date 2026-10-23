@@ -539,7 +539,7 @@ export const INITIAL_AUDIT_TRAIL: AuditTrailEntry[] = [
   },
 ];
 
-export const BENCHMARK_SYNTHETIC_DATASET: BenchmarkCaseResult[] = [
+export const INITIAL_BENCHMARK_RESULTS: BenchmarkCaseResult[] = [
   {
     id: "BM-01",
     label: "UPCODING_SEPSIS",
@@ -901,3 +901,5 @@ export const BENCHMARK_SYNTHETIC_DATASET: BenchmarkCaseResult[] = [
     detectedModus: "Clean Claim (Fast-Tracked)",
   },
 ];
+
+export const BENCHMARK_SYNTHETIC_DATASET = INITIAL_BENCHMARK_RESULTS;

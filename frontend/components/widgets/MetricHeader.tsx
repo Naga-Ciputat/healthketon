@@ -4,7 +4,10 @@ import React from "react";
 import { AlertCircle, TrendingDown, CheckCircle2, ShieldCheck, Layers } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+import { ClaimItem } from "@/lib/mockData";
+
 export interface MetricHeaderProps {
+  claims?: ClaimItem[];
   totalPendingCount?: number;
   highRiskCount?: number;
   totalInefficiencyRupiah?: number;
@@ -14,13 +17,19 @@ export interface MetricHeaderProps {
 }
 
 export function MetricHeader({
-  totalPendingCount = 24,
-  highRiskCount = 4,
-  totalInefficiencyRupiah = 142500000,
-  fastTrackedCount = 12,
-  fastTrackedPercent = 50,
+  claims,
+  totalPendingCount: propTotalPending,
+  highRiskCount: propHighRisk,
+  totalInefficiencyRupiah: propTotalInefficiency,
+  fastTrackedCount: propFastTracked,
+  fastTrackedPercent: propFastTrackedPercent,
   className,
 }: MetricHeaderProps) {
+  const totalPendingCount = claims ? claims.length : propTotalPending ?? 24;
+  const highRiskCount = claims ? claims.filter((c) => c.riskLevel === "TINGGI").length : propHighRisk ?? 4;
+  const totalInefficiencyRupiah = claims ? claims.reduce((acc, c) => acc + c.deltaTariff, 0) : propTotalInefficiency ?? 142500000;
+  const fastTrackedCount = claims ? claims.filter((c) => c.riskLevel === "RENDAH").length : propFastTracked ?? 12;
+  const fastTrackedPercent = claims && claims.length > 0 ? Math.round((fastTrackedCount / claims.length) * 100) : propFastTrackedPercent ?? 50;
   const formattedRupiah = new Intl.NumberFormat("id-ID", {
     style: "currency",
     currency: "IDR",
