@@ -212,7 +212,6 @@ export default function TriagePage() {
           }}
           onResetFilters={handleResetFilters}
           hospitals={hospitals}
-          onOpenUpload={() => setIsUploadOpen(true)}
         />
 
         {/* Claim Table Widget */}

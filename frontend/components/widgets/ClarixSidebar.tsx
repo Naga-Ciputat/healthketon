@@ -5,7 +5,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   Shield,
-  LayoutDashboard,
   FileCheck2,
   FlaskConical,
   Activity,
@@ -49,12 +48,6 @@ export function ClarixSidebar({
       href: "/benchmark/evaluation-suite",
       icon: FlaskConical,
       match: (path: string) => path.startsWith("/benchmark"),
-    },
-    {
-      label: "Katalog Komponen",
-      href: "/example-dashboard",
-      icon: LayoutDashboard,
-      match: (path: string) => path === "/example-dashboard",
     },
   ];
 

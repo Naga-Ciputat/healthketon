@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Search, ChevronDown, UploadCloud, RotateCcw, SlidersHorizontal } from "lucide-react";
+import { Search, ChevronDown, RotateCcw, SlidersHorizontal } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export interface ClaimFilterBarProps {
@@ -19,7 +19,7 @@ export interface ClaimFilterBarProps {
   sortBy?: string;
   onSortByChange?: (sort: string) => void;
   onResetFilters?: () => void;
-  onOpenUpload: () => void;
+  onOpenUpload?: () => void;
   className?: string;
 }
 
@@ -181,16 +181,6 @@ export function ClaimFilterBar({
           </button>
         )}
       </div>
-
-      {/* Right side: Upload Claim Trigger */}
-      <button
-        type="button"
-        onClick={onOpenUpload}
-        className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white rounded-[4px] text-xs font-semibold shadow-2xs transition-colors flex-shrink-0"
-      >
-        <UploadCloud className="w-3.5 h-3.5" />
-        <span>Unggah Berkas Klaim</span>
-      </button>
     </div>
   );
 }
