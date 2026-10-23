@@ -78,7 +78,7 @@ export function ClarixSidebar({
                 <span className="font-bold text-slate-900 text-sm tracking-tight truncate">
                   Clarix AI
                 </span>
-                <span className="text-[10.5px] bg-emerald-50 text-emerald-800 font-semibold px-1.5 py-0.2 rounded border border-emerald-200">
+                <span className="text-[10.5px] bg-emerald-50 text-emerald-800 font-semibold px-1.5 py-0.2 rounded-[4px] border border-emerald-200">
                   BPJS
                 </span>
               </div>
@@ -92,15 +92,15 @@ export function ClarixSidebar({
         {/* Verifier Profile Strip */}
         <div className="px-4 py-2.5 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
           <div className="flex items-center gap-2 min-w-0">
-            <div className="w-6 h-6 rounded-full bg-blue-100 text-blue-800 border border-blue-200 flex items-center justify-center text-xs font-semibold flex-shrink-0">
-              M
+            <div className="w-6 h-6 rounded-[4px] bg-blue-100 text-blue-800 border border-blue-200 flex items-center justify-center text-xs font-semibold flex-shrink-0">
+              S
             </div>
             <div className="flex flex-col min-w-0">
               <span className="text-xs font-semibold text-slate-900 truncate">
-                dr. Maya Indriati
+                dr. Siti Aminah
               </span>
               <span className="text-[10.5px] text-slate-500 truncate">
-                Verifikator Medis KCU
+                Verifikator Utama BPJS
               </span>
             </div>
           </div>
@@ -124,7 +124,7 @@ export function ClarixSidebar({
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "flex items-center justify-between px-3 py-2 rounded-md transition-colors text-xs group",
+                  "flex items-center justify-between px-3 py-2 rounded-[4px] transition-colors text-xs group",
                   isActive
                     ? "bg-blue-50/80 text-blue-800 font-semibold"
                     : "text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium"
@@ -141,7 +141,7 @@ export function ClarixSidebar({
                 </div>
 
                 {item.badge !== undefined && (
-                  <span className="bg-rose-50 text-rose-700 border border-rose-200 text-[10.5px] font-semibold px-1.5 py-0.5 rounded tabular-nums">
+                  <span className="bg-rose-50 text-rose-700 border border-rose-200 text-[10.5px] font-semibold px-1.5 py-0.5 rounded-[4px] tabular-nums">
                     {item.badge}
                   </span>
                 )}
@@ -153,15 +153,15 @@ export function ClarixSidebar({
 
       {/* Bottom Summary Card */}
       <div className="p-3 border-t border-slate-200 bg-white">
-        <div className="p-2.5 bg-slate-50 border border-slate-200 rounded-md text-xs space-y-1.5">
+        <div className="p-2.5 bg-slate-50 border border-slate-200 rounded-[4px] text-xs space-y-1.5">
           <div className="flex items-center justify-between text-slate-600 text-[11px]">
             <span>Koreksi Tarif Terdeteksi</span>
             <span className="font-semibold text-emerald-700 tabular-nums">
               +Rp 142,5 Jt
             </span>
           </div>
-          <div className="w-full bg-slate-200 rounded h-1.5 overflow-hidden">
-            <div className="bg-blue-600 h-1.5 rounded w-[75%]" />
+          <div className="w-full bg-slate-200 rounded-[2px] h-1.5 overflow-hidden">
+            <div className="bg-blue-600 h-1.5 rounded-[2px] w-[75%]" />
           </div>
           <div className="flex justify-between items-center text-[10.5px] text-slate-500 pt-0.5">
             <span className="tabular-nums">24 Klaim Diperiksa</span>

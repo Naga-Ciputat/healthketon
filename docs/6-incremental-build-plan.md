@@ -127,8 +127,8 @@ graph TD
      - Uji kontras warna dan keterbacaan tipografi.
      - Production build verification (`npm run build` bebas error).
 - **Kriteria Lolos (DoD):**
-  - [ ] Halaman benchmark dapat dijalankan secara instan untuk demonstrasi juri.
-  - [ ] Seluruh 4 rute aplikasi berjalan mulus, kohesif, dan siap rilis.
+  - [x] Halaman benchmark dapat dijalankan secara instan untuk demonstrasi juri.
+  - [x] Seluruh 4 rute aplikasi berjalan mulus, kohesif, dan siap rilis.
 
 ---
 
@@ -140,4 +140,4 @@ graph TD
 | **Increment 2** | Layar 1: Triage Dashboard & Modal Upload | `/claims/triage` | `COMPLETED` |
 | **Increment 3** | Layar 2: Dual-Pane Dossier & Document Viewer | `/claims/:id/dossier` | `COMPLETED` |
 | **Increment 4** | Action Bar, Dispute Drafter & Layar 3: Audit Trail | `/claims/audit-trail` | `COMPLETED` |
-| **Increment 5** | Layar 4: Scientific Benchmark Suite & Final Polish | `/benchmark/evaluation-suite` | `READY TO START` |
+| **Increment 5** | Layar 4: Scientific Benchmark Suite & Final Polish | `/benchmark/evaluation-suite` | `COMPLETED` |

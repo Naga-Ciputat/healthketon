@@ -89,7 +89,7 @@ export function Sidebar({
               <span className="text-xs">Search</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <kbd className="text-[10px] bg-white border border-gray-200 px-1 py-0.5 rounded font-mono text-gray-400">
+              <kbd className="text-[10px] bg-white border border-gray-200 px-1 py-0.5 rounded-[4px] font-medium text-gray-500">
                 CTRL K
               </kbd>
               <Inbox className="w-3.5 h-3.5 text-gray-400 hover:text-gray-600 cursor-pointer ml-1" />
@@ -213,10 +213,10 @@ export function Sidebar({
           )}
         >
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-pink-500 animate-pulse" />
+            <span className="w-2 h-2 rounded-[2px] bg-pink-500" />
             <span>Storybook Catalog</span>
           </div>
-          <span className="text-[10px] bg-pink-100 text-pink-700 px-1.5 py-0.2 rounded font-semibold">
+          <span className="text-[10px] bg-pink-100 text-pink-700 px-1.5 py-0.2 rounded-[4px] font-semibold">
             10 widgets
           </span>
         </Link>
