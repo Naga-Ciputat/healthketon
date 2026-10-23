@@ -96,7 +96,6 @@ export function ClaimSwitcher({
           {/* Header */}
           <div className="px-3 py-1.5 bg-slate-50/80 flex items-center justify-between text-[11px] font-medium text-slate-500">
             <span>Daftar Antrean Klaim ({claims.length} Berkas)</span>
-            <span className="text-[10px] text-slate-400">Esc untuk tutup</span>
           </div>
 
           {/* Claim Items List */}
