@@ -19,7 +19,7 @@ import {
   Activity,
   Layers,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, formatBenchmarkLabel, formatClassificationResult } from "@/lib/utils";
 
 export default function BenchmarkSuitePage() {
   const [isRunning, setIsRunning] = useState(false);
@@ -384,7 +384,7 @@ export default function BenchmarkSuitePage() {
                       </td>
                       <td className="px-3.5 py-2.5">
                         <span className="text-[11px] font-medium text-slate-800">
-                          {item.label}
+                          {formatBenchmarkLabel(item.label)}
                         </span>
                       </td>
                       <td className="px-3.5 py-2.5">
@@ -415,7 +415,7 @@ export default function BenchmarkSuitePage() {
                               "bg-rose-50 text-rose-800 border-rose-200"
                           )}
                         >
-                          {item.resultStatus}
+                          {formatClassificationResult(item.resultStatus)}
                         </span>
                       </td>
                       <td className="px-3 py-2.5 text-center">

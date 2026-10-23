@@ -171,7 +171,7 @@ export const INITIAL_CLAIMS: ClaimItem[] = [
         id: "FND-02",
         type: "INFLATED_ALKES",
         title: "Penggelembungan Alkes: Selisih 1 Unit Stent Jantung Koroner (DES)",
-        badgeLabel: "Discrepancy Kuitansi vs Laporan Bedah",
+        badgeLabel: "Diskrepansi Kuitansi vs Laporan Bedah",
         severity: "danger",
         description:
           "Kuitansi penagihan mencantumkan 2 unit Drug-Eluting Stent (DES) senilai Rp20.000.000. Namun, narasi laporan operasi bedah secara eksplisit menyatakan hanya 1 unit stent berhasil dipasang di arteri LAD, sedangkan stent kedua di cabang LCx batal dipasang karena tortuosity pembuluh darah.",
@@ -473,7 +473,7 @@ export const INITIAL_CLAIMS: ClaimItem[] = [
         id: "FND-06",
         type: "INFLATED_ALKES",
         title: "Selisih Jumlah Plat Fiksasi Internal Ortopedi (ORIF)",
-        badgeLabel: "Discrepancy Plat Implan",
+        badgeLabel: "Diskrepansi Plat Implan",
         severity: "danger",
         description:
           "Ditagihkan 2 buah plate fiksasi tibia, laporan radiologi paska-operasi hanya memperlihatkan 1 anatomical LCP plate terpasang.",

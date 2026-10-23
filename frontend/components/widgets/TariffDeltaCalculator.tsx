@@ -9,7 +9,7 @@ import {
   Scissors,
   AlertCircle,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, formatAnomalyCategory } from "@/lib/utils";
 import { ClaimItem } from "@/lib/mockData";
 
 export interface TariffItemBreakdown {
@@ -198,9 +198,18 @@ export function TariffDeltaCalculator({
                     <span className="font-medium text-slate-900">
                       {item.label}
                     </span>
-                    <span className="inline-flex items-center gap-1 bg-slate-50 text-slate-700 border border-slate-200 px-1.5 py-0.5 rounded-[4px] text-[10.5px]">
+                    <span
+                      className={cn(
+                        "inline-flex items-center gap-1 px-1.5 py-0.5 rounded-[4px] text-[10.5px] font-semibold border",
+                        item.category === "INFLATED_ALKES"
+                          ? "bg-amber-50 text-amber-800 border-amber-200"
+                          : item.category === "UPCODING"
+                          ? "bg-rose-50 text-rose-800 border-rose-200"
+                          : "bg-blue-50 text-blue-800 border-blue-200"
+                      )}
+                    >
                       {renderCategoryIcon(item.category)}
-                      <span>{item.category}</span>
+                      <span>{formatAnomalyCategory(item.category)}</span>
                     </span>
                   </div>
                   <p className="text-[10.5px] text-slate-500 mt-0.5">

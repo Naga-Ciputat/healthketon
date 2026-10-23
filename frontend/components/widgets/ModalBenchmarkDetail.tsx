@@ -3,7 +3,7 @@
 import React from "react";
 import { X, CheckCircle2, AlertTriangle, Clock, Cpu, FileText, ShieldCheck } from "lucide-react";
 import { BenchmarkCaseResult } from "@/lib/mockData";
-import { cn } from "@/lib/utils";
+import { cn, formatBenchmarkLabel, formatClassificationResult } from "@/lib/utils";
 
 export interface ModalBenchmarkDetailProps {
   isOpen: boolean;
@@ -98,7 +98,7 @@ export function ModalBenchmarkDetail({
                 </span>
               </div>
               <p className="text-[11.5px] text-slate-600">
-                Label Baku: <strong className="font-semibold text-slate-800">{item.label}</strong>
+                Label Baku: <strong className="font-semibold text-slate-800">{formatBenchmarkLabel(item.label)}</strong>
               </p>
             </div>
 
@@ -135,7 +135,7 @@ export function ModalBenchmarkDetail({
             <div className="flex items-center gap-2">
               <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
               <span>
-                Klasifikasi Evaluasi: <strong>{item.resultStatus}</strong>
+                Klasifikasi Evaluasi: <strong>{formatClassificationResult(item.resultStatus)}</strong>
               </span>
             </div>
             <span className="text-[11px] font-semibold tabular-nums">

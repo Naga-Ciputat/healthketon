@@ -12,7 +12,7 @@ import {
   FileText,
   Scale,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, formatAnomalyCategory } from "@/lib/utils";
 import { FindingItem, CitationLocation } from "@/lib/mockData";
 
 export interface EvidenceCardProps {
@@ -86,7 +86,7 @@ export function EvidenceCard({
               )}
             >
               {getFindingIcon()}
-              <span>{finding.badgeLabel}</span>
+              <span>{finding.badgeLabel || formatAnomalyCategory(finding.type)}</span>
             </span>
 
             {/* Verbatim Verified Badge */}
