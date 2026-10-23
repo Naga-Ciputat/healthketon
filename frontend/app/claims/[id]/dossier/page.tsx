@@ -179,7 +179,10 @@ export default function DossierPage() {
             >
               <ArrowLeft className="w-4 h-4" />
             </button>
-            {getStatusBadge(activeClaim.status)}
+            <div className="flex items-center gap-1.5 text-xs">
+              <span className="text-slate-400 text-[11px] font-medium">Status:</span>
+              {getStatusBadge(activeClaim.status)}
+            </div>
           </div>
         }
         showBranchTag={false}
