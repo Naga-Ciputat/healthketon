@@ -8,6 +8,8 @@ import {
   FileSpreadsheet,
   Scissors,
   AlertCircle,
+  Info,
+  TrendingDown,
 } from "lucide-react";
 import { cn, formatAnomalyCategory } from "@/lib/utils";
 import { ClaimItem } from "@/lib/mockData";
@@ -175,54 +177,83 @@ export function TariffDeltaCalculator({
           </p>
         </div>
         <div className="text-right">
-          <span className="text-base font-bold text-emerald-800 tracking-tight tabular-nums">
-            -{formatRupiah(totalDelta)}
+          <span className="text-base font-bold text-emerald-900 tracking-tight tabular-nums block">
+            {formatRupiah(totalDelta)}
+          </span>
+          <span className="text-[10px] text-emerald-700 font-medium block">
+            Optimalisasi Beban Dana JKN
           </span>
         </div>
       </div>
 
       {/* Itemized Discrepancy Breakdown */}
       {breakdowns.length > 0 && (
-        <div>
-          <span className="text-[11px] font-semibold text-slate-700 block mb-1.5">
-            Rincian Komponen Selisih:
-          </span>
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-semibold text-slate-800 block">
+              Temuan Anomali Bukti &amp; Estimasi Nilai Discrepancy Faskes:
+            </span>
+            <span className="text-[10.5px] text-slate-500 font-normal">
+              Bukti Fisik Overbilling
+            </span>
+          </div>
+
           <div className="space-y-1.5">
-            {breakdowns.map((item, idx) => (
-              <div
-                key={idx}
-                className="flex items-start justify-between gap-3 p-2 bg-white border border-slate-200 rounded-[4px] text-[11px]"
-              >
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-1.5 flex-wrap">
-                    <span className="font-medium text-slate-900">
-                      {item.label}
-                    </span>
-                    <span
-                      className={cn(
-                        "inline-flex items-center gap-1 px-1.5 py-0.5 rounded-[4px] text-[10.5px] font-semibold border",
-                        item.category === "INFLATED_ALKES"
-                          ? "bg-amber-50 text-amber-800 border-amber-200"
-                          : item.category === "UPCODING"
-                          ? "bg-rose-50 text-rose-800 border-rose-200"
-                          : "bg-blue-50 text-blue-800 border-blue-200"
+            {breakdowns.map((item, idx) => {
+              const isPackageCorrection = item.deltaRupiah === totalDelta;
+              return (
+                <div
+                  key={idx}
+                  className="flex items-start justify-between gap-3 p-2.5 bg-white border border-slate-200 rounded-[4px] text-[11px]"
+                >
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="font-medium text-slate-900">
+                        {item.label}
+                      </span>
+                      <span
+                        className={cn(
+                          "inline-flex items-center gap-1 px-1.5 py-0.5 rounded-[4px] text-[10.5px] font-semibold border",
+                          item.category === "INFLATED_ALKES"
+                            ? "bg-amber-50 text-amber-800 border-amber-200"
+                            : item.category === "UPCODING"
+                            ? "bg-rose-50 text-rose-800 border-rose-200"
+                            : "bg-blue-50 text-blue-800 border-blue-200"
+                        )}
+                      >
+                        {renderCategoryIcon(item.category)}
+                        <span>{formatAnomalyCategory(item.category)}</span>
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2 mt-1 text-[10.5px] text-slate-500">
+                      <span>Rujukan: {item.note}</span>
+                      {!isPackageCorrection && (
+                        <>
+                          <span>•</span>
+                          <span className="text-amber-800 font-medium">Tercakup dalam rekonsiliasi paket INA-CBG</span>
+                        </>
                       )}
-                    >
-                      {renderCategoryIcon(item.category)}
-                      <span>{formatAnomalyCategory(item.category)}</span>
+                    </div>
+                  </div>
+                  <div className="text-right flex-shrink-0">
+                    <span className="font-semibold text-slate-900 tabular-nums block">
+                      {formatRupiah(item.deltaRupiah)}
+                    </span>
+                    <span className="text-[9.5px] text-slate-500 block">
+                      {isPackageCorrection ? "Koreksi Tarif Paket" : "Discrepancy Kuitansi RS"}
                     </span>
                   </div>
-                  <p className="text-[10.5px] text-slate-500 mt-0.5">
-                    Rujukan: {item.note}
-                  </p>
                 </div>
-                <div className="text-right flex-shrink-0">
-                  <span className="font-semibold text-slate-800 tabular-nums">
-                    -{formatRupiah(item.deltaRupiah)}
-                  </span>
-                </div>
-              </div>
-            ))}
+              );
+            })}
+          </div>
+
+          {/* INA-CBG Bundled Clarification Banner */}
+          <div className="p-2.5 bg-slate-50 border border-slate-200 rounded-[4px] text-[10.5px] text-slate-600 flex items-start gap-2 leading-relaxed">
+            <Info className="w-3.5 h-3.5 text-slate-500 flex-shrink-0 mt-0.5" />
+            <span>
+              <strong>Kaidah Pembayaran Prospektif (INA-CBG):</strong> Klaim dibayarkan berbasis satu paket utuh per episode rawat. Nilai selisih kuitansi alkes &amp; unbundling di atas adalah bukti fisik temuan diskrepansi yang mendasari penyesuaian tingkat keparahan (*downcoding*), bukan tagihan tambahan terpisah di luar paket.
+            </span>
           </div>
         </div>
       )}
