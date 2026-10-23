@@ -153,11 +153,6 @@ export default function TriagePage() {
       <TopHeader
         title="Triage & Antrean Klaim"
         subtitle="Verifikasi Pra-Bayar Faskes"
-        badge={
-          <span className="text-[11px] font-semibold bg-blue-50 text-blue-700 px-2 py-0.5 rounded-[4px] border border-blue-200">
-            Layar 1
-          </span>
-        }
         rightActions={
           <button
             type="button"
