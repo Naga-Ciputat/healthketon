@@ -107,7 +107,16 @@ export default function TriagePage() {
 
       const matchesModus =
         selectedModus === "ALL" ||
-        claim.modusTags.some((tag) => tag.toLowerCase() === selectedModus.toLowerCase());
+        claim.modusTags.some((tag) => {
+          const t = tag.toLowerCase();
+          const sm = selectedModus.toLowerCase();
+          if (t === sm) return true;
+          if (sm === "upcoding" && t.includes("upcoding")) return true;
+          if (sm === "inflated alkes" && (t.includes("inflated") || t.includes("stent") || t.includes("penggelembungan") || t.includes("alkes"))) return true;
+          if (sm === "note cloning" && (t.includes("cloning") || t.includes("duplikasi"))) return true;
+          if (sm === "unbundling" && (t.includes("unbundling") || t.includes("pemecahan") || t.includes("drain"))) return true;
+          return false;
+        });
 
       return matchesSearch && matchesHospital && matchesRisk && matchesStatus && matchesModus;
     });

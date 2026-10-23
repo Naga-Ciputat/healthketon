@@ -204,7 +204,7 @@ export default function BenchmarkSuitePage() {
                 </span>
                 {currentEvalIndex !== null && results[currentEvalIndex] && (
                   <span className="text-slate-600 truncate">
-                    Menguji <strong className="tabular-nums font-semibold text-slate-900">{results[currentEvalIndex].claimId}</strong> ({results[currentEvalIndex].hospital}) — {results[currentEvalIndex].label}
+                    Menguji <strong className="tabular-nums font-semibold text-slate-900">{results[currentEvalIndex].claimId}</strong> ({results[currentEvalIndex].hospital}) — {formatBenchmarkLabel(results[currentEvalIndex].label)}
                   </span>
                 )}
               </div>

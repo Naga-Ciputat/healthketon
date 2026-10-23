@@ -18,7 +18,7 @@ import {
   ArrowDown,
   Inbox,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, formatAnomalyCategory } from "@/lib/utils";
 import { ClaimItem } from "@/lib/mockData";
 
 export interface ClaimTableProps {
@@ -128,26 +128,64 @@ export function ClaimTable({
   };
 
   // Modus tags: differentiated by icon in neutral 4px box (no rainbow saturation)
-  const renderModusTag = (modus: string) => {
+  const renderModusTag = (rawModus: string) => {
+    const formattedModus = formatAnomalyCategory(rawModus);
+
+    // If valid/clean claim, render restrained emerald valid badge
+    if (
+      rawModus === "VALID_CLAIM" ||
+      rawModus === "CLEAN_CLAIM" ||
+      formattedModus === "Klaim Sesuai Regulasi"
+    ) {
+      return (
+        <span
+          key={rawModus}
+          className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-[4px] text-[10.5px] font-medium"
+        >
+          <CheckCircle2 className="w-3 h-3 text-emerald-600 flex-shrink-0" />
+          <span>Klaim Sesuai Regulasi</span>
+        </span>
+      );
+    }
+
     let icon = <AlertCircle className="w-3 h-3 text-slate-500 flex-shrink-0" />;
 
-    if (modus === "Upcoding") {
+    const upper = rawModus.toUpperCase();
+    if (upper.includes("UPCODING") || formattedModus.includes("Upcoding")) {
       icon = <TrendingUp className="w-3 h-3 text-rose-600 flex-shrink-0" />;
-    } else if (modus === "Inflated Alkes") {
+    } else if (
+      upper.includes("INFLATED") ||
+      upper.includes("STENT") ||
+      upper.includes("ALKES") ||
+      formattedModus.includes("Penggelembungan")
+    ) {
       icon = <FileSpreadsheet className="w-3 h-3 text-amber-600 flex-shrink-0" />;
-    } else if (modus === "Note Cloning") {
+    } else if (
+      upper.includes("CLONING") ||
+      upper.includes("DUPLIKASI") ||
+      formattedModus.includes("Duplikasi")
+    ) {
       icon = <Copy className="w-3 h-3 text-slate-600 flex-shrink-0" />;
-    } else if (modus === "Unbundling") {
+    } else if (
+      upper.includes("UNBUNDLING") ||
+      upper.includes("DRAIN") ||
+      formattedModus.includes("Pemecahan")
+    ) {
       icon = <Scissors className="w-3 h-3 text-blue-600 flex-shrink-0" />;
+    } else if (
+      upper.includes("PHANTOM") ||
+      formattedModus.includes("Tidak Tervalidasi")
+    ) {
+      icon = <AlertTriangle className="w-3 h-3 text-rose-600 flex-shrink-0" />;
     }
 
     return (
       <span
-        key={modus}
+        key={rawModus}
         className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-slate-50 text-slate-700 border border-slate-200 rounded-[4px] text-[10.5px] font-medium"
       >
         {icon}
-        <span>{modus}</span>
+        <span>{formattedModus}</span>
       </span>
     );
   };

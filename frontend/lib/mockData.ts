@@ -64,7 +64,7 @@ export interface ClaimItem {
     | "DISETUJUI"
     | "ESKALASI_PK_JKN";
   riskLevel: "TINGGI" | "SEDANG" | "RENDAH";
-  modusTags: ("Upcoding" | "Inflated Alkes" | "Note Cloning" | "Unbundling")[];
+  modusTags: string[];
   confidenceScore: number;
   findings: FindingItem[];
   alternativeHypotheses: string;

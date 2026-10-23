@@ -10,18 +10,32 @@ export function cn(...inputs: ClassValue[]) {
  */
 export function formatAnomalyCategory(category: string): string {
   switch (category) {
-    case "INFLATED_ALKES":
-      return "Penggelembungan Alkes";
+    case "UPCODING_SEPSIS":
+      return "Upcoding Sepsis";
+    case "UPCODING_SEVERITY":
+      return "Upcoding Tingkat Keparahan";
     case "UPCODING":
       return "Upcoding Tarif";
+    case "INFLATED_ALKES_STENT":
+    case "INFLATED_STENT":
+      return "Penggelembungan Stent";
+    case "INFLATED_ALKES":
+      return "Penggelembungan Alkes";
     case "NOTE_CLONING":
       return "Duplikasi Catatan Medis";
+    case "PHANTOM_PROCEDURE":
+      return "Prosedur Tidak Tervalidasi";
+    case "UNBUNDLING_DRAIN":
+      return "Pemecahan Prosedur (Drainase)";
+    case "UNBUNDLING":
+    case "UNBUNDLING_PROC":
+      return "Pemecahan Prosedur";
     case "RULE_ANOMALY":
     case "RULE_ENGINE":
       return "Kaidah Koding INA-CBG";
-    case "UNBUNDLING":
-    case "UNBUNDLING_PROC":
-      return "Pemecahan Prosedur (Unbundling)";
+    case "VALID_CLAIM":
+    case "CLEAN_CLAIM":
+      return "Klaim Sesuai Regulasi";
     default:
       return category.replace(/_/g, " ");
   }

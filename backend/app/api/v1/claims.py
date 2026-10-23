@@ -13,6 +13,29 @@ class StatusUpdateRequest(BaseModel):
     notes: Optional[str] = None
 
 
+MODUS_LABEL_MAP = {
+    "UPCODING_SEPSIS": "Upcoding Sepsis",
+    "UPCODING_SEVERITY": "Upcoding Tingkat Keparahan",
+    "UPCODING": "Upcoding Tarif",
+    "INFLATED_ALKES_STENT": "Penggelembungan Stent",
+    "INFLATED_ALKES": "Penggelembungan Alkes",
+    "INFLATED_STENT": "Penggelembungan Stent",
+    "NOTE_CLONING": "Duplikasi Catatan Medis",
+    "PHANTOM_PROCEDURE": "Prosedur Tidak Tervalidasi",
+    "UNBUNDLING_DRAIN": "Pemecahan Prosedur (Drainase)",
+    "UNBUNDLING_PROC": "Pemecahan Prosedur",
+    "UNBUNDLING": "Pemecahan Prosedur",
+    "RULE_ANOMALY": "Kaidah Koding INA-CBG",
+    "RULE_ENGINE": "Kaidah Koding INA-CBG",
+    "VALID_CLAIM": "Klaim Sesuai Regulasi",
+    "CLEAN_CLAIM": "Klaim Sesuai Regulasi",
+}
+
+
+def format_modus_tag(tag: str) -> str:
+    return MODUS_LABEL_MAP.get(tag, tag.replace("_", " ").title())
+
+
 @router.get("")
 async def list_claims(
     status: Optional[str] = None,
@@ -90,7 +113,8 @@ async def list_claims(
     claims = []
     for r in rows:
         sec = json.loads(r["secondary_icd10"]) if isinstance(r["secondary_icd10"], str) else (r["secondary_icd10"] or [])
-        modus = json.loads(r["modus_tags"]) if isinstance(r["modus_tags"], str) else (r["modus_tags"] or [])
+        raw_modus = json.loads(r["modus_tags"]) if isinstance(r["modus_tags"], str) else (r["modus_tags"] or [])
+        modus = [format_modus_tag(t) for t in raw_modus]
         claims.append({
             "id": r["id"],
             "hospitalName": r["hospital_name"],
@@ -255,8 +279,8 @@ async def get_claim_detail(claim_id: str):
             ],
         })
 
-    sec = json.loads(claim_row["secondary_icd10"]) if isinstance(claim_row["secondary_icd10"], str) else (claim_row["secondary_icd10"] or [])
-    modus = json.loads(claim_row["modus_tags"]) if isinstance(claim_row["modus_tags"], str) else (claim_row["modus_tags"] or [])
+    raw_modus = json.loads(claim_row["modus_tags"]) if isinstance(claim_row["modus_tags"], str) else (claim_row["modus_tags"] or [])
+    modus = [format_modus_tag(t) for t in raw_modus]
 
     # Suggested actions mapping
     rec_action = {

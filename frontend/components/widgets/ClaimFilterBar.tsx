@@ -118,11 +118,11 @@ export function ClaimFilterBar({
               onChange={(e) => onModusChange(e.target.value)}
               className="appearance-none pl-3 pr-7 py-1.5 bg-white border border-slate-200 rounded-[4px] text-xs font-medium text-slate-700 hover:border-slate-300 focus:outline-none focus:ring-1 focus:ring-blue-600 cursor-pointer shadow-2xs"
             >
-              <option value="ALL">Semua Anomali</option>
-              <option value="Upcoding">Upcoding</option>
-              <option value="Inflated Alkes">Inflated Alkes</option>
-              <option value="Note Cloning">Note Cloning</option>
-              <option value="Unbundling">Unbundling</option>
+              <option value="ALL">Semua Indikasi Anomali</option>
+              <option value="Upcoding">Upcoding Tarif</option>
+              <option value="Inflated Alkes">Penggelembungan Alkes</option>
+              <option value="Note Cloning">Duplikasi Catatan Medis</option>
+              <option value="Unbundling">Pemecahan Prosedur (Unbundling)</option>
             </select>
             <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
           </div>

@@ -42,7 +42,7 @@ export interface ClaimRecord {
   status: ClaimVerificationStatus;
   riskLevel: RiskLevel;
   priorityScore?: number;
-  modusTags: ("Upcoding" | "Inflated Alkes" | "Note Cloning" | "Unbundling")[];
+  modusTags: string[];
   confidenceScore: number;
   findings: FindingItem[];
   alternativeHypotheses: string;
