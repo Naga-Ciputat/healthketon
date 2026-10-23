@@ -4,19 +4,22 @@ import React, { useState } from "react";
 import {
   X,
   UploadCloud,
-  ShieldCheck,
-  ShieldAlert,
   CheckCircle2,
-  AlertTriangle,
+  AlertCircle,
   FileText,
   Loader2,
+  FileCheck,
+  Shield,
+  Layers,
+  ArrowRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ClaimItem, INITIAL_CLAIMS } from "@/lib/mockData";
 
 export interface ModalUploadClaimProps {
   isOpen: boolean;
   onClose: () => void;
-  onSuccessUpload?: (newClaimSummary: string) => void;
+  onSuccessUpload?: (newClaim: ClaimItem) => void;
 }
 
 export function ModalUploadClaim({
@@ -25,136 +28,181 @@ export function ModalUploadClaim({
   onSuccessUpload,
 }: ModalUploadClaimProps) {
   const [isProcessing, setIsProcessing] = useState(false);
-  const [stepText, setStepText] = useState("");
+  const [currentStep, setCurrentStep] = useState<number>(0);
+  const [stepMessage, setStepMessage] = useState<string>("");
   const [errorDetails, setErrorDetails] = useState<string | null>(null);
-  const [successDetails, setSuccessDetails] = useState<string | null>(null);
+  const [uploadedClaim, setUploadedClaim] = useState<ClaimItem | null>(null);
 
   if (!isOpen) return null;
 
-  const handleSimulateSyntheticUpload = () => {
-    setIsProcessing(true);
+  const resetState = () => {
+    setIsProcessing(false);
+    setCurrentStep(0);
+    setStepMessage("");
     setErrorDetails(null);
-    setSuccessDetails(null);
-    setStepText("Memvalidasi skema payload JSON klaim...");
-
-    setTimeout(() => {
-      setStepText("Memeriksa kepatuhan regulasi UU PDP No. 27/2022...");
-      setTimeout(() => {
-        setIsProcessing(false);
-        setStepText("");
-        setSuccessDetails(
-          "Pemeriksaan lolos 100%! Seluruh data pasien telah ter-anonimisasi secara sintetis. Berkas berhasil dimasukkan ke antrean analisis prioritas (F2)."
-        );
-        onSuccessUpload?.("Paket Klaim Sintetis #CLM-2026-104");
-      }, 900);
-    }, 700);
+    setUploadedClaim(null);
   };
 
-  const handleSimulateRealDataViolation = () => {
+  const handleClose = () => {
+    resetState();
+    onClose();
+  };
+
+  const handleSimulateUpload = (presetType: "HEART_SURGERY" | "KIDNEY_CLONE" | "PII_VIOLATION") => {
+    resetState();
     setIsProcessing(true);
-    setErrorDetails(null);
-    setSuccessDetails(null);
-    setStepText("Memeriksa kepatuhan regulasi UU PDP No. 27/2022...");
+    setCurrentStep(1);
+    setStepMessage("1. Memeriksa kelengkapan struktur skema berkas INA-CBG...");
 
     setTimeout(() => {
-      setIsProcessing(false);
-      setStepText("");
-      setErrorDetails(
-        "PELANGGARAN UU PDP No. 27/2022 TERDETEKSI: Ditemukan nomor NIK 16-digit valid (3201021405780001) dan nama warga asli pada berkas rujukan. Sesuai protokol Privacy Guard, berkas seketika dibatalkan secara atomik dan residu dihapus dari memori."
-      );
-    }, 800);
+      if (presetType === "PII_VIOLATION") {
+        setIsProcessing(false);
+        setCurrentStep(0);
+        setErrorDetails(
+          "Validasi Gagal: Dokumen terdeteksi memuat nomor NIK 16-digit valid (3201021405780001) dan nama pasien tanpa sanitasi data. Berkas ditolak untuk melindungi privasi data rekam medis."
+        );
+        return;
+      }
+
+      setCurrentStep(2);
+      setStepMessage("2. Memverifikasi sanitasi identitas data pasien...");
+
+      setTimeout(() => {
+        setCurrentStep(3);
+        setStepMessage("3. Menghitung profil risiko anomali awal dan estimasi tarif...");
+
+        setTimeout(() => {
+          setIsProcessing(false);
+
+          let newClaim: ClaimItem;
+          if (presetType === "HEART_SURGERY") {
+            newClaim = {
+              ...INITIAL_CLAIMS[0],
+              id: `CLM-2026-${Math.floor(100 + Math.random() * 900)}`,
+              admissionDate: "2026-10-18",
+              dischargeDate: "2026-10-22",
+            };
+          } else {
+            newClaim = {
+              ...INITIAL_CLAIMS[1],
+              id: `CLM-2026-${Math.floor(100 + Math.random() * 900)}`,
+              admissionDate: "2026-10-17",
+              dischargeDate: "2026-10-21",
+            };
+          }
+
+          setUploadedClaim(newClaim);
+          onSuccessUpload?.(newClaim);
+        }, 600);
+      }, 600);
+    }, 600);
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-2xs animate-fade-in">
-      <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-lg shadow-xl overflow-hidden text-slate-800">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40">
+      <div className="bg-white border border-slate-200 rounded-[4px] w-full max-w-lg shadow-xl overflow-hidden text-slate-800">
         {/* Modal Header */}
-        <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+        <div className="px-5 py-3.5 border-b border-slate-200 flex items-center justify-between bg-slate-50/70">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-600">
+            <div className="w-7 h-7 rounded-[4px] bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-700">
               <UploadCloud className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-slate-900">
-                Unggah Paket Klaim Sintetis (F1 Intake)
+              <h3 className="text-xs font-semibold text-slate-900">
+                Unggah Berkas Klaim Digital
               </h3>
               <p className="text-[11px] text-slate-500">
-                Dilindungi oleh Privacy Guard & UU PDP No. 27/2022 Gatekeeper
+                Intake &amp; Validasi Format Rekam Medis Elektronik
               </p>
             </div>
           </div>
           <button
             type="button"
-            onClick={onClose}
-            className="p-1 rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+            onClick={handleClose}
+            className="p-1 rounded-[4px] text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Modal Body */}
-        <div className="p-6 space-y-5">
+        <div className="p-5 space-y-4">
           {/* Dropzone Area */}
-          <div className="border-2 border-dashed border-slate-200 rounded-xl p-6 flex flex-col items-center justify-center text-center bg-slate-50/40 hover:bg-slate-50/80 transition-colors">
-            <div className="w-12 h-12 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 mb-2">
-              <FileText className="w-6 h-6" />
+          <div className="border border-dashed border-slate-300 rounded-[4px] p-6 flex flex-col items-center justify-center text-center bg-slate-50/50 hover:bg-slate-50 transition-colors cursor-pointer">
+            <div className="w-10 h-10 rounded-[4px] bg-white border border-slate-200 flex items-center justify-center text-slate-600 mb-2 shadow-2xs">
+              <FileText className="w-5 h-5" />
             </div>
             <h4 className="text-xs font-semibold text-slate-800">
-              Tarik & Letakkan Berkas Klaim (.json / .zip)
+              Pilih atau tarik berkas paket klaim (.json / .zip)
             </h4>
             <p className="text-[11px] text-slate-500 mt-1 max-w-xs">
-              Menerima berkas resume medis, laporan operasi, lab, dan billing penagihan
+              Menerima berkas resume medis, laporan operasi, lab, dan billing rincian RS
             </p>
           </div>
 
           {/* Test Preset Buttons */}
-          <div className="space-y-2">
-            <span className="text-[10px] font-semibold tracking-wider text-slate-400 uppercase">
-              Uji Coba Gatekeeper Cepat:
+          <div className="space-y-1.5">
+            <span className="text-[11px] font-semibold text-slate-600">
+              Uji Cepat Berkas Sampel:
             </span>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 gap-2">
               <button
                 type="button"
                 disabled={isProcessing}
-                onClick={handleSimulateSyntheticUpload}
-                className="flex items-center gap-2 p-2.5 rounded-lg border border-emerald-200 bg-emerald-50/50 hover:bg-emerald-50 text-emerald-800 text-xs font-medium text-left transition-all disabled:opacity-50"
+                onClick={() => handleSimulateUpload("HEART_SURGERY")}
+                className="flex items-center justify-between p-2.5 rounded-[4px] border border-slate-200 bg-white hover:bg-slate-50 text-slate-800 text-xs text-left transition-colors disabled:opacity-50"
               >
-                <ShieldCheck className="w-4 h-4 text-emerald-600 flex-shrink-0" />
-                <div>
-                  <div className="font-bold text-[11px]">Uji Paket Sintetis</div>
-                  <div className="text-[10px] text-emerald-600">Lolos Privacy Guard</div>
+                <div className="flex items-center gap-2">
+                  <FileCheck className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                  <div>
+                    <div className="font-semibold text-slate-900">Sampel Bedah Jantung Laparoskopi</div>
+                    <div className="text-[11px] text-slate-500">Berkas lengkap &amp; tersanitasi (Potensi Upcoding)</div>
+                  </div>
                 </div>
+                <span className="text-[11px] text-emerald-700 font-medium px-2 py-0.5 bg-emerald-50 border border-emerald-200 rounded-[4px]">
+                  Uji Valid
+                </span>
               </button>
 
               <button
                 type="button"
                 disabled={isProcessing}
-                onClick={handleSimulateRealDataViolation}
-                className="flex items-center gap-2 p-2.5 rounded-lg border border-rose-200 bg-rose-50/50 hover:bg-rose-50 text-rose-800 text-xs font-medium text-left transition-all disabled:opacity-50"
+                onClick={() => handleSimulateUpload("PII_VIOLATION")}
+                className="flex items-center justify-between p-2.5 rounded-[4px] border border-slate-200 bg-white hover:bg-slate-50 text-slate-800 text-xs text-left transition-colors disabled:opacity-50"
               >
-                <ShieldAlert className="w-4 h-4 text-rose-600 flex-shrink-0" />
-                <div>
-                  <div className="font-bold text-[11px]">Uji Data Riil (Blokir)</div>
-                  <div className="text-[10px] text-rose-600">Simulasi Tolak NIK</div>
+                <div className="flex items-center gap-2">
+                  <Shield className="w-4 h-4 text-rose-600 flex-shrink-0" />
+                  <div>
+                    <div className="font-semibold text-slate-900">Sampel Pelanggaran Privasi Pasien</div>
+                    <div className="text-[11px] text-slate-500">Memuat NIK &amp; identitas riil tanpa anonimisasi</div>
+                  </div>
                 </div>
+                <span className="text-[11px] text-rose-700 font-medium px-2 py-0.5 bg-rose-50 border border-rose-200 rounded-[4px]">
+                  Uji Penolakan
+                </span>
               </button>
             </div>
           </div>
 
-          {/* Loading Progress State */}
+          {/* Processing Indicator */}
           {isProcessing && (
-            <div className="p-3 bg-blue-50/70 border border-blue-200 rounded-lg flex items-center gap-2.5 text-xs text-blue-900 animate-pulse">
-              <Loader2 className="w-4 h-4 animate-spin text-blue-600 flex-shrink-0" />
-              <span>{stepText}</span>
+            <div className="p-3 bg-blue-50 border border-blue-200 rounded-[4px] space-y-1.5">
+              <div className="flex items-center gap-2 text-xs font-semibold text-blue-900">
+                <Loader2 className="w-3.5 h-3.5 animate-spin text-blue-600 flex-shrink-0" />
+                <span>Memproses Berkas Klaim...</span>
+              </div>
+              <p className="text-[11px] text-blue-700 pl-5.5">
+                {stepMessage}
+              </p>
             </div>
           )}
 
-          {/* Error / UU PDP Violation Alert */}
+          {/* Error Alert */}
           {errorDetails && (
-            <div className="p-3.5 bg-rose-50 border border-rose-300 rounded-lg space-y-1.5 animate-in fade-in">
-              <div className="flex items-center gap-1.5 text-rose-800 font-bold text-xs">
-                <AlertTriangle className="w-4 h-4 text-rose-600 flex-shrink-0" />
-                <span>Peringatan Kepatuhan Regulasi</span>
+            <div className="p-3 bg-rose-50 border border-rose-200 rounded-[4px] space-y-1">
+              <div className="flex items-center gap-1.5 text-rose-800 font-semibold text-xs">
+                <AlertCircle className="w-3.5 h-3.5 text-rose-600 flex-shrink-0" />
+                <span>Pemeriksaan Gagal</span>
               </div>
               <p className="text-[11px] text-rose-700 leading-relaxed">
                 {errorDetails}
@@ -163,27 +211,27 @@ export function ModalUploadClaim({
           )}
 
           {/* Success Alert */}
-          {successDetails && (
-            <div className="p-3.5 bg-emerald-50 border border-emerald-300 rounded-lg space-y-1.5 animate-in fade-in">
-              <div className="flex items-center gap-1.5 text-emerald-800 font-bold text-xs">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
-                <span>Klaim Tervalidasi</span>
+          {uploadedClaim && (
+            <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-[4px] space-y-1.5">
+              <div className="flex items-center gap-1.5 text-emerald-800 font-semibold text-xs">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
+                <span>Berkas Berhasil Divalidasi</span>
               </div>
               <p className="text-[11px] text-emerald-700 leading-relaxed">
-                {successDetails}
+                Klaim <strong className="font-semibold tabular-nums">{uploadedClaim.id}</strong> ({uploadedClaim.hospitalName}) telah lolos validasi format dan ditambahkan ke antrean verifikasi.
               </p>
             </div>
           )}
         </div>
 
         {/* Modal Footer */}
-        <div className="px-5 py-3 border-t border-slate-100 flex items-center justify-end gap-2 bg-slate-50/50">
+        <div className="px-5 py-3 border-t border-slate-200 flex items-center justify-end gap-2 bg-slate-50/70">
           <button
             type="button"
-            onClick={onClose}
-            className="px-3.5 py-1.5 border border-slate-200 rounded-lg text-xs font-medium text-slate-700 hover:bg-slate-100 transition-colors"
+            onClick={handleClose}
+            className="px-3 py-1.5 border border-slate-200 rounded-[4px] text-xs font-medium text-slate-700 hover:bg-slate-100 transition-colors"
           >
-            Tutup
+            {uploadedClaim ? "Selesai" : "Tutup"}
           </button>
         </div>
       </div>

@@ -69,9 +69,9 @@ graph TD
      - Klik baris memicu navigasi ke `/claims/:id/dossier`.
   3. **`ModalUploadClaim`:** Dropzone upload berkas klaim `.json` dengan visualisasi tahapan sanitasi PII dan validasi integritas skema.
 - **Kriteria Lolos (DoD):**
-  - [ ] Triage table merender data mock secara presisi dengan sorting dan filtering aktif.
-  - [ ] Klik baris klaim berhasil membuka rute `/claims/:id/dossier`.
-  - [ ] Modal upload dapat dibuka-tutup dengan alur validasi visual yang bersih.
+  - [x] Triage table merender data mock secara presisi dengan sorting dan filtering aktif.
+  - [x] Klik baris klaim berhasil membuka rute `/claims/:id/dossier`.
+  - [x] Modal upload dapat dibuka-tutup dengan alur validasi visual yang bersih.
 
 ---
 
@@ -137,7 +137,7 @@ graph TD
 | Step | Deskripsi Increment | Rute Terkait | Status |
 |---|---|---|---|
 | **Increment 1** | Shell Navigasi, Design System & Kontrak Mock Data | `/`, Shell Global, `/types/` | `COMPLETED` |
-| **Increment 2** | Layar 1: Triage Dashboard & Modal Upload | `/claims/triage` | `READY TO START` |
-| **Increment 3** | Layar 2: Dual-Pane Dossier & Document Viewer | `/claims/:id/dossier` | `PENDING` |
+| **Increment 2** | Layar 1: Triage Dashboard & Modal Upload | `/claims/triage` | `COMPLETED` |
+| **Increment 3** | Layar 2: Dual-Pane Dossier & Document Viewer | `/claims/:id/dossier` | `READY TO START` |
 | **Increment 4** | Action Bar, Dispute Drafter & Layar 3: Audit Trail | `/claims/audit-trail` | `PENDING` |
 | **Increment 5** | Layar 4: Scientific Benchmark Suite & Final Polish | `/benchmark/evaluation-suite` | `PENDING` |
