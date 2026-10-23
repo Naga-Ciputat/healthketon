@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { TopHeader } from "@/components/widgets/TopHeader";
 import { EvidenceCard } from "@/components/widgets/EvidenceCard";
@@ -9,13 +9,20 @@ import { SmartDocumentViewer } from "@/components/widgets/SmartDocumentViewer";
 import { DossierActionBar, ActionType } from "@/components/widgets/DossierActionBar";
 import { ModalDisputeLetter } from "@/components/widgets/ModalDisputeLetter";
 import { DiffViewerModal } from "@/components/widgets/DiffViewerModal";
-import { INITIAL_CLAIMS, ClaimItem, CitationLocation, FindingItem } from "@/lib/mockData";
+import { AuditLogItem } from "@/components/widgets/AuditLogStream";
+import { ClaimItem, CitationLocation, FindingItem, INITIAL_CLAIMS } from "@/lib/mockData";
+import { getStoredClaims, updateClaimStatus, addAuditLogEntry } from "@/lib/claimStore";
 import {
   ArrowLeft,
   Building2,
   User,
   Stethoscope,
   ShieldAlert,
+  Clock,
+  Mail,
+  Sliders,
+  CheckCircle2,
+  AlertTriangle,
 } from "lucide-react";
 
 export default function DossierPage() {
@@ -23,13 +30,26 @@ export default function DossierPage() {
   const router = useRouter();
   const claimId = (params?.id as string) || "CLM-2026-089";
 
-  const [claims] = useState<ClaimItem[]>(INITIAL_CLAIMS);
+  const [claims, setClaims] = useState<ClaimItem[]>(INITIAL_CLAIMS);
+
+  // Synchronize with client store
+  useEffect(() => {
+    setClaims(getStoredClaims());
+    const handleUpdate = () => {
+      setClaims(getStoredClaims());
+    };
+    window.addEventListener("clarix_claims_updated", handleUpdate);
+    return () => {
+      window.removeEventListener("clarix_claims_updated", handleUpdate);
+    };
+  }, []);
 
   // Active Claim
   const activeClaim = useMemo(() => {
     return (
       claims.find((c) => c.id.toLowerCase() === claimId.toLowerCase()) ||
-      claims[0]
+      claims[0] ||
+      INITIAL_CLAIMS[0]
     );
   }, [claims, claimId]);
 
@@ -59,6 +79,85 @@ export default function DossierPage() {
     setIsDisputeOpen(true);
   };
 
+  // Status Badge Helper
+  const getStatusBadge = (status: ClaimItem["status"]) => {
+    switch (status) {
+      case "PERLU_TINJAUAN":
+        return (
+          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-[4px] text-[11px] font-medium bg-blue-50 text-blue-800 border border-blue-200">
+            <Clock className="w-3 h-3 text-blue-600 flex-shrink-0" />
+            <span>Perlu Telaah</span>
+          </span>
+        );
+      case "PENDING_KLARIFIKASI_RS":
+        return (
+          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-[4px] text-[11px] font-medium bg-slate-100 text-slate-800 border border-slate-200">
+            <Mail className="w-3 h-3 text-slate-600 flex-shrink-0" />
+            <span>Klarifikasi RS</span>
+          </span>
+        );
+      case "DOWNCODE_DIUSULKAN":
+        return (
+          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-[4px] text-[11px] font-medium bg-blue-50 text-blue-800 border border-blue-200">
+            <Sliders className="w-3 h-3 text-blue-600 flex-shrink-0" />
+            <span>Penyesuaian Tarif</span>
+          </span>
+        );
+      case "DISETUJUI":
+        return (
+          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-[4px] text-[11px] font-medium bg-emerald-50 text-emerald-800 border border-emerald-200">
+            <CheckCircle2 className="w-3 h-3 text-emerald-600 flex-shrink-0" />
+            <span>Disetujui (Valid)</span>
+          </span>
+        );
+      case "ESKALASI_PK_JKN":
+        return (
+          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-[4px] text-[11px] font-medium bg-rose-50 text-rose-800 border border-rose-200">
+            <AlertTriangle className="w-3 h-3 text-rose-600 flex-shrink-0" />
+            <span>Eskalasi Khusus</span>
+          </span>
+        );
+    }
+  };
+
+  const handleConfirmDecision = (notes: string, letterDraft: string) => {
+    // 1. Update status
+    updateClaimStatus(activeClaim.id, selectedActionType);
+
+    // 2. Add audit log entry
+    const newLog: AuditLogItem = {
+      id: `AUD-2026-${Date.now().toString().slice(-4)}`,
+      claimId: activeClaim.id,
+      hospitalName: activeClaim.hospitalName,
+      verifierName: "dr. Siti Aminah",
+      verifierRole: "Verifikator Utama BPJS",
+      timestamp: new Date().toLocaleDateString("id-ID", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      }) + " WIB",
+      action: selectedActionType,
+      finalTariff: selectedActionType === "DISETUJUI" ? activeClaim.claimedTariff : activeClaim.fairTariff,
+      savedDeltaRupiah: selectedActionType === "DISETUJUI" ? 0 : activeClaim.deltaTariff,
+      officialLetterNumber:
+        selectedActionType === "DISETUJUI"
+          ? `BA-BPJS/2026/ACC/${activeClaim.id}`
+          : selectedActionType === "DOWNCODE_DIUSULKAN"
+          ? `BA-BPJS/2026/DOWNCODE/${activeClaim.id}`
+          : selectedActionType === "ESKALASI_PK_JKN"
+          ? `ND-BPJS/2026/ESK-PK/${activeClaim.id}`
+          : `440/BPJS-KCU/KLARIF/X/2026`,
+      notes: notes || activeClaim.recommendedAction.suggestedNotes,
+      letterContent: letterDraft,
+    };
+    addAuditLogEntry(newLog);
+
+    setIsDisputeOpen(false);
+    router.push("/claims/audit-trail");
+  };
+
   return (
     <div className="flex flex-col h-full bg-slate-50/50">
       {/* Top Header */}
@@ -78,9 +177,12 @@ export default function DossierPage() {
         }
         subtitle={activeClaim.id}
         badge={
-          <span className="text-[11px] font-semibold bg-emerald-50 text-emerald-800 px-2 py-0.5 rounded-[4px] border border-emerald-200">
-            Layar 2 (Dual-Pane)
-          </span>
+          <div className="flex items-center gap-2">
+            {getStatusBadge(activeClaim.status)}
+            <span className="text-[11px] font-semibold bg-emerald-50 text-emerald-800 px-2 py-0.5 rounded-[4px] border border-emerald-200">
+              Layar 2 (Dual-Pane)
+            </span>
+          </div>
         }
       />
 
@@ -186,10 +288,7 @@ export default function DossierPage() {
         onClose={() => setIsDisputeOpen(false)}
         claim={activeClaim}
         actionType={selectedActionType}
-        onConfirmDecision={() => {
-          setIsDisputeOpen(false);
-          router.push("/claims/audit-trail");
-        }}
+        onConfirmDecision={handleConfirmDecision}
       />
 
       {/* Diff Viewer Modal for Note Cloning */}

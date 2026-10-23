@@ -111,7 +111,7 @@ graph TD
      - Tabel log append-only kronologis: Stempel waktu, No SEP, Verifikator, Keputusan, Catatan Justifikasi, dan Aksi Pratinjau Surat.
      - Format angka referensi dengan `tabular-nums`, tanpa chip ornamen buatan.
 - **Kriteria Lolos (DoD):**
-  - [ ] Alur tertutup (*Closed-Loop Golden Path*) tuntas 100%: dari triage $\rightarrow$ dossier $\rightarrow$ ambil keputusan $\rightarrow$ tercatat di audit trail $\rightarrow$ antrean triage terbarui.
+  - [x] Alur tertutup (*Closed-Loop Golden Path*) tuntas 100%: dari triage $\rightarrow$ dossier $\rightarrow$ ambil keputusan $\rightarrow$ tercatat di audit trail $\rightarrow$ antrean triage terbarui.
 
 ---
 
@@ -139,5 +139,5 @@ graph TD
 | **Increment 1** | Shell Navigasi, Design System & Kontrak Mock Data | `/`, Shell Global, `/types/` | `COMPLETED` |
 | **Increment 2** | Layar 1: Triage Dashboard & Modal Upload | `/claims/triage` | `COMPLETED` |
 | **Increment 3** | Layar 2: Dual-Pane Dossier & Document Viewer | `/claims/:id/dossier` | `COMPLETED` |
-| **Increment 4** | Action Bar, Dispute Drafter & Layar 3: Audit Trail | `/claims/audit-trail` | `READY TO START` |
-| **Increment 5** | Layar 4: Scientific Benchmark Suite & Final Polish | `/benchmark/evaluation-suite` | `PENDING` |
+| **Increment 4** | Action Bar, Dispute Drafter & Layar 3: Audit Trail | `/claims/audit-trail` | `COMPLETED` |
+| **Increment 5** | Layar 4: Scientific Benchmark Suite & Final Polish | `/benchmark/evaluation-suite` | `READY TO START` |

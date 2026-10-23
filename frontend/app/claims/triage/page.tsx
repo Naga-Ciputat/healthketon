@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { TopHeader } from "@/components/widgets/TopHeader";
 import { MetricHeader } from "@/components/widgets/MetricHeader";
@@ -8,11 +8,24 @@ import { ClaimFilterBar } from "@/components/widgets/ClaimFilterBar";
 import { ClaimTable } from "@/components/widgets/ClaimTable";
 import { ModalUploadClaim } from "@/components/widgets/ModalUploadClaim";
 import { INITIAL_CLAIMS, ClaimItem } from "@/lib/mockData";
+import { getStoredClaims, prependClaim } from "@/lib/claimStore";
 import { UploadCloud, Layers, CheckCircle2, ArrowRight, X } from "lucide-react";
 
 export default function TriagePage() {
   const router = useRouter();
   const [claims, setClaims] = useState<ClaimItem[]>(INITIAL_CLAIMS);
+
+  // Synchronize with client store
+  useEffect(() => {
+    setClaims(getStoredClaims());
+    const handleUpdate = () => {
+      setClaims(getStoredClaims());
+    };
+    window.addEventListener("clarix_claims_updated", handleUpdate);
+    return () => {
+      window.removeEventListener("clarix_claims_updated", handleUpdate);
+    };
+  }, []);
 
   // Filters State
   const [searchQuery, setSearchQuery] = useState("");
@@ -118,7 +131,7 @@ export default function TriagePage() {
   };
 
   const handleSuccessUpload = (newClaim: ClaimItem) => {
-    setClaims((prev) => [newClaim, ...prev]);
+    prependClaim(newClaim);
     setIsUploadOpen(false);
     setRecentUploadNotice({ id: newClaim.id, hospital: newClaim.hospitalName });
   };

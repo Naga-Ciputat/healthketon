@@ -10,6 +10,9 @@ import {
   CheckCircle2,
   Sliders,
   AlertTriangle,
+  FileText,
+  X,
+  ExternalLink,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -25,6 +28,7 @@ export interface AuditLogItem {
   savedDeltaRupiah: number;
   officialLetterNumber?: string;
   notes: string;
+  letterContent?: string;
 }
 
 export interface AuditLogStreamProps {
@@ -33,67 +37,18 @@ export interface AuditLogStreamProps {
   className?: string;
 }
 
-const DEFAULT_AUDIT_LOGS: AuditLogItem[] = [
-  {
-    id: "AUD-2026-004",
-    claimId: "CLM-2026-089",
-    hospitalName: "RS Sejahtera Medika",
-    verifierName: "dr. Maya Wulandari",
-    verifierRole: "Verifikator Utama BPJS",
-    timestamp: "12 Okt 2026, 11:20 WIB",
-    action: "PENDING_KLARIFIKASI_RS",
-    finalTariff: 20100000,
-    savedDeltaRupiah: 24900000,
-    officialLetterNumber: "BA-BPJS/2026/KLM-089/KLARIFIKASI",
-    notes: "Klarifikasi resmi diterbitkan ke Komite Medik RS Sejahtera Medika terkait selisih 1 unit Stent DES dan kriteria diagnosis Sepsis.",
-  },
-  {
-    id: "AUD-2026-003",
-    claimId: "CLM-2026-012",
-    hospitalName: "RS Mitra Sehat",
-    verifierName: "dr. Maya Wulandari",
-    verifierRole: "Verifikator Utama BPJS",
-    timestamp: "12 Okt 2026, 09:45 WIB",
-    action: "DOWNCODE_DIUSULKAN",
-    finalTariff: 8200000,
-    savedDeltaRupiah: 7800000,
-    officialLetterNumber: "BA-BPJS/2026/KLM-012/ADJUST",
-    notes: "Penyesuaian kode dari G-4-14-II ke G-4-14-I disetujui DPJP RS. Selisih tarif dikoreksi dalam Berita Acara Rekonsiliasi.",
-  },
-  {
-    id: "AUD-2026-002",
-    claimId: "CLM-2026-077",
-    hospitalName: "RSUD Kota Madya",
-    verifierName: "Sistem Verifikasi Otomatis",
-    verifierRole: "Kaidah Koding & Aturan Dasar",
-    timestamp: "12 Okt 2026, 08:15 WIB",
-    action: "DISETUJUI",
-    finalTariff: 6400000,
-    savedDeltaRupiah: 0,
-    notes: "Klaim bersih tervalidasi 100% tanpa anomali klinis maupun administratif. Diteruskan ke proses realisasi pembayaran.",
-  },
-  {
-    id: "AUD-2026-001",
-    claimId: "CLM-2026-034",
-    hospitalName: "RS Sentosa Kasih",
-    verifierName: "dr. Hendrawan Sp.PK",
-    verifierRole: "Dewan Pertimbangan Klinis",
-    timestamp: "11 Okt 2026, 16:30 WIB",
-    action: "ESKALASI_PK_JKN",
-    finalTariff: 18500000,
-    savedDeltaRupiah: 12400000,
-    officialLetterNumber: "ESK-PKJKN/2026/10-091",
-    notes: "Eskalasi ke tim Pencegahan Kecurangan JKN atas dugaan duplikasi catatan rekam medis (Note Cloning) berulang.",
-  },
-];
-
 export function AuditLogStream({
-  entries = DEFAULT_AUDIT_LOGS,
+  entries = [],
   title = "Jejak Audit & Riwayat Putusan Klaim",
   className,
 }: AuditLogStreamProps) {
   const [filterAction, setFilterAction] = useState<string>("ALL");
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [activeLetter, setActiveLetter] = useState<{
+    title: string;
+    letterNumber?: string;
+    content: string;
+  } | null>(null);
 
   const formatRupiah = (val: number) =>
     new Intl.NumberFormat("id-ID", {
@@ -102,35 +57,35 @@ export function AuditLogStream({
       maximumFractionDigits: 0,
     }).format(val);
 
-  // Status differentiation primarily using icons + clean BPJS blue/green
+  // Status differentiation using functional icons in clean 4px rectangular containers
   const getActionBadge = (action: AuditLogItem["action"]) => {
     switch (action) {
       case "DISETUJUI":
         return (
-          <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-800 border border-emerald-200 px-2 py-0.5 rounded text-[11px] font-medium">
-            <CheckCircle2 className="w-3 h-3 text-emerald-600" />
-            Selesai (Disetujui)
+          <span className="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-800 border border-emerald-200 px-2 py-0.5 rounded-[4px] text-[11px] font-medium">
+            <CheckCircle2 className="w-3 h-3 text-emerald-600 flex-shrink-0" />
+            <span>Disetujui (Valid)</span>
           </span>
         );
       case "PENDING_KLARIFIKASI_RS":
         return (
-          <span className="inline-flex items-center gap-1 bg-slate-100 text-slate-800 border border-slate-200 px-2 py-0.5 rounded text-[11px] font-medium">
-            <Mail className="w-3 h-3 text-slate-600" />
-            Klarifikasi Faskes
+          <span className="inline-flex items-center gap-1.5 bg-slate-100 text-slate-800 border border-slate-200 px-2 py-0.5 rounded-[4px] text-[11px] font-medium">
+            <Mail className="w-3 h-3 text-slate-600 flex-shrink-0" />
+            <span>Klarifikasi RS</span>
           </span>
         );
       case "DOWNCODE_DIUSULKAN":
         return (
-          <span className="inline-flex items-center gap-1 bg-blue-50 text-blue-800 border border-blue-200 px-2 py-0.5 rounded text-[11px] font-medium">
-            <Sliders className="w-3 h-3 text-blue-600" />
-            Penyesuaian Tarif
+          <span className="inline-flex items-center gap-1.5 bg-blue-50 text-blue-800 border border-blue-200 px-2 py-0.5 rounded-[4px] text-[11px] font-medium">
+            <Sliders className="w-3 h-3 text-blue-600 flex-shrink-0" />
+            <span>Penyesuaian Tarif</span>
           </span>
         );
       case "ESKALASI_PK_JKN":
         return (
-          <span className="inline-flex items-center gap-1 bg-rose-50 text-rose-800 border border-rose-200 px-2 py-0.5 rounded text-[11px] font-medium">
-            <AlertTriangle className="w-3 h-3 text-rose-600" />
-            Eskalasi Khusus
+          <span className="inline-flex items-center gap-1.5 bg-rose-50 text-rose-800 border border-rose-200 px-2 py-0.5 rounded-[4px] text-[11px] font-medium">
+            <AlertTriangle className="w-3 h-3 text-rose-600 flex-shrink-0" />
+            <span>Eskalasi Khusus</span>
           </span>
         );
     }
@@ -138,26 +93,55 @@ export function AuditLogStream({
 
   const filtered = entries.filter((e) => {
     const matchesAction = filterAction === "ALL" || e.action === filterAction;
+    const q = searchQuery.toLowerCase().trim();
     const matchesSearch =
-      e.claimId.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      e.hospitalName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      e.verifierName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (e.officialLetterNumber &&
-        e.officialLetterNumber.toLowerCase().includes(searchQuery.toLowerCase()));
+      q === "" ||
+      e.claimId.toLowerCase().includes(q) ||
+      e.hospitalName.toLowerCase().includes(q) ||
+      e.verifierName.toLowerCase().includes(q) ||
+      (e.officialLetterNumber && e.officialLetterNumber.toLowerCase().includes(q)) ||
+      e.notes.toLowerCase().includes(q);
     return matchesAction && matchesSearch;
   });
+
+  const handleOpenLetter = (item: AuditLogItem) => {
+    const content =
+      item.letterContent ||
+      `BERITA ACARA RESMI BPJS KESEHATAN
+Nomor: ${item.officialLetterNumber || `BA-BPJS/2026/${item.claimId}`}
+Tanggal: ${item.timestamp}
+
+Fasilitas Kesehatan: ${item.hospitalName}
+ID Berkas Klaim: ${item.claimId}
+Verifikator Medis: ${item.verifierName}
+
+Catatan Justifikasi:
+${item.notes}
+
+Status Putusan: ${item.action}
+Tarif Akhir Disetujui: Rp ${item.finalTariff.toLocaleString("id-ID")}
+Nilai Koreksi Penghematan JKN: Rp ${item.savedDeltaRupiah.toLocaleString("id-ID")}
+
+Dokumen ini diterbitkan secara elektronik dan terekam pada sistem jejak audit verifikasi klaim BPJS Kesehatan.`;
+
+    setActiveLetter({
+      title: `Surat Resmi — Berkas ${item.claimId}`,
+      letterNumber: item.officialLetterNumber,
+      content,
+    });
+  };
 
   return (
     <div
       className={cn(
-        "bg-white border border-slate-200 rounded-md p-4 text-slate-800 transition-all shadow-2xs",
+        "bg-white border border-slate-200 rounded-[4px] p-4 text-slate-800 shadow-2xs space-y-3",
         className
       )}
     >
       {/* Title & Toolbar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-3 border-b border-slate-100">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-2.5 border-b border-slate-100">
         <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-700">
+          <div className="w-6 h-6 rounded-[4px] bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-700">
             <FileCheck className="w-3.5 h-3.5" />
           </div>
           <div>
@@ -170,106 +154,153 @@ export function AuditLogStream({
           </div>
         </div>
 
-        {/* Filter Pills */}
-        <div className="flex items-center gap-1.5 flex-wrap">
-          {["ALL", "PENDING_KLARIFIKASI_RS", "DOWNCODE_DIUSULKAN", "DISETUJUI"].map((status) => (
+        {/* Filter Segmented Buttons */}
+        <div className="flex items-center gap-1 flex-wrap">
+          {[
+            { id: "ALL", label: "Semua Riwayat" },
+            { id: "PENDING_KLARIFIKASI_RS", label: "Klarifikasi RS" },
+            { id: "DOWNCODE_DIUSULKAN", label: "Penyesuaian Tarif" },
+            { id: "DISETUJUI", label: "Disetujui" },
+          ].map((status) => (
             <button
-              key={status}
+              key={status.id}
               type="button"
-              onClick={() => setFilterAction(status)}
+              onClick={() => setFilterAction(status.id)}
               className={cn(
-                "px-2.5 py-1 text-[11px] font-medium rounded border transition-colors",
-                filterAction === status
+                "px-2.5 py-1 text-[11px] font-medium rounded-[4px] border transition-colors",
+                filterAction === status.id
                   ? "bg-slate-900 text-white border-slate-900"
                   : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
               )}
             >
-              {status === "ALL"
-                ? "Semua Riwayat"
-                : status === "PENDING_KLARIFIKASI_RS"
-                ? "Klarifikasi"
-                : status === "DOWNCODE_DIUSULKAN"
-                ? "Penyesuaian"
-                : "Disetujui"}
+              {status.label}
             </button>
           ))}
         </div>
       </div>
 
       {/* Search Bar */}
-      <div className="mt-3 relative">
-        <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
+      <div className="relative">
+        <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
         <input
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Cari berkas berdasarkan ID klaim, RS, atau verifikator..."
-          className="w-full pl-8 pr-3 py-1.5 bg-slate-50/70 border border-slate-200 rounded text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-600 focus:bg-white transition-all"
+          className="w-full pl-8 pr-3 py-1.5 bg-slate-50/70 border border-slate-200 rounded-[4px] text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-600 focus:bg-white transition-all"
         />
       </div>
 
       {/* Stream List */}
-      <div className="mt-3 space-y-2.5">
+      <div className="space-y-2.5">
         {filtered.length === 0 ? (
-          <div className="p-6 text-center text-xs text-slate-500 bg-slate-50/50 border border-dashed border-slate-200 rounded">
+          <div className="p-6 text-center text-xs text-slate-500 bg-slate-50/50 border border-dashed border-slate-200 rounded-[4px]">
             Tidak ada catatan riwayat yang sesuai kriteria pencarian.
           </div>
         ) : (
           filtered.map((item) => (
             <div
               key={item.id}
-              className="p-3 bg-white border border-slate-200/90 rounded text-xs hover:border-slate-300 transition-all"
+              className="p-3 bg-white border border-slate-200 rounded-[4px] text-xs hover:border-slate-300 transition-colors space-y-2 shadow-2xs"
             >
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="font-semibold text-slate-900">
+                  <span className="font-semibold text-slate-900 tabular-nums">
                     {item.claimId}
                   </span>
-                  <span className="text-slate-400">·</span>
+                  <span className="text-slate-300">·</span>
                   <span className="text-slate-700 font-medium truncate">
                     {item.hospitalName}
                   </span>
                   {getActionBadge(item.action)}
                 </div>
 
-                <div className="flex items-center gap-1.5 text-[11px] text-slate-500 flex-shrink-0">
+                <div className="flex items-center gap-1.5 text-[11px] text-slate-500 flex-shrink-0 tabular-nums">
                   <Clock className="w-3 h-3 text-slate-400" />
                   <span>{item.timestamp}</span>
                 </div>
               </div>
 
-              {/* Verifier & Official Letter */}
-              <div className="mt-2 flex items-center justify-between gap-2 flex-wrap text-[11px] text-slate-600">
+              {/* Verifier & Savings Info */}
+              <div className="flex items-center justify-between gap-2 flex-wrap text-[11px] text-slate-600">
                 <div className="flex items-center gap-1.5">
-                  <UserCheck className="w-3.5 h-3.5 text-slate-400" />
+                  <UserCheck className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
                   <span>
-                    Verifikator: <strong className="text-slate-800">{item.verifierName}</strong>
+                    Verifikator: <strong className="text-slate-800 font-medium">{item.verifierName}</strong>
                     {item.verifierRole && ` (${item.verifierRole})`}
                   </span>
                 </div>
 
                 {item.savedDeltaRupiah > 0 && (
                   <div className="text-emerald-700 font-semibold tabular-nums">
-                    Koreksi: {formatRupiah(item.savedDeltaRupiah)}
+                    Efisiensi Terkoreksi: {formatRupiah(item.savedDeltaRupiah)}
                   </div>
                 )}
               </div>
 
-              {/* Notes & Letter Ref */}
-              <p className="mt-2 text-[11.5px] text-slate-700 bg-slate-50/80 p-2 rounded border border-slate-100">
+              {/* Notes */}
+              <p className="text-[11.5px] text-slate-700 bg-slate-50 p-2.5 rounded-[4px] border border-slate-200/70 leading-relaxed">
                 {item.notes}
               </p>
 
-              {item.officialLetterNumber && (
-                <div className="mt-2 flex items-center gap-1.5 text-[11px] text-blue-700">
-                  <Mail className="w-3.5 h-3.5 text-blue-600" />
-                  <span>Nomor Surat: {item.officialLetterNumber}</span>
+              {/* Official Letter Link Button */}
+              <div className="flex items-center justify-between pt-1 text-[11px]">
+                <div className="flex items-center gap-1.5 text-slate-500">
+                  <Mail className="w-3.5 h-3.5 text-blue-600 flex-shrink-0" />
+                  <span className="tabular-nums">
+                    {item.officialLetterNumber || `BA-${item.claimId}`}
+                  </span>
                 </div>
-              )}
+                <button
+                  type="button"
+                  onClick={() => handleOpenLetter(item)}
+                  className="inline-flex items-center gap-1 px-2.5 py-0.5 bg-white border border-slate-200 hover:bg-slate-50 text-blue-700 font-medium rounded-[4px] transition-colors shadow-2xs"
+                >
+                  <span>Lihat Surat Resmi</span>
+                  <ExternalLink className="w-2.5 h-2.5" />
+                </button>
+              </div>
             </div>
           ))
         )}
       </div>
+
+      {/* Official Letter Preview Modal */}
+      {activeLetter && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40">
+          <div className="bg-white border border-slate-200 rounded-[4px] w-full max-w-2xl shadow-xl overflow-hidden flex flex-col max-h-[85vh] text-slate-800">
+            <div className="px-5 py-3 border-b border-slate-200 flex items-center justify-between bg-slate-50/70">
+              <div className="flex items-center gap-2">
+                <FileText className="w-4 h-4 text-blue-700" />
+                <h3 className="text-xs font-semibold text-slate-900">
+                  {activeLetter.title}
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setActiveLetter(null)}
+                className="p-1 rounded-[4px] text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="p-5 overflow-y-auto flex-1">
+              <pre className="text-xs leading-relaxed text-slate-800 whitespace-pre-wrap font-sans p-4 bg-slate-50 border border-slate-200 rounded-[4px] select-text">
+                {activeLetter.content}
+              </pre>
+            </div>
+            <div className="px-5 py-2.5 border-t border-slate-200 flex items-center justify-end bg-slate-50/70">
+              <button
+                type="button"
+                onClick={() => setActiveLetter(null)}
+                className="px-3.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-[4px] text-xs font-semibold transition-colors shadow-2xs"
+              >
+                Tutup Dokumen
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

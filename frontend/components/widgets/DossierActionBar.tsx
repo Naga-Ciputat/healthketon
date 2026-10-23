@@ -22,21 +22,21 @@ export function DossierActionBar({
   return (
     <div
       className={cn(
-        "bg-white border-t border-slate-200 p-4 shadow-lg flex flex-col gap-3 flex-shrink-0",
+        "bg-white border-t border-slate-200 p-4 shadow-sm flex flex-col gap-2.5 flex-shrink-0",
         className
       )}
     >
-      {/* Agent Recommendation Banner */}
-      <div className="flex items-center justify-between px-3 py-2 bg-blue-50/80 border border-blue-200 rounded-lg text-xs">
+      {/* Recommendation Banner */}
+      <div className="flex items-center justify-between px-3 py-2 bg-blue-50 border border-blue-200 rounded-[4px] text-xs">
         <div className="flex items-center gap-2 min-w-0">
           <Sparkles className="w-4 h-4 text-blue-600 flex-shrink-0" />
-          <span className="font-semibold text-blue-900 truncate">
+          <span className="font-semibold text-blue-950 truncate">
             {recommendedActionText}
           </span>
         </div>
         <div className="flex items-center gap-1.5 flex-shrink-0 ml-2">
-          <span className="text-[10px] text-blue-700">Keyakinan AI:</span>
-          <span className="px-1.5 py-0.2 bg-blue-600 text-white font-mono font-bold text-[10px] rounded">
+          <span className="text-[11px] text-blue-700">Skor Keyakinan:</span>
+          <span className="px-1.5 py-0.5 bg-blue-700 text-white font-semibold text-[10.5px] rounded-[4px] tabular-nums">
             {confidenceScore}%
           </span>
         </div>
@@ -48,40 +48,40 @@ export function DossierActionBar({
         <button
           type="button"
           onClick={() => onTriggerAction("DISETUJUI")}
-          className="flex items-center justify-center gap-1.5 px-3 py-2 bg-white hover:bg-emerald-50 text-emerald-700 border border-emerald-300 rounded-lg text-xs font-semibold shadow-2xs transition-all active:scale-[0.98]"
+          className="flex items-center justify-center gap-1.5 px-3 py-2 bg-white hover:bg-emerald-50 text-emerald-800 border border-emerald-300 rounded-[4px] text-xs font-semibold shadow-2xs transition-colors"
         >
-          <Check className="w-3.5 h-3.5" />
-          <span>Setujui</span>
+          <Check className="w-3.5 h-3.5 text-emerald-600" />
+          <span>Setujui Klaim</span>
         </button>
 
-        {/* Pending Request Documents (Recommended) */}
+        {/* Pending Request Klarifikasi (Recommended) */}
         <button
           type="button"
           onClick={() => onTriggerAction("PENDING_KLARIFIKASI_RS")}
-          className="flex items-center justify-center gap-1.5 px-3 py-2 bg-amber-600 hover:bg-amber-700 active:bg-amber-800 text-white rounded-lg text-xs font-semibold shadow-xs transition-all active:scale-[0.98] ring-2 ring-amber-300 ring-offset-1"
+          className="flex items-center justify-center gap-1.5 px-3 py-2 bg-amber-600 hover:bg-amber-700 active:bg-amber-800 text-white border border-amber-600 rounded-[4px] text-xs font-semibold shadow-2xs transition-colors"
         >
           <Clock className="w-3.5 h-3.5" />
-          <span>Pending — Klarifikasi</span>
+          <span>Klarifikasi RS</span>
         </button>
 
-        {/* Propose Downcode */}
+        {/* Propose Downcode (BPJS Blue) */}
         <button
           type="button"
           onClick={() => onTriggerAction("DOWNCODE_DIUSULKAN")}
-          className="flex items-center justify-center gap-1.5 px-3 py-2 bg-white hover:bg-purple-50 text-purple-700 border border-purple-300 rounded-lg text-xs font-semibold shadow-2xs transition-all active:scale-[0.98]"
+          className="flex items-center justify-center gap-1.5 px-3 py-2 bg-white hover:bg-blue-50 text-blue-800 border border-blue-300 rounded-[4px] text-xs font-semibold shadow-2xs transition-colors"
         >
-          <ArrowDownCircle className="w-3.5 h-3.5" />
-          <span>Downcode</span>
+          <ArrowDownCircle className="w-3.5 h-3.5 text-blue-600" />
+          <span>Koreksi Kode</span>
         </button>
 
         {/* Escalate to PK-JKN */}
         <button
           type="button"
           onClick={() => onTriggerAction("ESKALASI_PK_JKN")}
-          className="flex items-center justify-center gap-1.5 px-3 py-2 bg-white hover:bg-rose-50 text-rose-700 border border-rose-300 rounded-lg text-xs font-semibold shadow-2xs transition-all active:scale-[0.98]"
+          className="flex items-center justify-center gap-1.5 px-3 py-2 bg-white hover:bg-rose-50 text-rose-800 border border-rose-300 rounded-[4px] text-xs font-semibold shadow-2xs transition-colors"
         >
-          <AlertOctagon className="w-3.5 h-3.5" />
-          <span>Eskalasi PK-JKN</span>
+          <AlertOctagon className="w-3.5 h-3.5 text-rose-600" />
+          <span>Eskalasi Audit</span>
         </button>
       </div>
     </div>
