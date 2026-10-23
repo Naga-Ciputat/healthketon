@@ -191,16 +191,18 @@ export function TariffDeltaCalculator({
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-semibold text-slate-800 block">
-              Temuan Anomali Bukti &amp; Estimasi Nilai Discrepancy Faskes:
+              Daftar Bukti Temuan yang Mendasari Penyesuaian Paket:
             </span>
             <span className="text-[10.5px] text-slate-500 font-normal">
-              Bukti Fisik Overbilling
+              Alat Bukti Telaah Substantif
             </span>
           </div>
 
           <div className="space-y-1.5">
             {breakdowns.map((item, idx) => {
-              const isPackageCorrection = item.deltaRupiah === totalDelta;
+              const isPackageCorrection = item.category === "UPCODING";
+              const isAlkes = item.category === "INFLATED_ALKES";
+
               return (
                 <div
                   key={idx}
@@ -230,18 +232,42 @@ export function TariffDeltaCalculator({
                       {!isPackageCorrection && (
                         <>
                           <span>•</span>
-                          <span className="text-amber-800 font-medium">Tercakup dalam rekonsiliasi paket INA-CBG</span>
+                          <span className="text-amber-800 font-medium">Tercakup dalam tarif paket INA-CBG</span>
                         </>
                       )}
                     </div>
                   </div>
+
+                  {/* Differentiated Right Metric: Standalone Rupiah only for Package Downcode */}
                   <div className="text-right flex-shrink-0">
-                    <span className="font-semibold text-slate-900 tabular-nums block">
-                      {formatRupiah(item.deltaRupiah)}
-                    </span>
-                    <span className="text-[9.5px] text-slate-500 block">
-                      {isPackageCorrection ? "Koreksi Tarif Paket" : "Discrepancy Kuitansi RS"}
-                    </span>
+                    {isPackageCorrection ? (
+                      <div>
+                        <span className="font-bold text-sm text-emerald-900 tabular-nums block">
+                          {formatRupiah(totalDelta)}
+                        </span>
+                        <span className="text-[9.5px] text-emerald-700 font-medium block">
+                          Koreksi Tarif Paket
+                        </span>
+                      </div>
+                    ) : isAlkes ? (
+                      <div>
+                        <span className="font-semibold text-xs text-amber-900 tabular-nums block bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded-[4px]">
+                          Selisih Fisik: +1 Unit
+                        </span>
+                        <span className="text-[10px] text-slate-500 block mt-0.5">
+                          Kuitansi RS: {formatRupiah(item.deltaRupiah)}
+                        </span>
+                      </div>
+                    ) : (
+                      <div>
+                        <span className="font-semibold text-xs text-blue-900 tabular-nums block bg-blue-50 border border-blue-200 px-1.5 py-0.5 rounded-[4px]">
+                          Koding Terpisah
+                        </span>
+                        <span className="text-[10px] text-slate-500 block mt-0.5">
+                          Kuitansi RS: {formatRupiah(item.deltaRupiah)}
+                        </span>
+                      </div>
+                    )}
                   </div>
                 </div>
               );
@@ -252,7 +278,7 @@ export function TariffDeltaCalculator({
           <div className="p-2.5 bg-slate-50 border border-slate-200 rounded-[4px] text-[10.5px] text-slate-600 flex items-start gap-2 leading-relaxed">
             <Info className="w-3.5 h-3.5 text-slate-500 flex-shrink-0 mt-0.5" />
             <span>
-              <strong>Kaidah Pembayaran Prospektif (INA-CBG):</strong> Klaim dibayarkan berbasis satu paket utuh per episode rawat. Nilai selisih kuitansi alkes &amp; unbundling di atas adalah bukti fisik temuan diskrepansi yang mendasari penyesuaian tingkat keparahan (*downcoding*), bukan tagihan tambahan terpisah di luar paket.
+              <strong>Kaidah Pembayaran Prospektif (INA-CBG):</strong> Pembayaran klaim BPJS dilakukan per paket utuh episode rawat. Nilai <strong>Rp 24.900.000</strong> adalah satu-satunya efisiensi dana yang direalisasikan dari penurunan kode paket. Temuan selisih alkes kuitansi &amp; unbundling berfungsi sebagai alat bukti fisik pendukung telaah substantif verifikator, bukan biaya terpisah di luar paket.
             </span>
           </div>
         </div>
