@@ -209,7 +209,7 @@ async def get_claim_detail(claim_id: str):
         # Ambil Clinical Documents
         docs_rows = await conn.fetch(
             """
-            SELECT id, document_type, file_name, raw_text, metadata_json
+            SELECT id, document_type, file_name, raw_text, metadata_json, COALESCE(pdf_url, '') AS pdf_url
             FROM clinical_documents
             WHERE claim_id = $1
             ORDER BY id ASC
@@ -277,10 +277,13 @@ async def get_claim_detail(claim_id: str):
         title = type_to_title.get(doc_type, d["file_name"])
         raw_text = d["raw_text"]
         paragraphs = [p.strip() for p in raw_text.split("\n\n") if p.strip()]
+        metadata = json.loads(d["metadata_json"]) if isinstance(d["metadata_json"], str) else (d["metadata_json"] or {})
+        pdf_url = d["pdf_url"] or metadata.get("pdf_url") or f"/docs/{d['file_name']}"
         documents.append({
             "id": mapped_id,
             "title": title,
             "fileName": d["file_name"],
+            "pdfUrl": pdf_url,
             "pages": [
                 {
                     "pageNumber": 1,

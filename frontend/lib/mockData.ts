@@ -35,6 +35,7 @@ export interface DocumentSection {
   id: "resumeMedis" | "laporanOperasi" | "hasilLab" | "kuitansiAlkes";
   title: string;
   fileName: string;
+  pdfUrl?: string;
   pages: {
     pageNumber: number;
     paragraphs: string[];
@@ -258,6 +259,7 @@ export const INITIAL_CLAIMS: ClaimItem[] = [
         id: "resumeMedis",
         title: "Resume Medis Pasien",
         fileName: "Resume_Medis_CLM089.pdf",
+        pdfUrl: "https://res.cloudinary.com/dj6gxrayb/raw/upload/v1792837499/healthkaton/berkas/Resume_Medis_CLM089.pdf",
         pages: [
           {
             pageNumber: 1,
@@ -274,6 +276,7 @@ export const INITIAL_CLAIMS: ClaimItem[] = [
         id: "laporanOperasi",
         title: "Laporan Tindakan Operasi",
         fileName: "Laporan_Operasi_PCI_CLM089.pdf",
+        pdfUrl: "https://res.cloudinary.com/dj6gxrayb/raw/upload/v1792837500/healthkaton/berkas/Laporan_Operasi_PCI.pdf",
         pages: [
           {
             pageNumber: 1,
@@ -291,6 +294,7 @@ export const INITIAL_CLAIMS: ClaimItem[] = [
         id: "hasilLab",
         title: "Hasil Laboratorium & Biomarker",
         fileName: "Laboratorium_CLM089.pdf",
+        pdfUrl: "https://res.cloudinary.com/dj6gxrayb/raw/upload/v1792837501/healthkaton/berkas/Hasil_Lab_Biomarker.pdf",
         pages: [
           {
             pageNumber: 1,
@@ -307,6 +311,7 @@ export const INITIAL_CLAIMS: ClaimItem[] = [
         id: "kuitansiAlkes",
         title: "Rincian Billing & Alkes",
         fileName: "Kuitansi_Alkes_CLM089.pdf",
+        pdfUrl: "https://res.cloudinary.com/dj6gxrayb/raw/upload/v1792837502/healthkaton/berkas/Kuitansi_Rincian_Billing.pdf",
         pages: [
           {
             pageNumber: 1,
@@ -354,7 +359,24 @@ export const INITIAL_CLAIMS: ClaimItem[] = [
       suggestedNotes: "Klaim historis sah.",
       disputeDraftSummary: "",
     },
-    documents: [],
+    documents: [
+      {
+        id: "resumeMedis",
+        title: "Resume Medis Pasien Donor",
+        fileName: "Resume_Medis_Donor_CLM077.pdf",
+        pdfUrl: "https://res.cloudinary.com/dj6gxrayb/raw/upload/v1792837503/healthkaton/berkas/Resume_Medis_Donor_CLM077.pdf",
+        pages: [
+          {
+            pageNumber: 1,
+            paragraphs: [
+              "RUMAH SAKIT SEJAHTERA MEDIKA — RESUME MEDIS RAWAT INAP ELEKTRONIK (BERKAS ACUAN DONOR). No RM: 00-47-19. Nama: Tn. M (Pasien Donor). Tanggal Masuk: 07/10/2026. Tanggal Keluar: 09/10/2026. DPJP: dr. Hendra Sp.JP.",
+              "Pasien mengeluh nyeri dada substernal menjalar ke lengan kiri sejak 3 jam SMRS disertai keringat dingin, mual, dan rasa tertekan beban berat pada dada sebelah kiri saat beristirahat.",
+              "Pemeriksaan Fisik Awal: Keadaan umum sedang, Compos Mentis. Tekanan Darah: 130/80 mmHg, Nadi: 88 x/menit teratur, Suhu: 36.8 C.",
+            ],
+          },
+        ],
+      },
+    ],
   },
   {
     id: "CLM-2026-092",

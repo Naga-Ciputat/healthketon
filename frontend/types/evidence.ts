@@ -53,5 +53,6 @@ export interface DocumentSection {
   id: DocumentTypeId;
   title: string;
   fileName: string;
+  pdfUrl?: string;
   pages: DocumentPage[];
 }

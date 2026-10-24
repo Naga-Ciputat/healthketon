@@ -1,0 +1,38 @@
+{
+  "DOC-089-1": {
+    "file_name": "Resume_Medis_CLM089.pdf",
+    "url": "https://res.cloudinary.com/dj6gxrayb/raw/upload/v1792837499/healthkaton/berkas/Resume_Medis_CLM089.pdf",
+    "claim_id": "CLM-2026-089",
+    "type": "RESUME_MEDIS"
+  },
+  "DOC-089-2": {
+    "file_name": "Laporan_Operasi_PCI.pdf",
+    "url": "https://res.cloudinary.com/dj6gxrayb/raw/upload/v1792837500/healthkaton/berkas/Laporan_Operasi_PCI.pdf",
+    "claim_id": "CLM-2026-089",
+    "type": "LAPORAN_OPERASI"
+  },
+  "DOC-089-3": {
+    "file_name": "Hasil_Lab_Biomarker.pdf",
+    "url": "https://res.cloudinary.com/dj6gxrayb/raw/upload/v1792837501/healthkaton/berkas/Hasil_Lab_Biomarker.pdf",
+    "claim_id": "CLM-2026-089",
+    "type": "LAB_RESULT"
+  },
+  "DOC-089-4": {
+    "file_name": "Kuitansi_Rincian_Billing.pdf",
+    "url": "https://res.cloudinary.com/dj6gxrayb/raw/upload/v1792837502/healthkaton/berkas/Kuitansi_Rincian_Billing.pdf",
+    "claim_id": "CLM-2026-089",
+    "type": "BILLING_ALKES"
+  },
+  "DOC-012-1": {
+    "file_name": "Resume_Medis_CLM012.pdf",
+    "url": "https://res.cloudinary.com/dj6gxrayb/raw/upload/v1792837502/healthkaton/berkas/Resume_Medis_CLM012.pdf",
+    "claim_id": "CLM-2026-012",
+    "type": "RESUME_MEDIS"
+  },
+  "DOC-077-1": {
+    "file_name": "Resume_Medis_Donor_CLM077.pdf",
+    "url": "https://res.cloudinary.com/dj6gxrayb/raw/upload/v1792837503/healthkaton/berkas/Resume_Medis_Donor_CLM077.pdf",
+    "claim_id": "CLM-2026-077",
+    "type": "RESUME_MEDIS"
+  }
+}
