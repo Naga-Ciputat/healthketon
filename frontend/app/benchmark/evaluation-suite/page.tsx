@@ -6,7 +6,7 @@ import { TopHeader } from "@/components/widgets/TopHeader";
 import { ConfusionMatrixCard } from "@/components/widgets/ConfusionMatrixCard";
 import { ModalBenchmarkDetail } from "@/components/widgets/ModalBenchmarkDetail";
 import { BenchmarkCaseResult } from "@/lib/mockData";
-import { getCohortById, BENCHMARK_COHORTS } from "@/lib/benchmarkCohorts";
+import { getCohortById, BENCHMARK_COHORTS, createCustomCohort } from "@/lib/benchmarkCohorts";
 import {
   FlaskConical,
   Play,
@@ -29,7 +29,17 @@ function BenchmarkSuiteContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const cohortId = searchParams.get("cohort") || "RS_SEJAHTERA";
-  const cohort = getCohortById(cohortId);
+  const hospitalParam = searchParams.get("hospital") || "ALL";
+  const modusParam = searchParams.get("modus") ? searchParams.get("modus")!.split(",") : [];
+  const minRecallParam = searchParams.get("minRecall") ? Number(searchParams.get("minRecall")) : 85;
+  const maxFprParam = searchParams.get("maxFpr") ? Number(searchParams.get("maxFpr")) : 15;
+
+  const cohort = useMemo(() => {
+    if (cohortId === "CUSTOM") {
+      return createCustomCohort(hospitalParam, modusParam, minRecallParam, maxFprParam);
+    }
+    return getCohortById(cohortId);
+  }, [cohortId, hospitalParam, modusParam, minRecallParam, maxFprParam]);
 
   const [isRunning, setIsRunning] = useState(true);
   const [progress, setProgress] = useState(0);
@@ -280,8 +290,8 @@ function BenchmarkSuiteContent() {
             </div>
 
             <div className="flex items-center justify-between text-[11px] text-slate-500 pt-0.5">
-              <span>Tri-Engine Pipeline: Gemini 2.0 Flash (PNPK) · Groq LPU (Tariff Delta) · NVIDIA NIM (Cosine Similarity)</span>
-              <span className="font-mono text-emerald-700 font-medium">Grounding Verbatim: 100% OK</span>
+              <span>Pipeline Verifikasi: Kaidah Koding ICD · Audit Laporan Medis Operasi · Konsistensi Tarif INA-CBG</span>
+              <span className="text-slate-600 font-medium">Verifikasi Bukti Riil: 100% Sesuai Berkas</span>
             </div>
           </div>
         )}
@@ -293,7 +303,7 @@ function BenchmarkSuiteContent() {
             <div className="flex items-center justify-between text-xs text-slate-500">
               <span className="font-medium">Sensitivitas (Recall)</span>
               <span className="text-[10px] font-semibold text-emerald-800 bg-emerald-50 px-1.5 py-0.5 rounded-[4px] border border-emerald-200">
-                Target ≥ 85%
+                Target ≥ {minRecallParam}%
               </span>
             </div>
             <div className="text-2xl font-bold text-slate-900 tabular-nums">
@@ -309,13 +319,13 @@ function BenchmarkSuiteContent() {
             <div className="flex items-center justify-between text-xs text-slate-500">
               <span className="font-medium">Positif Palsu (FPR)</span>
               <span className="text-[10px] font-semibold text-slate-700 bg-slate-100 px-1.5 py-0.5 rounded-[4px] border border-slate-200">
-                Target ≤ 15%
+                Target ≤ {maxFprParam}%
               </span>
             </div>
             <div
               className={cn(
                 "text-2xl font-bold tabular-nums",
-                fpr <= 15 ? "text-slate-900" : "text-amber-700"
+                fpr <= maxFprParam ? "text-slate-900" : "text-amber-700"
               )}
             >
               {fpr.toFixed(1)}%
@@ -325,10 +335,10 @@ function BenchmarkSuiteContent() {
             </span>
           </div>
 
-          {/* Metrik 3: Grounding */}
+          {/* Metrik 3: Verifikasi Bukti */}
           <div className="bg-white border border-slate-200 rounded-[4px] p-4 space-y-1 shadow-2xs">
             <div className="flex items-center justify-between text-xs text-slate-500">
-              <span className="font-medium">Grounding Accuracy</span>
+              <span className="font-medium">Akurasi Bukti Medis</span>
               <span className="text-[10px] font-semibold text-blue-800 bg-blue-50 px-1.5 py-0.5 rounded-[4px] border border-blue-200">
                 Target 100%
               </span>
@@ -337,7 +347,7 @@ function BenchmarkSuiteContent() {
               {verbatimRate}%
             </div>
             <span className="text-[11px] text-slate-500 block">
-              100% kutipan teks rekam medis asli
+              Pencocokan kutipan rekam medis asli
             </span>
           </div>
 

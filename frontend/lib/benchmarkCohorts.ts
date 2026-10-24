@@ -11,7 +11,7 @@ export interface BenchmarkCohort {
   caseCount: number;
   anomalyCount: number;
   cleanCount: number;
-  estimatedDuration: string;
+  estimatedDuration?: string;
   cases: BenchmarkCaseResult[];
 }
 
@@ -407,7 +407,6 @@ export const BENCHMARK_COHORTS: BenchmarkCohort[] = [
     caseCount: 10,
     anomalyCount: 6,
     cleanCount: 4,
-    estimatedDuration: "~12 Detik",
     cases: SEJAHTERA_CASES,
   },
   {
@@ -422,7 +421,6 @@ export const BENCHMARK_COHORTS: BenchmarkCohort[] = [
     caseCount: 10,
     anomalyCount: 6,
     cleanCount: 4,
-    estimatedDuration: "~11 Detik",
     cases: MITRA_CASES,
   },
   {
@@ -437,7 +435,6 @@ export const BENCHMARK_COHORTS: BenchmarkCohort[] = [
     caseCount: 10,
     anomalyCount: 6,
     cleanCount: 4,
-    estimatedDuration: "~14 Detik",
     cases: SENTOSA_CASES,
   },
   {
@@ -452,13 +449,62 @@ export const BENCHMARK_COHORTS: BenchmarkCohort[] = [
     caseCount: 30,
     anomalyCount: 18,
     cleanCount: 12,
-    estimatedDuration: "~35 Detik",
     cases: MULTI_CENTER_CASES,
   },
 ];
+
+export const ALL_BENCHMARK_CASES = MULTI_CENTER_CASES;
 
 export function getCohortById(cohortId?: string | null): BenchmarkCohort {
   if (!cohortId) return BENCHMARK_COHORTS[0];
   const found = BENCHMARK_COHORTS.find((c) => c.id.toLowerCase() === cohortId.toLowerCase());
   return found || BENCHMARK_COHORTS[0];
+}
+
+export function createCustomCohort(
+  hospitalFilter: string,
+  selectedModus: string[],
+  targetRecall: number = 85,
+  targetFpr: number = 15
+): BenchmarkCohort {
+  let filtered = [...MULTI_CENTER_CASES];
+
+  if (hospitalFilter && hospitalFilter !== "ALL") {
+    filtered = filtered.filter((c) =>
+      c.hospital.toLowerCase().includes(hospitalFilter.toLowerCase())
+    );
+  }
+
+  if (selectedModus && selectedModus.length > 0) {
+    filtered = filtered.filter(
+      (c) =>
+        c.label === "CLEAN_CLAIM" ||
+        selectedModus.some((m) => c.label.toLowerCase().includes(m.toLowerCase()))
+    );
+  }
+
+  // Ensure at least some cases exist
+  if (filtered.length === 0) {
+    filtered = MULTI_CENTER_CASES.slice(0, 10);
+  }
+
+  const anomalyCount = filtered.filter((c) => c.expectedAnomaly).length;
+  const cleanCount = filtered.filter((c) => !c.expectedAnomaly).length;
+
+  return {
+    id: "CUSTOM",
+    title: "Uji Kustom Parameter Terpilih",
+    specialization:
+      hospitalFilter !== "ALL"
+        ? `Faskes: ${hospitalFilter}`
+        : "Kluster Terpilih (Kustom Mandiri)",
+    hospitalName: hospitalFilter !== "ALL" ? hospitalFilter : "Multi-Faskes Terpilih",
+    badge: "Kustom Mandiri",
+    description: `Pengujian terkonfigurasi mandiri dengan ambang batas target recall ${targetRecall}% dan toleransi FPR maks. ${targetFpr}%.`,
+    focusModus: selectedModus.length > 0 ? selectedModus : ["Seluruh Modus"],
+    caseCount: filtered.length,
+    anomalyCount,
+    cleanCount,
+    cases: filtered,
+  };
 }
