@@ -493,14 +493,14 @@ export function createCustomCohort(
 
   return {
     id: "CUSTOM",
-    title: "Uji Kustom Parameter Terpilih",
+    title: "Uji Custom Parameter Terpilih",
     specialization:
       hospitalFilter !== "ALL"
         ? `Faskes: ${hospitalFilter}`
-        : "Kluster Terpilih (Kustom Mandiri)",
+        : "Kluster Terpilih (Custom)",
     hospitalName: hospitalFilter !== "ALL" ? hospitalFilter : "Multi-Faskes Terpilih",
-    badge: "Kustom Mandiri",
-    description: `Pengujian terkonfigurasi mandiri dengan ambang batas target recall ${targetRecall}% dan toleransi FPR maks. ${targetFpr}%.`,
+    badge: "Custom",
+    description: `Pengujian parameter custom dengan ambang batas target recall ${targetRecall}% dan toleransi FPR maks. ${targetFpr}%.`,
     focusModus: selectedModus.length > 0 ? selectedModus : ["Seluruh Modus"],
     caseCount: filtered.length,
     anomalyCount,

@@ -125,7 +125,7 @@ export default function BenchmarkLauncherPage() {
                 Metode Pengujian Kasus
               </h3>
               <p className="text-[11px] text-slate-500">
-                Pilih paket preset kluster fasilitas kesehatan atau atur parameter kustomisasi mandiri
+                Pilih paket preset kluster fasilitas kesehatan atau atur parameter custom
               </p>
             </div>
 
@@ -155,7 +155,7 @@ export default function BenchmarkLauncherPage() {
                 )}
               >
                 <SlidersHorizontal className="w-3.5 h-3.5" />
-                <span>Kustomisasi Mandiri</span>
+                <span>Custom</span>
               </button>
             </div>
           </div>
@@ -316,7 +316,7 @@ export default function BenchmarkLauncherPage() {
 
               {/* Summary of Custom Matching Cases */}
               <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-600">
-                <span>Hasil filter kustomisasi:</span>
+                <span>Hasil filter custom:</span>
                 <span className="tabular-nums font-semibold text-slate-900">
                   {customCohort.caseCount} Kasus ({customCohort.anomalyCount} Anomali · {customCohort.cleanCount} Kontrol Wajar)
                 </span>
