@@ -5,11 +5,15 @@ import { TopHeader } from "@/components/widgets/TopHeader";
 import { AuditLogStream, AuditLogItem } from "@/components/widgets/AuditLogStream";
 import { getStoredAuditLogs } from "@/lib/claimStore";
 import { fetchAuditLogsFromBackend } from "@/lib/api";
-import { ShieldCheck, Download, Check, Banknote } from "lucide-react";
+import { ShieldCheck, Download, Check, Banknote, ChevronDown, FileText, FileSpreadsheet } from "lucide-react";
+import { ModalReconciliationReport } from "@/components/widgets/ModalReconciliationReport";
 
 export default function AuditTrailPage() {
   const [logs, setLogs] = useState<AuditLogItem[]>([]);
-  const [isExported, setIsExported] = useState(false);
+  const [isExportMenuOpen, setIsExportMenuOpen] = useState(false);
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+  const [exportFeedback, setExportFeedback] = useState<string | null>(null);
+  const menuRef = React.useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // 1. Initial fast local load
@@ -34,6 +38,19 @@ export default function AuditTrailPage() {
     };
   }, []);
 
+  // Close dropdown on click outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsExportMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   const totalEfficiency = logs.reduce((sum, item) => sum + (item.savedDeltaRupiah || 0), 0);
 
   const formatRupiah = (val: number) =>
@@ -43,7 +60,57 @@ export default function AuditTrailPage() {
       maximumFractionDigits: 0,
     }).format(val);
 
-  const handleExportBeritaAcara = () => {
+  // 1. Ekspor CSV Terstruktur untuk Excel / SIMRS
+  const handleExportCSV = () => {
+    setIsExportMenuOpen(false);
+    const headers = [
+      "No",
+      "ID Klaim",
+      "Fasilitas Kesehatan",
+      "Tanggal Putusan",
+      "Verifikator",
+      "Jabatan Verifikator",
+      "Status Tindakan",
+      "Nomor Surat Resmi",
+      "Tarif Disetujui (IDR)",
+      "Efisiensi Terkoreksi (IDR)",
+      "Catatan Justifikasi",
+    ];
+
+    const rows = logs.map((l, idx) => [
+      idx + 1,
+      `"${l.claimId}"`,
+      `"${(l.hospitalName || "").replace(/"/g, '""')}"`,
+      `"${l.timestamp}"`,
+      `"${(l.verifierName || "").replace(/"/g, '""')}"`,
+      `"${(l.verifierRole || "Verifikator Utama").replace(/"/g, '""')}"`,
+      `"${l.action}"`,
+      `"${(l.officialLetterNumber || "-").replace(/"/g, '""')}"`,
+      l.finalTariff || 0,
+      l.savedDeltaRupiah || 0,
+      `"${(l.notes || "").replace(/"/g, '""').replace(/\n/g, " ")}"`,
+    ]);
+
+    // UTF-8 BOM for seamless Microsoft Excel compatibility
+    const csvContent =
+      "\uFEFF" +
+      [headers.join(";"), ...rows.map((row) => row.join(";"))].join("\r\n");
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `Rekapitulasi_Audit_Klaim_BPJS_${Date.now()}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+
+    setExportFeedback("CSV Diunduh");
+    setTimeout(() => setExportFeedback(null), 3000);
+  };
+
+  // 2. Ekspor Ringkasan Teks Lengkap (.TXT)
+  const handleExportTXT = () => {
+    setIsExportMenuOpen(false);
     const headerText = `REKAPITULASI BERITA ACARA AUDIT KLAIM BPJS KESEHATAN
 Waktu Ekspor: ${new Date().toLocaleString("id-ID")}
 Total Putusan: ${logs.length} berkas
@@ -74,8 +141,14 @@ Catatan: ${l.notes}
     link.click();
     URL.revokeObjectURL(url);
 
-    setIsExported(true);
-    setTimeout(() => setIsExported(false), 3000);
+    setExportFeedback("TXT Diunduh");
+    setTimeout(() => setExportFeedback(null), 3000);
+  };
+
+  // 3. Buka Modal Cetak PDF Berita Acara Rekonsiliasi Resmi
+  const handleOpenReportModal = () => {
+    setIsExportMenuOpen(false);
+    setIsReportModalOpen(true);
   };
 
   return (
@@ -86,23 +159,89 @@ Catatan: ${l.notes}
         subtitle="Log Append-Only Verifikasi Klaim"
         rightActions={
           <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={handleExportBeritaAcara}
-              className="flex items-center gap-1.5 px-3 py-1 text-xs font-semibold text-slate-700 bg-white border border-slate-200 rounded-[4px] hover:bg-slate-50 transition-colors shadow-2xs"
-            >
-              {isExported ? (
-                <>
-                  <Check className="w-3.5 h-3.5 text-emerald-600" />
-                  <span className="text-emerald-700">Terekspor</span>
-                </>
-              ) : (
-                <>
-                  <Download className="w-3.5 h-3.5 text-slate-500" />
-                  <span>Ekspor Berita Acara</span>
-                </>
+            <div className="relative" ref={menuRef}>
+              <button
+                type="button"
+                onClick={() => setIsExportMenuOpen(!isExportMenuOpen)}
+                className="flex items-center gap-1.5 px-3 py-1 text-xs font-semibold text-slate-700 bg-white border border-slate-200 rounded-[4px] hover:bg-slate-50 transition-colors shadow-2xs"
+              >
+                {exportFeedback ? (
+                  <>
+                    <Check className="w-3.5 h-3.5 text-emerald-600" />
+                    <span className="text-emerald-700">{exportFeedback}</span>
+                  </>
+                ) : (
+                  <>
+                    <Download className="w-3.5 h-3.5 text-slate-500" />
+                    <span>Ekspor Berita Acara</span>
+                    <ChevronDown className="w-3 h-3 text-slate-400 ml-0.5" />
+                  </>
+                )}
+              </button>
+
+              {/* Dropdown Menu Pilihan Format Ekspor */}
+              {isExportMenuOpen && (
+                <div className="absolute right-0 top-full mt-1.5 w-76 bg-white border border-slate-200 rounded-[4px] shadow-lg py-1 z-50 text-slate-800">
+                  <div className="px-3 py-1.5 border-b border-slate-100 text-[10.5px] font-semibold text-slate-500 uppercase tracking-wider">
+                    Pilih Format Ekspor Berita Acara
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={handleOpenReportModal}
+                    className="w-full px-3 py-2 text-left hover:bg-slate-50 flex items-start gap-2.5 transition-colors border-b border-slate-50"
+                  >
+                    <div className="p-1.5 rounded-[4px] bg-blue-50 text-blue-700 mt-0.5 border border-blue-100 flex-shrink-0">
+                      <FileText className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <span className="text-xs font-semibold text-slate-900 block">
+                        Cetak Berita Acara Resmi (PDF / A4)
+                      </span>
+                      <span className="text-[11px] text-slate-500 block leading-tight mt-0.5">
+                        Laporan rekapitulasi formal berkop BPJS dengan pengesahan TTE
+                      </span>
+                    </div>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleExportCSV}
+                    className="w-full px-3 py-2 text-left hover:bg-slate-50 flex items-start gap-2.5 transition-colors border-b border-slate-50"
+                  >
+                    <div className="p-1.5 rounded-[4px] bg-emerald-50 text-emerald-700 mt-0.5 border border-emerald-100 flex-shrink-0">
+                      <FileSpreadsheet className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <span className="text-xs font-semibold text-slate-900 block">
+                        Rekapitulasi Data Tabular (.CSV / Excel)
+                      </span>
+                      <span className="text-[11px] text-slate-500 block leading-tight mt-0.5">
+                        Format spreadsheet terstruktur untuk pembukuan akuntansi & SIMRS
+                      </span>
+                    </div>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleExportTXT}
+                    className="w-full px-3 py-2 text-left hover:bg-slate-50 flex items-start gap-2.5 transition-colors"
+                  >
+                    <div className="p-1.5 rounded-[4px] bg-slate-100 text-slate-700 mt-0.5 border border-slate-200 flex-shrink-0">
+                      <Download className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <span className="text-xs font-semibold text-slate-900 block">
+                        Ringkasan Naskah Lengkap (.TXT)
+                      </span>
+                      <span className="text-[11px] text-slate-500 block leading-tight mt-0.5">
+                        Salinan naskah teks lengkap seluruh catatan putusan audit
+                      </span>
+                    </div>
+                  </button>
+                </div>
               )}
-            </button>
+            </div>
           </div>
         }
       />
@@ -138,6 +277,14 @@ Catatan: ${l.notes}
         {/* Audit Log Stream Component */}
         <AuditLogStream entries={logs} title="Riwayat Keputusan Verifikator" />
       </div>
+
+      {/* Modal Berita Acara Rekonsiliasi Kolektif */}
+      <ModalReconciliationReport
+        isOpen={isReportModalOpen}
+        onClose={() => setIsReportModalOpen(false)}
+        logs={logs}
+        totalEfficiency={totalEfficiency}
+      />
     </div>
   );
 }
