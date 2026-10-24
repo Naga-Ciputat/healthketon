@@ -3,9 +3,9 @@
 import React, { useState, useEffect } from "react";
 import { TopHeader } from "@/components/widgets/TopHeader";
 import { AuditLogStream, AuditLogItem } from "@/components/widgets/AuditLogStream";
-import { getStoredAuditLogs, resetStoreToDefault } from "@/lib/claimStore";
+import { getStoredAuditLogs } from "@/lib/claimStore";
 import { fetchAuditLogsFromBackend } from "@/lib/api";
-import { ShieldCheck, Download, RotateCcw, Check, Banknote } from "lucide-react";
+import { ShieldCheck, Download, Check, Banknote } from "lucide-react";
 
 export default function AuditTrailPage() {
   const [logs, setLogs] = useState<AuditLogItem[]>([]);
@@ -86,15 +86,6 @@ Catatan: ${l.notes}
         subtitle="Log Append-Only Verifikasi Klaim"
         rightActions={
           <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={resetStoreToDefault}
-              title="Reset ke data awal purwarupa"
-              className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium text-slate-600 bg-white border border-slate-200 rounded-[4px] hover:bg-slate-50 transition-colors shadow-2xs"
-            >
-              <RotateCcw className="w-3 h-3 text-slate-400" />
-              <span>Reset Data</span>
-            </button>
             <button
               type="button"
               onClick={handleExportBeritaAcara}
