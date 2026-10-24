@@ -39,7 +39,7 @@ export function ClarixSidebar({
     },
     {
       label: "Uji Kasus Benchmark",
-      href: "/benchmark/evaluation-suite",
+      href: "/benchmark",
       icon: FlaskConical,
       match: (path: string) => path.startsWith("/benchmark"),
     },
