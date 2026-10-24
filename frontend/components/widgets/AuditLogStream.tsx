@@ -37,6 +37,8 @@ export interface AuditLogStreamProps {
   className?: string;
 }
 
+import { ModalOfficialLetter } from "@/components/widgets/ModalOfficialLetter";
+
 export function AuditLogStream({
   entries = [],
   title = "Jejak Audit & Riwayat Putusan Klaim",
@@ -44,11 +46,7 @@ export function AuditLogStream({
 }: AuditLogStreamProps) {
   const [filterAction, setFilterAction] = useState<string>("ALL");
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [activeLetter, setActiveLetter] = useState<{
-    title: string;
-    letterNumber?: string;
-    content: string;
-  } | null>(null);
+  const [selectedItemForLetter, setSelectedItemForLetter] = useState<AuditLogItem | null>(null);
 
   const formatRupiah = (val: number) =>
     new Intl.NumberFormat("id-ID", {
@@ -105,30 +103,7 @@ export function AuditLogStream({
   });
 
   const handleOpenLetter = (item: AuditLogItem) => {
-    const content =
-      item.letterContent ||
-      `BERITA ACARA RESMI BPJS KESEHATAN
-Nomor: ${item.officialLetterNumber || `BA-BPJS/2026/${item.claimId}`}
-Tanggal: ${item.timestamp}
-
-Fasilitas Kesehatan: ${item.hospitalName}
-ID Berkas Klaim: ${item.claimId}
-Verifikator Medis: ${item.verifierName}
-
-Catatan Justifikasi:
-${item.notes}
-
-Status Putusan: ${item.action}
-Tarif Akhir Disetujui: Rp ${item.finalTariff.toLocaleString("id-ID")}
-Nilai Koreksi Penghematan JKN: Rp ${item.savedDeltaRupiah.toLocaleString("id-ID")}
-
-Dokumen ini diterbitkan secara elektronik dan terekam pada sistem jejak audit verifikasi klaim BPJS Kesehatan.`;
-
-    setActiveLetter({
-      title: `Surat Resmi — Berkas ${item.claimId}`,
-      letterNumber: item.officialLetterNumber,
-      content,
-    });
+    setSelectedItemForLetter(item);
   };
 
   return (
@@ -266,41 +241,29 @@ Dokumen ini diterbitkan secara elektronik dan terekam pada sistem jejak audit ve
       </div>
 
       {/* Official Letter Preview Modal */}
-      {activeLetter && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40">
-          <div className="bg-white border border-slate-200 rounded-[4px] w-full max-w-2xl shadow-xl overflow-hidden flex flex-col max-h-[85vh] text-slate-800">
-            <div className="px-5 py-3 border-b border-slate-200 flex items-center justify-between bg-slate-50/70">
-              <div className="flex items-center gap-2">
-                <FileText className="w-4 h-4 text-blue-700" />
-                <h3 className="text-xs font-semibold text-slate-900">
-                  {activeLetter.title}
-                </h3>
-              </div>
-              <button
-                type="button"
-                onClick={() => setActiveLetter(null)}
-                className="p-1 rounded-[4px] text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-            <div className="p-5 overflow-y-auto flex-1">
-              <pre className="text-xs leading-relaxed text-slate-800 whitespace-pre-wrap font-sans p-4 bg-slate-50 border border-slate-200 rounded-[4px] select-text">
-                {activeLetter.content}
-              </pre>
-            </div>
-            <div className="px-5 py-2.5 border-t border-slate-200 flex items-center justify-end bg-slate-50/70">
-              <button
-                type="button"
-                onClick={() => setActiveLetter(null)}
-                className="px-3.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-[4px] text-xs font-semibold transition-colors shadow-2xs"
-              >
-                Tutup Dokumen
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <ModalOfficialLetter
+        isOpen={!!selectedItemForLetter}
+        onClose={() => setSelectedItemForLetter(null)}
+        letterData={
+          selectedItemForLetter
+            ? {
+                letterType: selectedItemForLetter.action,
+                letterNumber:
+                  selectedItemForLetter.officialLetterNumber ||
+                  `BA-BPJS/2026/${selectedItemForLetter.claimId}`,
+                claimId: selectedItemForLetter.claimId,
+                hospitalName: selectedItemForLetter.hospitalName,
+                verifierName: selectedItemForLetter.verifierName,
+                verifierRole: selectedItemForLetter.verifierRole,
+                timestamp: selectedItemForLetter.timestamp,
+                finalTariff: selectedItemForLetter.finalTariff,
+                savedDeltaRupiah: selectedItemForLetter.savedDeltaRupiah,
+                notes: selectedItemForLetter.notes,
+                rawContent: selectedItemForLetter.letterContent,
+              }
+            : null
+        }
+      />
     </div>
   );
 }
