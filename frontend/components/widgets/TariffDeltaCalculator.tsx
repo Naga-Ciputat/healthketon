@@ -63,18 +63,19 @@ export function TariffDeltaCalculator({
   const recommendedTariff = claim?.fairTariff ?? propRecTariff ?? 20100000;
   const totalDelta = claim?.deltaTariff ?? (claimedTariff - recommendedTariff);
 
-  const breakdowns: TariffItemBreakdown[] = claim
-    ? claim.findings
-      .filter((f) => f.deltaRupiah && f.deltaRupiah > 0)
-      .map((f) => ({
-        label: f.title,
-        category: f.type === "INFLATED_ALKES" ? "INFLATED_ALKES" : "UPCODING",
-        originalAmount: f.deltaRupiah || 0,
-        adjustedAmount: 0,
-        deltaRupiah: f.deltaRupiah || 0,
-        note: f.regulationReference || "Permenkes RI No. 3/2023",
-      }))
-    : propBreakdowns || [
+  const breakdowns: TariffItemBreakdown[] =
+    claim?.findings && claim.findings.length > 0
+      ? claim.findings
+          .filter((f) => f.deltaRupiah && f.deltaRupiah > 0)
+          .map((f) => ({
+            label: f.title,
+            category: f.type === "INFLATED_ALKES" ? "INFLATED_ALKES" : "UPCODING",
+            originalAmount: f.deltaRupiah || 0,
+            adjustedAmount: 0,
+            deltaRupiah: f.deltaRupiah || 0,
+            note: f.regulationReference || "Permenkes RI No. 3/2023",
+          }))
+      : propBreakdowns || [
       {
         label: "Severity Downcode (A41.9 Sepsis tidak memenuhi kriteria klinis/lab)",
         category: "UPCODING",

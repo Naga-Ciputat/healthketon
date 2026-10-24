@@ -138,6 +138,16 @@ async def list_claims(
             "riskLevel": r["risk_level"],
             "modusTags": modus,
             "confidenceScore": float(r["priority_score"]),
+            "findings": [],
+            "documents": [],
+            "alternativeHypotheses": "",
+            "recommendedAction": {
+                "type": r["status"],
+                "label": "Rekomendasi Tindakan: Peninjauan Berkas",
+                "confidence": int(float(r["priority_score"])),
+                "suggestedNotes": "",
+                "disputeDraftSummary": "",
+            },
         })
 
     return {"status": "success", "total": len(claims), "data": claims}
@@ -279,6 +289,7 @@ async def get_claim_detail(claim_id: str):
             ],
         })
 
+    sec = json.loads(claim_row["secondary_icd10"]) if isinstance(claim_row["secondary_icd10"], str) else (claim_row["secondary_icd10"] or [])
     raw_modus = json.loads(claim_row["modus_tags"]) if isinstance(claim_row["modus_tags"], str) else (claim_row["modus_tags"] or [])
     modus = [format_modus_tag(t) for t in raw_modus]
 

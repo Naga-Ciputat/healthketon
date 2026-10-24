@@ -19,13 +19,14 @@ export interface SmartDocumentViewerProps {
 }
 
 export function SmartDocumentViewer({
-  documents,
+  documents = [],
   activeCitation,
   onSelectDocumentTab,
   className,
 }: SmartDocumentViewerProps) {
+  const safeDocs = documents || [];
   const [activeTabId, setActiveTabId] = useState<DocumentSection["id"]>(
-    documents[0]?.id || "resumeMedis"
+    safeDocs[0]?.id || "resumeMedis"
   );
   const [zoomLevel, setZoomLevel] = useState(100);
   const highlightedRef = useRef<HTMLDivElement>(null);
@@ -44,7 +45,7 @@ export function SmartDocumentViewer({
     }
   }, [activeCitation]);
 
-  const activeDoc = documents.find((d) => d.id === activeTabId) || documents[0];
+  const activeDoc = safeDocs.find((d) => d.id === activeTabId) || safeDocs[0];
 
   const handleTabChange = (docId: DocumentSection["id"]) => {
     setActiveTabId(docId);
@@ -69,7 +70,7 @@ export function SmartDocumentViewer({
       {/* Top Document Tabs: Surface Contrast */}
       <div className="bg-white border-b border-slate-200 px-3 flex items-center justify-between flex-shrink-0">
         <div className="flex items-center gap-1 overflow-x-auto py-1.5">
-          {documents.map((doc) => {
+          {safeDocs.map((doc) => {
             const isActive = doc.id === activeTabId;
             return (
               <button

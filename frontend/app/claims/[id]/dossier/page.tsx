@@ -173,7 +173,7 @@ export default function DossierPage() {
           : selectedActionType === "ESKALASI_PK_JKN"
           ? `ND-BPJS/2026/ESK-PK/${activeClaim.id}`
           : `440/BPJS-KCU/KLARIF/X/2026`,
-      notes: notes || activeClaim.recommendedAction.suggestedNotes,
+      notes: notes || activeClaim?.recommendedAction?.suggestedNotes || "",
       letterContent: letterDraft,
     };
     addAuditLogEntry(newLog);
@@ -281,7 +281,7 @@ export default function DossierPage() {
             <div className="flex items-center gap-2">
               <ShieldAlert className="w-4 h-4 text-rose-600 flex-shrink-0" />
               <span className="text-xs font-semibold text-slate-900">
-                Temuan Diskrepansi Bukti Klinis ({activeClaim.findings.length})
+                Temuan Diskrepansi Bukti Klinis ({(activeClaim?.findings || []).length})
               </span>
             </div>
             <span className="text-[11px] text-slate-500">
@@ -295,7 +295,7 @@ export default function DossierPage() {
 
             {/* Evidence Cards List */}
             <div className="space-y-3">
-              {activeClaim.findings.map((finding) => (
+              {(activeClaim?.findings || []).map((finding) => (
                 <EvidenceCard
                   key={finding.id}
                   finding={finding}
@@ -320,8 +320,8 @@ export default function DossierPage() {
 
           {/* Fixed Action Bar at Bottom of Left Pane */}
           <DossierActionBar
-            recommendedActionText={activeClaim.recommendedAction.label}
-            confidenceScore={activeClaim.recommendedAction.confidence}
+            recommendedActionText={activeClaim?.recommendedAction?.label || "Rekomendasi Tindakan: Peninjauan Berkas"}
+            confidenceScore={activeClaim?.recommendedAction?.confidence ?? 90}
             onTriggerAction={handleActionClick}
           />
         </div>
@@ -329,7 +329,7 @@ export default function DossierPage() {
         {/* Right Pane (50%): Smart Document Viewer */}
         <div className="w-1/2 flex flex-col bg-white overflow-hidden">
           <SmartDocumentViewer
-            documents={activeClaim.documents}
+            documents={activeClaim?.documents || []}
             activeCitation={activeCitation}
           />
         </div>

@@ -71,7 +71,20 @@ export function getStoredClaims(): ClaimItem[] {
       localStorage.setItem(CLAIMS_STORAGE_KEY, JSON.stringify(INITIAL_CLAIMS));
       return INITIAL_CLAIMS;
     }
-    return JSON.parse(data);
+    const parsed: ClaimItem[] = JSON.parse(data);
+    const initialMap = new Map(INITIAL_CLAIMS.map((c) => [c.id.toLowerCase(), c]));
+    return parsed.map((item) => {
+      const init = initialMap.get(item.id.toLowerCase());
+      if (!init) return item;
+      return {
+        ...init,
+        ...item,
+        findings: item.findings && item.findings.length > 0 ? item.findings : init.findings,
+        documents: item.documents && item.documents.length > 0 ? item.documents : init.documents,
+        recommendedAction: item.recommendedAction || init.recommendedAction,
+        alternativeHypotheses: item.alternativeHypotheses || init.alternativeHypotheses,
+      };
+    });
   } catch (err) {
     console.error("Failed to read claims from storage:", err);
     return INITIAL_CLAIMS;
@@ -82,7 +95,24 @@ export function getStoredClaims(): ClaimItem[] {
 export function saveClaims(claims: ClaimItem[]): void {
   if (typeof window === "undefined") return;
   try {
-    localStorage.setItem(CLAIMS_STORAGE_KEY, JSON.stringify(claims));
+    const raw = localStorage.getItem(CLAIMS_STORAGE_KEY);
+    const existingList: ClaimItem[] = raw ? JSON.parse(raw) : INITIAL_CLAIMS;
+    const existingMap = new Map(existingList.map((c) => [c.id.toLowerCase(), c]));
+
+    const merged = claims.map((newClaim) => {
+      const prev = existingMap.get(newClaim.id.toLowerCase());
+      if (!prev) return newClaim;
+      return {
+        ...prev,
+        ...newClaim,
+        findings: newClaim.findings && newClaim.findings.length > 0 ? newClaim.findings : prev.findings,
+        documents: newClaim.documents && newClaim.documents.length > 0 ? newClaim.documents : prev.documents,
+        recommendedAction: newClaim.recommendedAction || prev.recommendedAction,
+        alternativeHypotheses: newClaim.alternativeHypotheses || prev.alternativeHypotheses,
+      };
+    });
+
+    localStorage.setItem(CLAIMS_STORAGE_KEY, JSON.stringify(merged));
     window.dispatchEvent(new Event("clarix_claims_updated"));
   } catch (err) {
     console.error("Failed to save claims to storage:", err);

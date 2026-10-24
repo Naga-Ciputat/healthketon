@@ -46,11 +46,11 @@ export function ModalDisputeLetter({
       case "DOWNCODE_DIUSULKAN":
         return `Berdasarkan telaah klinis rekam medis, diagnosa sekunder komplikasi berat tidak didukung bukti objektif. Diusulkan penyesuaian kode dari Severity Level III ke Severity Level I dengan efisiensi tarif Rp ${claim.deltaTariff.toLocaleString("id-ID")}.`;
       case "ESKALASI_PK_JKN":
-        return `Ditemukan indikasi anomali berulang (${claim.modusTags.map(formatAnomalyCategory).join(", ")}) dengan kemiripan redaksional teks rekam medis historis dan selisih alat implan. Berkas dilimpahkan ke Tim PK-JKN untuk audit investigasi lapangan.`;
+        return `Ditemukan indikasi anomali berulang (${(claim?.modusTags || []).map(formatAnomalyCategory).join(", ")}) dengan kemiripan redaksional teks rekam medis historis dan selisih alat implan. Berkas dilimpahkan ke Tim PK-JKN untuk audit investigasi lapangan.`;
       case "PENDING_KLARIFIKASI_RS":
       default:
         return (
-          claim.recommendedAction.suggestedNotes ||
+          claim?.recommendedAction?.suggestedNotes ||
           "Dimintakan klarifikasi faktur pemakaian alkes implan serta bukti penunjang lab diagnosa komplikasi berat."
         );
     }
