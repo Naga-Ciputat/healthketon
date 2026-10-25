@@ -9,6 +9,7 @@ export type ActionType = "DISETUJUI" | "PENDING_KLARIFIKASI_RS" | "DOWNCODE_DIUS
 export interface DossierActionBarProps {
   recommendedActionText: string;
   confidenceScore: number;
+  recommendedActionType?: ActionType;
   onTriggerAction: (actionType: ActionType) => void;
   className?: string;
 }
@@ -16,9 +17,28 @@ export interface DossierActionBarProps {
 export function DossierActionBar({
   recommendedActionText,
   confidenceScore = 92,
+  recommendedActionType,
   onTriggerAction,
   className,
 }: DossierActionBarProps) {
+  // Determine which action is recommended
+  const activeRecommendedType: ActionType =
+    recommendedActionType ||
+    (recommendedActionText.toLowerCase().includes("setuju")
+      ? "DISETUJUI"
+      : recommendedActionText.toLowerCase().includes("downcode") ||
+        recommendedActionText.toLowerCase().includes("koreksi") ||
+        recommendedActionText.toLowerCase().includes("penyesuaian")
+      ? "DOWNCODE_DIUSULKAN"
+      : recommendedActionText.toLowerCase().includes("eskalasi")
+      ? "ESKALASI_PK_JKN"
+      : "PENDING_KLARIFIKASI_RS");
+
+  const isApproveRecommended = activeRecommendedType === "DISETUJUI";
+  const isKlarifikasiRecommended = activeRecommendedType === "PENDING_KLARIFIKASI_RS";
+  const isDowncodeRecommended = activeRecommendedType === "DOWNCODE_DIUSULKAN";
+  const isEskalasiRecommended = activeRecommendedType === "ESKALASI_PK_JKN";
+
   return (
     <div
       className={cn(
@@ -48,19 +68,29 @@ export function DossierActionBar({
         <button
           type="button"
           onClick={() => onTriggerAction("DISETUJUI")}
-          className="flex items-center justify-center gap-1.5 px-3 py-2 bg-white hover:bg-emerald-50 text-emerald-800 border border-emerald-300 rounded-[4px] text-xs font-semibold shadow-2xs transition-colors"
+          className={cn(
+            "flex items-center justify-center gap-1.5 px-3 py-2 rounded-[4px] text-xs font-semibold shadow-2xs transition-colors",
+            isApproveRecommended
+              ? "bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white border border-emerald-600 shadow-xs"
+              : "bg-white hover:bg-emerald-50 active:bg-emerald-100 text-emerald-800 border border-emerald-300"
+          )}
         >
-          <Check className="w-3.5 h-3.5 text-emerald-600" />
+          <Check className={cn("w-3.5 h-3.5", isApproveRecommended ? "text-white" : "text-emerald-600")} />
           <span>Setujui Klaim</span>
         </button>
 
-        {/* Pending Request Klarifikasi (Recommended) */}
+        {/* Pending Request Klarifikasi */}
         <button
           type="button"
           onClick={() => onTriggerAction("PENDING_KLARIFIKASI_RS")}
-          className="flex items-center justify-center gap-1.5 px-3 py-2 bg-amber-600 hover:bg-amber-700 active:bg-amber-800 text-white border border-amber-600 rounded-[4px] text-xs font-semibold shadow-2xs transition-colors"
+          className={cn(
+            "flex items-center justify-center gap-1.5 px-3 py-2 rounded-[4px] text-xs font-semibold shadow-2xs transition-colors",
+            isKlarifikasiRecommended
+              ? "bg-amber-600 hover:bg-amber-700 active:bg-amber-800 text-white border border-amber-600 shadow-xs"
+              : "bg-white hover:bg-amber-50 active:bg-amber-100 text-amber-800 border border-amber-300"
+          )}
         >
-          <Clock className="w-3.5 h-3.5" />
+          <Clock className={cn("w-3.5 h-3.5", isKlarifikasiRecommended ? "text-white" : "text-amber-600")} />
           <span>Klarifikasi RS</span>
         </button>
 
@@ -68,9 +98,14 @@ export function DossierActionBar({
         <button
           type="button"
           onClick={() => onTriggerAction("DOWNCODE_DIUSULKAN")}
-          className="flex items-center justify-center gap-1.5 px-3 py-2 bg-white hover:bg-blue-50 text-blue-800 border border-blue-300 rounded-[4px] text-xs font-semibold shadow-2xs transition-colors"
+          className={cn(
+            "flex items-center justify-center gap-1.5 px-3 py-2 rounded-[4px] text-xs font-semibold shadow-2xs transition-colors",
+            isDowncodeRecommended
+              ? "bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white border border-blue-600 shadow-xs"
+              : "bg-white hover:bg-blue-50 active:bg-blue-100 text-blue-800 border border-blue-300"
+          )}
         >
-          <ArrowDownCircle className="w-3.5 h-3.5 text-blue-600" />
+          <ArrowDownCircle className={cn("w-3.5 h-3.5", isDowncodeRecommended ? "text-white" : "text-blue-600")} />
           <span>Koreksi Kode</span>
         </button>
 
@@ -78,9 +113,14 @@ export function DossierActionBar({
         <button
           type="button"
           onClick={() => onTriggerAction("ESKALASI_PK_JKN")}
-          className="flex items-center justify-center gap-1.5 px-3 py-2 bg-white hover:bg-rose-50 text-rose-800 border border-rose-300 rounded-[4px] text-xs font-semibold shadow-2xs transition-colors"
+          className={cn(
+            "flex items-center justify-center gap-1.5 px-3 py-2 rounded-[4px] text-xs font-semibold shadow-2xs transition-colors",
+            isEskalasiRecommended
+              ? "bg-rose-600 hover:bg-rose-700 active:bg-rose-800 text-white border border-rose-600 shadow-xs"
+              : "bg-white hover:bg-rose-50 active:bg-rose-100 text-rose-800 border border-rose-300"
+          )}
         >
-          <AlertOctagon className="w-3.5 h-3.5 text-rose-600" />
+          <AlertOctagon className={cn("w-3.5 h-3.5", isEskalasiRecommended ? "text-white" : "text-rose-600")} />
           <span>Eskalasi Audit</span>
         </button>
       </div>

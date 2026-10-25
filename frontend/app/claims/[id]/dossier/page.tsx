@@ -322,6 +322,7 @@ export default function DossierPage() {
           <DossierActionBar
             recommendedActionText={activeClaim?.recommendedAction?.label || "Rekomendasi Tindakan: Peninjauan Berkas"}
             confidenceScore={activeClaim?.recommendedAction?.confidence ?? 90}
+            recommendedActionType={activeClaim?.recommendedAction?.type as ActionType}
             onTriggerAction={handleActionClick}
           />
         </div>
