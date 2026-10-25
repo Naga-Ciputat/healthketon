@@ -17,9 +17,11 @@ function AuditTrailContent() {
   const [isExportMenuOpen, setIsExportMenuOpen] = useState(false);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [exportFeedback, setExportFeedback] = useState<string | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
   const menuRef = React.useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    setIsMounted(true);
     // 1. Initial fast local load
     setLogs(getStoredAuditLogs());
 
@@ -252,11 +254,17 @@ Catatan: ${l.notes}
         </div>
 
         {/* Audit Log Stream Component */}
-        <AuditLogStream
-          entries={logs}
-          highlightClaimId={newClaimId}
-          title="Riwayat Keputusan Verifikator"
-        />
+        {isMounted ? (
+          <AuditLogStream
+            entries={logs}
+            highlightClaimId={newClaimId}
+            title="Riwayat Keputusan Verifikator"
+          />
+        ) : (
+          <div className="bg-white border border-slate-200 rounded-[4px] p-8 text-center text-xs text-slate-400 shadow-2xs">
+            Memuat repositori jejak audit...
+          </div>
+        )}
       </div>
 
       {/* Modal Berita Acara Rekonsiliasi Kolektif */}

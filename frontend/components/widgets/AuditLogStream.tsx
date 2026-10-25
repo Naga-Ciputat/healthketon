@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   FileCheck,
   Search,
@@ -108,6 +108,30 @@ export function AuditLogStream({
     setSelectedItemForLetter(item);
   };
 
+  const [isExpanded, setIsExpanded] = useState<boolean>(!highlightClaimId);
+  const [isSettled, setIsSettled] = useState<boolean>(!highlightClaimId);
+
+  useEffect(() => {
+    if (highlightClaimId) {
+      // Trigger smooth slide-down expansion shortly after mount so user perceives the entrance clearly
+      const timer = setTimeout(() => {
+        setIsExpanded(true);
+      }, 120);
+
+      const settleTimer = setTimeout(() => {
+        setIsSettled(true);
+      }, 850);
+
+      return () => {
+        clearTimeout(timer);
+        clearTimeout(settleTimer);
+      };
+    } else {
+      setIsExpanded(true);
+      setIsSettled(true);
+    }
+  }, [highlightClaimId]);
+
   return (
     <div
       className={cn(
@@ -175,17 +199,18 @@ export function AuditLogStream({
             Tidak ada catatan riwayat yang sesuai kriteria pencarian.
           </div>
         ) : (
-          filtered.map((item) => {
+          filtered.map((item, index) => {
             const isNewlyAdded = Boolean(
-              highlightClaimId && item.claimId.toLowerCase() === highlightClaimId.toLowerCase()
+              highlightClaimId &&
+                index === 0 &&
+                item.claimId.toLowerCase() === highlightClaimId.toLowerCase()
             );
 
-            return (
+            const cardElement = (
               <div
-                key={item.id}
                 className={cn(
                   "p-3 bg-white border border-slate-200 rounded-[4px] text-xs hover:border-slate-300 transition-colors space-y-2 shadow-2xs",
-                  isNewlyAdded && "animate-in fade-in slide-in-from-top-4 duration-500 ease-out"
+                  isNewlyAdded && "audit-entry-card"
                 )}
               >
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
@@ -200,56 +225,76 @@ export function AuditLogStream({
                     {getActionBadge(item.action)}
                   </div>
 
-                <div className="flex items-center gap-1.5 text-[11px] text-slate-500 flex-shrink-0 tabular-nums">
-                  <Clock className="w-3 h-3 text-slate-400" />
-                  <span>{item.timestamp}</span>
-                </div>
-              </div>
-
-              {/* Verifier & Savings Info */}
-              <div className="flex items-center justify-between gap-2 flex-wrap text-[11px] text-slate-600">
-                <div className="flex items-center gap-1.5">
-                  <UserCheck className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
-                  <span>
-                    Verifikator: <strong className="text-slate-800 font-medium">{item.verifierName}</strong>
-                    {item.verifierRole && ` (${item.verifierRole})`}
-                  </span>
-                </div>
-
-                {item.savedDeltaRupiah > 0 && (
-                  <div className="text-emerald-700 font-semibold tabular-nums">
-                    Efisiensi Terkoreksi: {formatRupiah(item.savedDeltaRupiah)}
+                  <div className="flex items-center gap-1.5 text-[11px] text-slate-500 flex-shrink-0 tabular-nums">
+                    <Clock className="w-3 h-3 text-slate-400" />
+                    <span>{item.timestamp}</span>
                   </div>
-                )}
-              </div>
-
-              {/* Notes */}
-              <p className="text-[11.5px] text-slate-700 bg-slate-50 p-2.5 rounded-[4px] border border-slate-200/70 leading-relaxed">
-                {item.notes}
-              </p>
-
-              {/* Official Letter Link Button */}
-              <div className="flex items-center justify-between pt-1 text-[11px]">
-                <div className="flex items-center gap-1.5 text-slate-500">
-                  <Mail className="w-3.5 h-3.5 text-blue-600 flex-shrink-0" />
-                  <span className="tabular-nums">
-                    {item.officialLetterNumber || `BA-${item.claimId}`}
-                  </span>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => handleOpenLetter(item)}
-                  className="inline-flex items-center gap-1 px-2.5 py-0.5 bg-white border border-slate-200 hover:bg-slate-50 text-blue-700 font-medium rounded-[4px] transition-colors shadow-2xs"
-                >
-                  <span>Lihat Surat Resmi</span>
-                  <ExternalLink className="w-2.5 h-2.5" />
-                </button>
+
+                {/* Verifier & Savings Info */}
+                <div className="flex items-center justify-between gap-2 flex-wrap text-[11px] text-slate-600">
+                  <div className="flex items-center gap-1.5">
+                    <UserCheck className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
+                    <span>
+                      Verifikator:{" "}
+                      <strong className="text-slate-800 font-medium">
+                        {item.verifierName}
+                      </strong>
+                      {item.verifierRole && ` (${item.verifierRole})`}
+                    </span>
+                  </div>
+
+                  {item.savedDeltaRupiah > 0 && (
+                    <div className="text-emerald-700 font-semibold tabular-nums">
+                      Efisiensi Terkoreksi: {formatRupiah(item.savedDeltaRupiah)}
+                    </div>
+                  )}
+                </div>
+
+                {/* Notes */}
+                <p className="text-[11.5px] text-slate-700 bg-slate-50 p-2.5 rounded-[4px] border border-slate-200/70 leading-relaxed">
+                  {item.notes}
+                </p>
+
+                {/* Official Letter Link Button */}
+                <div className="flex items-center justify-between pt-1 text-[11px]">
+                  <div className="flex items-center gap-1.5 text-slate-500">
+                    <Mail className="w-3.5 h-3.5 text-blue-600 flex-shrink-0" />
+                    <span className="tabular-nums">
+                      {item.officialLetterNumber || `BA-${item.claimId}`}
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleOpenLetter(item)}
+                    className="inline-flex items-center gap-1 px-2.5 py-0.5 bg-white border border-slate-200 hover:bg-slate-50 text-blue-700 font-medium rounded-[4px] transition-colors shadow-2xs"
+                  >
+                    <span>Lihat Surat Resmi</span>
+                    <ExternalLink className="w-2.5 h-2.5" />
+                  </button>
+                </div>
               </div>
-            </div>
-          );
-        })
-      )}
-    </div>
+            );
+
+            if (isNewlyAdded) {
+              return (
+                <div
+                  key={item.id}
+                  className={cn(
+                    "audit-entry-slider",
+                    isExpanded && "is-expanded",
+                    isSettled && "is-settled"
+                  )}
+                >
+                  <div className="audit-entry-inner">{cardElement}</div>
+                </div>
+              );
+            }
+
+            return <div key={item.id}>{cardElement}</div>;
+          })
+        )}
+      </div>
 
       {/* Official Letter Preview Modal */}
       <ModalOfficialLetter

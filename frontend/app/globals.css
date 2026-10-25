@@ -38,3 +38,37 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #D1D5DB;
 }
+
+/* Smooth entrance expansion for newly inserted audit trail records */
+.audit-entry-slider {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition: grid-template-rows 650ms cubic-bezier(0.16, 1, 0.3, 1),
+              opacity 500ms ease-out;
+  will-change: grid-template-rows, opacity;
+}
+
+.audit-entry-slider.is-expanded {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+
+.audit-entry-slider > .audit-entry-inner {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.audit-entry-slider.is-settled > .audit-entry-inner {
+  overflow: visible;
+}
+
+.audit-entry-slider .audit-entry-card {
+  transform: translateY(-20px);
+  transition: transform 650ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+.audit-entry-slider.is-expanded .audit-entry-card {
+  transform: translateY(0);
+}
