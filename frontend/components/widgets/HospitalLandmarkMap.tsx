@@ -1,17 +1,16 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Building2,
   MapPin,
   Check,
   ShieldCheck,
   ArrowRight,
-  Layers,
-  Sparkles,
-  Info,
   Navigation,
   Compass,
+  Layers,
+  Sparkles,
 } from "lucide-react";
 import { BenchmarkCohort, BENCHMARK_COHORTS } from "@/lib/benchmarkCohorts";
 import { cn } from "@/lib/utils";
@@ -21,7 +20,7 @@ interface HospitalLandmarkMapProps {
   onSelectCohort: (cohortId: string) => void;
 }
 
-interface HospitalLandmark {
+interface JabodetabekLandmark {
   id: string;
   cohortId: string;
   name: string;
@@ -33,15 +32,16 @@ interface HospitalLandmark {
   anomalyCount: number;
   cleanCount: number;
   focusModus: string[];
-  coordinates: { x: number; y: number }; // viewBox coordinate 0..960 x 0..520
+  lat: number;
+  lng: number;
 }
 
-const JABODETABEK_LANDMARKS: HospitalLandmark[] = [
+const JABODETABEK_LANDMARKS: JabodetabekLandmark[] = [
   {
     id: "HOSP-01",
     cohortId: "RS_SEJAHTERA",
     name: "RS Sejahtera Medika",
-    region: "Jakarta Pusat (DKI Jakarta)",
+    region: "Salemba, Jakarta Pusat (DKI Jakarta)",
     zone: "DKI Jakarta",
     hospitalClass: "Kelas A",
     specialization: "Kasus Bedah Mayor, Kardiologi & Alkes Implan",
@@ -49,49 +49,83 @@ const JABODETABEK_LANDMARKS: HospitalLandmark[] = [
     anomalyCount: 6,
     cleanCount: 4,
     focusModus: ["Inflated Stent", "Upcoding Sepsis", "Unbundling Tindakan"],
-    coordinates: { x: 480, y: 195 },
+    lat: -6.1950,
+    lng: 106.8480,
   },
   {
     id: "HOSP-02",
     cohortId: "RS_MITRA",
     name: "RS Mitra Sehat",
-    region: "Tangerang Selatan (Banten)",
-    zone: "Tangerang & Tangsel",
+    region: "BSD City, Tangerang Selatan (Banten)",
+    zone: "Tangerang Selatan",
     hospitalClass: "Kelas B",
     specialization: "Kasus Rawat Inap, Neurologi & Severity Level",
     caseCount: 10,
     anomalyCount: 6,
     cleanCount: 4,
     focusModus: ["Severity Upcoding", "Kaidah Koding", "Unbundling Pasca-Rawat"],
-    coordinates: { x: 310, y: 245 },
+    lat: -6.3020,
+    lng: 106.6740,
   },
   {
     id: "HOSP-04",
     cohortId: "RS_SENTOSA",
     name: "RS Sentosa Kasih",
-    region: "Kota Depok (Jawa Barat)",
-    zone: "Depok",
+    region: "Margonda, Kota Depok (Jawa Barat)",
+    zone: "Kota Depok",
     hospitalClass: "Kelas C",
     specialization: "Deteksi Fraud Semantik & Duplikasi Catatan Medis",
     caseCount: 10,
     anomalyCount: 6,
     cleanCount: 4,
     focusModus: ["Note Cloning SOAP", "Template CPPT Massal", "Vektor Semantik"],
-    coordinates: { x: 480, y: 300 },
+    lat: -6.3980,
+    lng: 106.8280,
+  },
+  {
+    id: "HOSP-06",
+    cohortId: "MULTI_CENTER_BPJS",
+    name: "RS Hermina Medika (Bekasi)",
+    region: "Ahmad Yani, Kota Bekasi (Jawa Barat)",
+    zone: "Kota Bekasi",
+    hospitalClass: "Kelas B",
+    specialization: "Mitra Koridor Jawa Barat - Kaidah Koding INA-CBG",
+    caseCount: 10,
+    anomalyCount: 5,
+    cleanCount: 5,
+    focusModus: ["Kaidah Koding", "Unbundling Paket", "Alkes Bedah"],
+    lat: -6.2380,
+    lng: 106.9920,
+  },
+  {
+    id: "HOSP-05",
+    cohortId: "MULTI_CENTER_BPJS",
+    name: "RSUD Salak Medika (Bogor)",
+    region: "Pajajaran, Kota Bogor (Jawa Barat)",
+    zone: "Kota Bogor",
+    hospitalClass: "Kelas B",
+    specialization: "Mitra Koridor Selatan - Audit Resep & Rekam Medis",
+    caseCount: 10,
+    anomalyCount: 4,
+    cleanCount: 6,
+    focusModus: ["Audit Obat Kronis", "Klaim Rawat Inap", "Severity II"],
+    lat: -6.5890,
+    lng: 106.7970,
   },
   {
     id: "HOSP-MULTI",
     cohortId: "MULTI_CENTER_BPJS",
     name: "Aglomerasi Jabodetabek (Multi-Faskes)",
-    region: "Seluruh Wilayah Jabodetabek",
-    zone: "Kawasan Megapolitan Jabodetabek",
+    region: "Seluruh Koridor Metropolitan Jabodetabek",
+    zone: "Aglomerasi Jabodetabek",
     hospitalClass: "Jaringan Terintegrasi KCU",
-    specialization: "Golden Dataset 30 Kasus Faskes Wilayah Jabodetabek",
+    specialization: "Golden Dataset 30 Kasus Terstandar Jabodetabek",
     caseCount: 30,
     anomalyCount: 18,
     cleanCount: 12,
     focusModus: ["Alkes Implan", "Severity Inflation", "Note Cloning", "Unbundling"],
-    coordinates: { x: 480, y: 145 },
+    lat: -6.2400,
+    lng: 106.8300,
   },
 ];
 
@@ -99,14 +133,190 @@ export function HospitalLandmarkMap({
   selectedCohortId,
   onSelectCohort,
 }: HospitalLandmarkMapProps) {
-  const [hoveredLandmark, setHoveredLandmark] = useState<HospitalLandmark | null>(null);
+  const mapContainerRef = useRef<HTMLDivElement | null>(null);
+  const mapInstanceRef = useRef<any>(null);
+  const markersRef = useRef<{ [key: string]: any }>({});
+  const [isMapReady, setIsMapReady] = useState(false);
 
   // Active Landmark based on selectedCohortId
   const activeLandmark =
     JABODETABEK_LANDMARKS.find((lm) => lm.cohortId === selectedCohortId) ||
     JABODETABEK_LANDMARKS[0];
 
-  const centralHub = { x: 480, y: 195 }; // Jakarta Pusat Hub
+  // Initialize Real Leaflet Map
+  useEffect(() => {
+    let isMounted = true;
+
+    async function initMap() {
+      if (typeof window === "undefined" || !mapContainerRef.current) return;
+      if (mapInstanceRef.current) return;
+
+      const L = await import("leaflet");
+
+      if (!isMounted || !mapContainerRef.current) return;
+
+      // Center of Jabodetabek: [-6.26, 106.82], Zoom 10.5
+      const map = L.map(mapContainerRef.current, {
+        center: [-6.26, 106.82],
+        zoom: 10,
+        minZoom: 9,
+        maxZoom: 16,
+        zoomControl: false,
+        attributionControl: false,
+      });
+
+      // Add Zoom Control at top-left
+      L.control
+        .zoom({
+          position: "topleft",
+        })
+        .addTo(map);
+
+      // Attribution control at bottom-left
+      L.control
+        .attribution({
+          position: "bottomleft",
+          prefix: "Peta Jabodetabek &copy; CartoDB &copy; OpenStreetMap",
+        })
+        .addTo(map);
+
+      // Elegant, clean, modern CartoDB Positron Light Tiles
+      L.tileLayer(
+        "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+        {
+          subdomains: "abcd",
+          maxZoom: 19,
+        }
+      ).addTo(map);
+
+      mapInstanceRef.current = map;
+      setIsMapReady(true);
+    }
+
+    initMap();
+
+    return () => {
+      isMounted = false;
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.remove();
+        mapInstanceRef.current = null;
+      }
+    };
+  }, []);
+
+  // Update Markers & Pan when selection changes or map becomes ready
+  useEffect(() => {
+    if (!isMapReady || !mapInstanceRef.current) return;
+
+    let isMounted = true;
+
+    async function renderMarkers() {
+      const L = await import("leaflet");
+      if (!isMounted || !mapInstanceRef.current) return;
+
+      const map = mapInstanceRef.current;
+
+      // Clear existing markers
+      Object.values(markersRef.current).forEach((m: any) => map.removeLayer(m));
+      markersRef.current = {};
+
+      // Filter displayable hospital landmarks
+      const displayableHospitals = JABODETABEK_LANDMARKS.filter(
+        (lm) => lm.id !== "HOSP-MULTI"
+      );
+
+      displayableHospitals.forEach((lm) => {
+        const isSelected = selectedCohortId === lm.cohortId;
+
+        // Modern Custom HTML Marker Pin
+        const markerHtml = `
+          <div class="flex flex-col items-center group cursor-pointer transition-transform duration-200 ${
+            isSelected ? "scale-110 z-50" : "scale-100 z-20 hover:scale-105"
+          }">
+            <!-- Floating Label Pill -->
+            <div class="${
+              isSelected
+                ? "bg-slate-900 text-white border-slate-900 font-semibold shadow-md ring-2 ring-blue-500/30"
+                : "bg-white/95 text-slate-800 border-slate-200 font-medium shadow-xs hover:border-slate-300"
+            } border px-2 py-0.5 rounded-[3px] text-[10px] tracking-tight whitespace-nowrap mb-1 flex items-center gap-1">
+              <span>${lm.name}</span>
+              <span class="${
+                isSelected ? "bg-slate-800 text-blue-300" : "bg-slate-100 text-slate-500"
+              } px-1 rounded-[2px] text-[9px] tabular-nums">${lm.caseCount}k</span>
+            </div>
+
+            <!-- Pin Head -->
+            <div class="relative flex items-center justify-center">
+              ${
+                isSelected
+                  ? `<div class="absolute -inset-1 rounded-[4px] bg-blue-500/25 animate-ping"></div>`
+                  : ""
+              }
+              <div class="w-7 h-7 rounded-[4px] ${
+                isSelected
+                  ? "bg-blue-600 border-2 border-white text-white shadow-md"
+                  : "bg-white border border-slate-300 text-slate-700 shadow-2xs group-hover:border-blue-500 group-hover:text-blue-600"
+              } flex items-center justify-center transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M18 20V6a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v14"></path>
+                  <path d="M2 20h20"></path>
+                  <path d="M14 12v.01"></path>
+                  <path d="M10 12v.01"></path>
+                  <path d="M14 16v.01"></path>
+                  <path d="M10 16v.01"></path>
+                </svg>
+              </div>
+            </div>
+
+            <!-- Triangle Pin Tip -->
+            <div class="w-0 h-0 border-l-[4px] border-l-transparent border-r-[4px] border-r-transparent border-t-[5px] ${
+              isSelected ? "border-t-blue-600" : "border-t-slate-300"
+            } -mt-0.5"></div>
+          </div>
+        `;
+
+        const customIcon = L.divIcon({
+          className: "hospital-landmark-marker",
+          html: markerHtml,
+          iconSize: [160, 60],
+          iconAnchor: [80, 56],
+        });
+
+        const marker = L.marker([lm.lat, lm.lng], {
+          icon: customIcon,
+          title: lm.name,
+        }).addTo(map);
+
+        marker.on("click", () => {
+          onSelectCohort(lm.cohortId);
+        });
+
+        markersRef.current[lm.id] = marker;
+      });
+
+      // Fly to active selection or fit Jabodetabek bounds
+      if (selectedCohortId === "MULTI_CENTER_BPJS") {
+        map.flyTo([-6.26, 106.82], 10, {
+          duration: 0.8,
+        });
+      } else {
+        const target = JABODETABEK_LANDMARKS.find(
+          (lm) => lm.cohortId === selectedCohortId
+        );
+        if (target) {
+          map.flyTo([target.lat, target.lng], 12, {
+            duration: 0.8,
+          });
+        }
+      }
+    }
+
+    renderMarkers();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [isMapReady, selectedCohortId, onSelectCohort]);
 
   return (
     <div className="bg-white border border-slate-200 rounded-[4px] shadow-2xs overflow-hidden flex flex-col">
@@ -118,9 +328,9 @@ export function HospitalLandmarkMap({
           </div>
           <div>
             <h3 className="font-semibold text-slate-900 text-xs uppercase tracking-tight flex items-center gap-1.5">
-              <span>Peta Aglomerasi Faskes Jabodetabek</span>
+              <span>Peta Faskes Wilayah Jabodetabek (Live Map)</span>
               <span className="text-[10px] text-slate-500 font-normal capitalize">
-                (Pilih landmark rumah sakit untuk pengujian)
+                (Klik landmark pada peta atau pilih faskes)
               </span>
             </h3>
           </div>
@@ -128,7 +338,11 @@ export function HospitalLandmarkMap({
 
         {/* Quick Landmark Buttons */}
         <div className="flex items-center gap-1.5 flex-wrap">
-          {JABODETABEK_LANDMARKS.map((lm) => {
+          {JABODETABEK_LANDMARKS.filter(
+            (lm, idx, arr) =>
+              arr.findIndex((x) => x.cohortId === lm.cohortId) === idx ||
+              lm.id === "HOSP-MULTI"
+          ).map((lm) => {
             const isSelected = selectedCohortId === lm.cohortId;
             return (
               <button
@@ -163,382 +377,13 @@ export function HospitalLandmarkMap({
         </div>
       </div>
 
-      {/* Modern Geospatial Vector Map Canvas */}
-      <div className="relative w-full bg-slate-50/60 overflow-hidden select-none border-b border-slate-100 min-h-[420px] lg:min-h-[460px] flex items-center justify-center">
-        {/* Subtle Map Grid lines */}
-        <div
-          className="absolute inset-0 pointer-events-none opacity-[0.35]"
-          style={{
-            backgroundImage:
-              "radial-gradient(#94a3b8 0.75px, transparent 0.75px), radial-gradient(#cbd5e1 0.75px, #f8fafc 0.75px)",
-            backgroundSize: "22px 22px",
-            backgroundPosition: "0 0, 11px 11px",
-          }}
-        />
-
-        {/* Latitude & Longitude Coordinate Marks */}
-        <div className="absolute top-2.5 left-3.5 text-[9.5px] font-mono text-slate-400 pointer-events-none tracking-wider">
-          KORIDOR METROPOLITAN JABODETABEK · 6°12&apos;S 106°49&apos;E
-        </div>
-        <div className="absolute bottom-2.5 left-3.5 text-[9.5px] font-mono text-slate-400 pointer-events-none">
-          WILAYAH KERJA KCU BPJS KESEHATAN KANTOR REGIONAL IV
-        </div>
-
-        {/* SVG Map of Jabodetabek with Stylized Regional Boundaries */}
-        <svg
-          viewBox="0 0 960 520"
-          className="w-full h-auto max-h-[500px] relative z-10"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <defs>
-            {/* Soft Gray Region Fill */}
-            <linearGradient id="regionFill" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#f8fafc" stopOpacity="0.95" />
-              <stop offset="100%" stopColor="#e2e8f0" stopOpacity="0.85" />
-            </linearGradient>
-
-            {/* Selected Zone Highlight Gradient */}
-            <linearGradient id="selectedZoneFill" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#eff6ff" stopOpacity="0.95" />
-              <stop offset="100%" stopColor="#dbeafe" stopOpacity="0.9" />
-            </linearGradient>
-
-            {/* Sea Shoreline Water Fill */}
-            <linearGradient id="seaWater" x1="0%" y1="100%" x2="0%" y2="0%">
-              <stop offset="0%" stopColor="#e0f2fe" stopOpacity="0.5" />
-              <stop offset="100%" stopColor="#f0f9ff" stopOpacity="0.2" />
-            </linearGradient>
-          </defs>
-
-          {/* 0. LAUT JAWA / TELUK JAKARTA (Coastal Water Body) */}
-          <path
-            d="M 120 120 
-               Q 260 135, 410 125 
-               Q 480 115, 550 122 
-               Q 680 130, 840 115 
-               L 840 40 
-               L 120 40 Z"
-            fill="url(#seaWater)"
-            stroke="#bae6fd"
-            strokeWidth="1"
-          />
-          <text x="440" y="80" fill="#0284c7" fontSize="10" fontWeight="600" letterSpacing="2" opacity="0.6">
-            TELUK JAKARTA / LAUT JAWA
-          </text>
-
-          {/* Kepulauan Seribu subtle offshore islands */}
-          <circle cx="380" cy="65" r="3.5" fill="#93c5fd" />
-          <circle cx="400" cy="55" r="4.5" fill="#93c5fd" />
-          <circle cx="425" cy="68" r="3" fill="#93c5fd" />
-          <text x="435" y="60" fill="#64748b" fontSize="8" fontFamily="monospace">
-            Kep. Seribu
-          </text>
-
-          {/* 1. WILAYAH TANGERANG & TANGERANG SELATAN (BANTEN - Sisi Barat) */}
-          <path
-            d="M 180 130 
-               L 390 135 
-               L 410 210 
-               L 410 275 
-               L 360 310 
-               L 260 300 
-               L 180 230 Z"
-            fill={activeLandmark.zone === "Tangerang & Tangsel" ? "url(#selectedZoneFill)" : "url(#regionFill)"}
-            stroke={activeLandmark.zone === "Tangerang & Tangsel" ? "#3b82f6" : "#cbd5e1"}
-            strokeWidth={activeLandmark.zone === "Tangerang & Tangsel" ? "1.8" : "1.2"}
-            strokeLinejoin="round"
-            className="transition-colors duration-300"
-          />
-          <text x="240" y="195" fill="#64748b" fontSize="11" fontWeight="700" letterSpacing="1">
-            KOTA TANGERANG
-          </text>
-          <text x="250" y="270" fill="#475569" fontSize="10" fontWeight="600">
-            TANGERANG SELATAN
-          </text>
-
-          {/* 2. WILAYAH DKI JAKARTA (Pusat Metropolitan) */}
-          <path
-            d="M 390 135 
-               L 550 122 
-               L 560 210 
-               L 545 260 
-               L 410 260 
-               L 410 210 Z"
-            fill={activeLandmark.zone === "DKI Jakarta" ? "url(#selectedZoneFill)" : "url(#regionFill)"}
-            stroke={activeLandmark.zone === "DKI Jakarta" ? "#2563eb" : "#94a3b8"}
-            strokeWidth={activeLandmark.zone === "DKI Jakarta" ? "2" : "1.4"}
-            strokeLinejoin="round"
-            className="transition-colors duration-300"
-          />
-          {/* Jakarta Internal District boundary separators */}
-          <line x1="390" y1="180" x2="555" y2="175" stroke="#cbd5e1" strokeDasharray="3 3" strokeWidth="1" />
-          <line x1="480" y1="130" x2="480" y2="260" stroke="#cbd5e1" strokeDasharray="3 3" strokeWidth="1" />
-          <text x="445" y="165" fill="#1e293b" fontSize="11" fontWeight="800" letterSpacing="1.5">
-            DKI JAKARTA
-          </text>
-          <text x="425" y="240" fill="#64748b" fontSize="9" fontWeight="600">
-            JAKARTA SELATAN
-          </text>
-          <text x="495" y="240" fill="#64748b" fontSize="9" fontWeight="600">
-            JAKARTA TIMUR
-          </text>
-
-          {/* 3. WILAYAH KOTA & KABUPATEN BEKASI (Jawa Barat - Sisi Timur) */}
-          <path
-            d="M 550 122 
-               L 780 120 
-               L 770 240 
-               L 720 290 
-               L 550 280 
-               L 560 210 Z"
-            fill={activeLandmark.zone === "Bekasi" ? "url(#selectedZoneFill)" : "url(#regionFill)"}
-            stroke={activeLandmark.zone === "Bekasi" ? "#3b82f6" : "#cbd5e1"}
-            strokeWidth="1.2"
-            strokeLinejoin="round"
-            className="transition-colors duration-300"
-          />
-          <text x="610" y="180" fill="#64748b" fontSize="11" fontWeight="700" letterSpacing="1">
-            KOTA BEKASI
-          </text>
-          <text x="635" y="250" fill="#94a3b8" fontSize="9.5" fontWeight="500">
-            KAB. BEKASI (Cikarang)
-          </text>
-
-          {/* 4. WILAYAH KOTA DEPOK (Jawa Barat - Koridor Tengah) */}
-          <path
-            d="M 410 260 
-               L 545 260 
-               L 545 330 
-               L 410 330 Z"
-            fill={activeLandmark.zone === "Depok" ? "url(#selectedZoneFill)" : "url(#regionFill)"}
-            stroke={activeLandmark.zone === "Depok" ? "#2563eb" : "#94a3b8"}
-            strokeWidth={activeLandmark.zone === "Depok" ? "2" : "1.2"}
-            strokeLinejoin="round"
-            className="transition-colors duration-300"
-          />
-          <text x="445" y="295" fill="#1e293b" fontSize="11" fontWeight="700" letterSpacing="1">
-            KOTA DEPOK
-          </text>
-
-          {/* 5. WILAYAH KOTA & KABUPATEN BOGOR (Jawa Barat - Sisi Selatan) */}
-          <path
-            d="M 360 310 
-               L 410 330 
-               L 545 330 
-               L 720 290 
-               L 710 440 
-               L 580 470 
-               L 430 465 
-               L 360 400 Z"
-            fill={activeLandmark.zone === "Bogor" ? "url(#selectedZoneFill)" : "url(#regionFill)"}
-            stroke={activeLandmark.zone === "Bogor" ? "#3b82f6" : "#cbd5e1"}
-            strokeWidth="1.2"
-            strokeLinejoin="round"
-            className="transition-colors duration-300"
-          />
-          <text x="450" y="375" fill="#64748b" fontSize="11" fontWeight="700" letterSpacing="1">
-            KOTA BOGOR
-          </text>
-          <text x="440" y="445" fill="#94a3b8" fontSize="9.5" fontWeight="500">
-            KABUPATEN BOGOR
-          </text>
-
-          {/* TRANSPORT & HEALTHCARE REFERRAL CONDUITS (Tollways connecting hospitals) */}
-          <g opacity="0.45" stroke="#94a3b8" strokeWidth="1.5" strokeDasharray="3 3">
-            {/* Tol Jagorawi (Jakarta -> Depok -> Bogor) */}
-            <line x1="480" y1="195" x2="480" y2="300" />
-            <line x1="480" y1="300" x2="470" y2="390" />
-            {/* Tol JORR / Merak (Jakarta -> Tangerang Selatan) */}
-            <line x1="480" y1="195" x2="310" y2="245" />
-            {/* Tol Jakarta-Cikampek (Jakarta -> Bekasi) */}
-            <line x1="480" y1="195" x2="630" y2="215" />
-          </g>
-
-          {/* Standby Partner Hospitals in Bekasi & Bogor */}
-          {/* RS Hermina Medika (Bekasi) */}
-          <g opacity="0.65" className="cursor-pointer" onClick={() => onSelectCohort("MULTI_CENTER_BPJS")}>
-            <circle cx="630" cy="215" r="5" fill="#ffffff" stroke="#64748b" strokeWidth="1.5" />
-            <circle cx="630" cy="215" r="2" fill="#64748b" />
-            <text x="640" y="218" fill="#475569" fontSize="8.5" fontWeight="600">
-              RS Hermina (Bekasi)
-            </text>
-          </g>
-
-          {/* RSUD Salak Medika (Bogor) */}
-          <g opacity="0.65" className="cursor-pointer" onClick={() => onSelectCohort("MULTI_CENTER_BPJS")}>
-            <circle cx="470" cy="390" r="5" fill="#ffffff" stroke="#64748b" strokeWidth="1.5" />
-            <circle cx="470" cy="390" r="2" fill="#64748b" />
-            <text x="480" y="393" fill="#475569" fontSize="8.5" fontWeight="600">
-              RSUD Salak (Bogor)
-            </text>
-          </g>
-
-          {/* Multi-Center Network Flight lines when Multi-Center is selected */}
-          {selectedCohortId === "MULTI_CENTER_BPJS" && (
-            <g className="opacity-90">
-              <line
-                x1={centralHub.x}
-                y1={centralHub.y}
-                x2="310"
-                y2="245"
-                stroke="#2563eb"
-                strokeWidth="2"
-                strokeDasharray="4 4"
-                className="animate-pulse"
-              />
-              <line
-                x1={centralHub.x}
-                y1={centralHub.y}
-                x2="480"
-                y2="300"
-                stroke="#2563eb"
-                strokeWidth="2"
-                strokeDasharray="4 4"
-                className="animate-pulse"
-              />
-              <line
-                x1={centralHub.x}
-                y1={centralHub.y}
-                x2="630"
-                y2="215"
-                stroke="#2563eb"
-                strokeWidth="2"
-                strokeDasharray="4 4"
-                className="animate-pulse"
-              />
-              <line
-                x1={centralHub.x}
-                y1={centralHub.y}
-                x2="470"
-                y2="390"
-                stroke="#2563eb"
-                strokeWidth="2"
-                strokeDasharray="4 4"
-                className="animate-pulse"
-              />
-              {/* Metropolitan Perimeter Coverage Ring */}
-              <circle
-                cx={centralHub.x}
-                cy="270"
-                r="185"
-                fill="none"
-                stroke="#2563eb"
-                strokeWidth="1.2"
-                strokeDasharray="6 6"
-                opacity="0.35"
-              />
-            </g>
-          )}
-
-          {/* PRIMARY JABODETABEK LANDMARK PINS */}
-          {JABODETABEK_LANDMARKS.map((lm) => {
-            const isSelected = selectedCohortId === lm.cohortId;
-            const isHovered = hoveredLandmark?.id === lm.id;
-            const { x, y } = lm.coordinates;
-
-            // Multi-Center has a distinct command badge at top of Jakarta
-            if (lm.id === "HOSP-MULTI") {
-              return null;
-            }
-
-            return (
-              <g
-                key={lm.id}
-                className="cursor-pointer transition-transform duration-200"
-                onClick={() => onSelectCohort(lm.cohortId)}
-                onMouseEnter={() => setHoveredLandmark(lm)}
-                onMouseLeave={() => setHoveredLandmark(null)}
-              >
-                {/* Active Radar Pulse Circles */}
-                {isSelected && (
-                  <>
-                    <circle
-                      cx={x}
-                      cy={y}
-                      r="18"
-                      fill="#3b82f6"
-                      opacity="0.25"
-                      className="animate-ping"
-                    />
-                    <circle
-                      cx={x}
-                      cy={y}
-                      r="24"
-                      fill="none"
-                      stroke="#2563eb"
-                      strokeWidth="1.2"
-                      opacity="0.4"
-                    />
-                  </>
-                )}
-
-                {/* Base Landmark Ground Shadow */}
-                <ellipse
-                  cx={x}
-                  cy={y + 11}
-                  rx="6"
-                  ry="2.5"
-                  fill="#475569"
-                  opacity="0.3"
-                />
-
-                {/* Landmark Pin Body */}
-                <g transform={`translate(${x - 14}, ${y - 26})`}>
-                  <path
-                    d="M 14 0 C 6.5 0 0 6.5 0 14 C 0 23 14 34 14 34 C 14 34 28 23 28 14 C 28 6.5 21.5 0 14 0 Z"
-                    fill={isSelected ? "#1d4ed8" : isHovered ? "#0284c7" : "#ffffff"}
-                    stroke={isSelected ? "#1e40af" : "#64748b"}
-                    strokeWidth="1.5"
-                    filter="drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.15))"
-                  />
-
-                  {/* Inner hospital icon cross */}
-                  <circle
-                    cx="14"
-                    cy="13"
-                    r="6.5"
-                    fill={isSelected ? "#ffffff" : "#f8fafc"}
-                  />
-                  <path
-                    d="M 14 9.5 L 14 16.5 M 10.5 13 L 17.5 13"
-                    stroke={isSelected ? "#1d4ed8" : "#334155"}
-                    strokeWidth="1.6"
-                    strokeLinecap="round"
-                  />
-                </g>
-
-                {/* Landmark Floating Label Box */}
-                <g transform={`translate(${x}, ${y - 32})`}>
-                  <rect
-                    x={x > 450 ? -150 : 10}
-                    y="-13"
-                    width="145"
-                    height="22"
-                    rx="3"
-                    fill={isSelected ? "#0f172a" : "#ffffff"}
-                    stroke={isSelected ? "#0f172a" : "#94a3b8"}
-                    strokeWidth="1"
-                    filter="drop-shadow(0px 1px 3px rgba(0,0,0,0.1))"
-                  />
-                  <text
-                    x={x > 450 ? -77 : 82}
-                    y="2"
-                    textAnchor="middle"
-                    fill={isSelected ? "#ffffff" : "#0f172a"}
-                    fontSize="9.5"
-                    fontWeight="700"
-                    fontFamily="sans-serif"
-                  >
-                    {lm.name} ({lm.caseCount}k)
-                  </text>
-                </g>
-              </g>
-            );
-          })}
-        </svg>
+      {/* Real Interactive Leaflet Map Container */}
+      <div className="relative w-full h-[460px] lg:h-[500px] bg-slate-100 overflow-hidden">
+        {/* Leaflet DOM container */}
+        <div ref={mapContainerRef} className="w-full h-full z-10" />
 
         {/* Floating Active Landmark Inspector Overlay (Right side of Map) */}
-        <div className="absolute bottom-3 right-3 max-w-sm w-full md:w-80 bg-white/95 backdrop-blur-xs border border-slate-200 rounded-[4px] p-3.5 shadow-md space-y-2 z-20">
+        <div className="absolute bottom-4 right-4 max-w-sm w-full md:w-80 bg-white/95 backdrop-blur-xs border border-slate-200 rounded-[4px] p-3.5 shadow-md space-y-2 z-[1000] pointer-events-auto">
           <div className="flex items-start justify-between gap-2">
             <div>
               <span className="text-[10px] font-semibold text-blue-700 bg-blue-50 border border-blue-200 px-1.5 py-0.2 rounded-[2px] uppercase">

@@ -22,8 +22,23 @@ import {
   createCustomCohort,
   ALL_BENCHMARK_CASES,
 } from "@/lib/benchmarkCohorts";
-import { HospitalLandmarkMap } from "@/components/widgets/HospitalLandmarkMap";
+import dynamic from "next/dynamic";
 import { cn } from "@/lib/utils";
+
+const HospitalLandmarkMap = dynamic(
+  () =>
+    import("@/components/widgets/HospitalLandmarkMap").then(
+      (mod) => mod.HospitalLandmarkMap
+    ),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="w-full h-[460px] bg-slate-50 border border-slate-200 rounded-[4px] flex items-center justify-center text-xs text-slate-500 animate-pulse">
+        Memuat peta interaktif faskes Jabodetabek...
+      </div>
+    ),
+  }
+);
 
 export default function BenchmarkLauncherPage() {
   const router = useRouter();
