@@ -236,13 +236,13 @@ export function HospitalLandmarkMap({
       L.control
         .attribution({
           position: "bottomleft",
-          prefix: "Peta Jabodetabek &copy; Esri &copy; OpenStreetMap",
+          prefix: "Peta Jabodetabek &copy; Google Maps",
         })
         .addTo(map);
 
-      // Genuine Google Maps Clean Layer (Soft roads, calm parks, pastel water, no over-highlighted highway veins)
+      // Clean Google Maps Layer with ALL non-hospital POIs disabled (No malls, museums, commercial landmarks)
       L.tileLayer(
-        "https://mt{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}",
+        "https://mt{s}.google.com/vt/lyrs=m&apistyle=s.t:2|p.v:off&x={x}&y={y}&z={z}",
         {
           subdomains: ["0", "1", "2", "3"],
           maxZoom: 19,
