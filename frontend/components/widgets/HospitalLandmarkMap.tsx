@@ -249,7 +249,7 @@ export function HospitalLandmarkMap({
               <span>${lm.name}</span>
               <span class="${
                 isSelected ? "bg-slate-800 text-blue-300" : "bg-slate-100 text-slate-500"
-              } px-1 rounded-[2px] text-[9px] tabular-nums">${lm.caseCount}k</span>
+              } px-1 rounded-[2px] text-[9px] tabular-nums">${lm.caseCount}</span>
             </div>
 
             <!-- Pin Head -->
