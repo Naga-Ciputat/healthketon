@@ -176,16 +176,23 @@ export function HospitalLandmarkMap({
       L.control
         .attribution({
           position: "bottomleft",
-          prefix: "Peta Jabodetabek &copy; CartoDB &copy; OpenStreetMap",
+          prefix: "Peta Jabodetabek &copy; Esri &copy; OpenStreetMap",
         })
         .addTo(map);
 
-      // Elegant, clean, modern CartoDB Positron Light Tiles
+      // Clean, modern Esri World Light Gray Canvas (No API key required, zero watermark)
       L.tileLayer(
-        "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+        "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}",
         {
-          subdomains: "abcd",
-          maxZoom: 19,
+          maxZoom: 16,
+        }
+      ).addTo(map);
+
+      // Reference Labels layer for Jabodetabek districts and roads (No API key required)
+      L.tileLayer(
+        "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}",
+        {
+          maxZoom: 16,
         }
       ).addTo(map);
 
