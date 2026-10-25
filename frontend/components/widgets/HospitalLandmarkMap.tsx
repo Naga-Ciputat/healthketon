@@ -326,68 +326,17 @@ export function HospitalLandmarkMap({
   }, [isMapReady, selectedCohortId, onSelectCohort]);
 
   return (
-    <div className="bg-white border border-slate-200 rounded-[4px] shadow-2xs overflow-hidden flex flex-col">
-      {/* Top Map Action & Fast Selector Bar */}
-      <div className="px-4 py-3 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-2.5 bg-slate-50/50">
-        <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded-[3px] bg-blue-50 border border-blue-200 text-blue-700 flex items-center justify-center flex-shrink-0">
-            <Compass className="w-3.5 h-3.5" />
-          </div>
-          <div>
-            <h3 className="font-semibold text-slate-900 text-xs uppercase tracking-tight flex items-center gap-1.5">
-              <span>Peta Faskes Wilayah Jabodetabek (Live Map)</span>
-              <span className="text-[10px] text-slate-500 font-normal capitalize">
-                (Klik landmark pada peta atau pilih faskes)
-              </span>
-            </h3>
-          </div>
-        </div>
-
-        {/* Quick Landmark Buttons */}
-        <div className="flex items-center gap-1.5 flex-wrap">
-          {JABODETABEK_LANDMARKS.filter(
-            (lm, idx, arr) =>
-              arr.findIndex((x) => x.cohortId === lm.cohortId) === idx ||
-              lm.id === "HOSP-MULTI"
-          ).map((lm) => {
-            const isSelected = selectedCohortId === lm.cohortId;
-            return (
-              <button
-                key={lm.id}
-                type="button"
-                onClick={() => onSelectCohort(lm.cohortId)}
-                className={cn(
-                  "px-2.5 py-1 text-[11px] font-medium rounded-[4px] border transition-colors flex items-center gap-1.5 cursor-pointer",
-                  isSelected
-                    ? "bg-slate-900 text-white border-slate-900 shadow-2xs font-semibold"
-                    : "bg-white text-slate-700 border-slate-200 hover:bg-slate-100/70"
-                )}
-              >
-                <MapPin
-                  className={cn(
-                    "w-3 h-3 flex-shrink-0",
-                    isSelected ? "text-blue-400" : "text-slate-400"
-                  )}
-                />
-                <span>{lm.name}</span>
-                <span
-                  className={cn(
-                    "text-[10px] tabular-nums px-1 rounded-[2px]",
-                    isSelected ? "bg-slate-800 text-slate-300" : "bg-slate-100 text-slate-500"
-                  )}
-                >
-                  {lm.caseCount}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
+    <div className="bg-white border border-slate-200 rounded-[4px] shadow-2xs overflow-hidden relative w-full h-[520px] lg:h-[580px]">
       {/* Real Interactive Leaflet Map Container */}
-      <div className="relative w-full h-[460px] lg:h-[500px] bg-slate-100 overflow-hidden">
-        {/* Leaflet DOM container */}
-        <div ref={mapContainerRef} className="w-full h-full z-10" />
+      <div ref={mapContainerRef} className="w-full h-full z-10" />
+
+      {/* Subtle Map Indicator Badge (Top Right of Map) */}
+      <div className="absolute top-3 right-3 bg-white/95 backdrop-blur-xs border border-slate-200 rounded-[4px] px-3 py-1.5 text-xs text-slate-700 shadow-xs z-[1000] flex items-center gap-2 pointer-events-none">
+        <MapPin className="w-3.5 h-3.5 text-blue-600 flex-shrink-0" />
+        <span className="font-semibold text-slate-900">Peta Faskes Wilayah Jabodetabek</span>
+        <span className="text-slate-300">·</span>
+        <span className="text-slate-500 text-[11px]">Klik landmark pada peta untuk memilih</span>
+      </div>
 
         {/* Floating Active Landmark Inspector Overlay (Right side of Map) */}
         <div className="absolute bottom-4 right-4 max-w-sm w-full md:w-80 bg-white/95 backdrop-blur-xs border border-slate-200 rounded-[4px] p-3.5 shadow-md space-y-2 z-[1000] pointer-events-auto">
@@ -442,6 +391,5 @@ export function HospitalLandmarkMap({
           </div>
         </div>
       </div>
-    </div>
   );
 }
