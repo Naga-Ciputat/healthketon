@@ -13,7 +13,6 @@ import {
   FileText,
   X,
   ExternalLink,
-  Sparkles,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -169,28 +168,6 @@ export function AuditLogStream({
         />
       </div>
 
-      {/* Synchronization Notification for newly archived claim */}
-      {highlightClaimId && (
-        <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-[4px] text-xs text-emerald-950 flex items-center justify-between animate-in fade-in slide-in-from-top-3 duration-500 shadow-2xs">
-          <div className="flex items-center gap-2.5 min-w-0">
-            <div className="w-6 h-6 rounded bg-emerald-100 border border-emerald-200 flex items-center justify-center text-emerald-700 flex-shrink-0">
-              <CheckCircle2 className="w-3.5 h-3.5" />
-            </div>
-            <div className="min-w-0">
-              <span className="font-semibold block truncate">
-                Putusan Klaim #{highlightClaimId} Berhasil Tersinkronisasi
-              </span>
-              <span className="text-[11px] text-emerald-800">
-                Data telah dialihkan dari Triage dan tercatat resmi secara permanen (append-only) ke repositori Audit Trail.
-              </span>
-            </div>
-          </div>
-          <span className="text-[10px] font-semibold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-[4px] border border-emerald-300 flex-shrink-0 ml-2">
-            Status Tercatat
-          </span>
-        </div>
-      )}
-
       {/* Stream List */}
       <div className="space-y-2.5">
         {filtered.length === 0 ? (
@@ -207,31 +184,10 @@ export function AuditLogStream({
               <div
                 key={item.id}
                 className={cn(
-                  "p-3 bg-white border rounded-[4px] text-xs transition-all space-y-2 shadow-2xs",
-                  isNewlyAdded
-                    ? "border-blue-400 bg-blue-50/20 ring-2 ring-blue-500/25 shadow-md animate-in fade-in slide-in-from-top-6 duration-700 ease-out"
-                    : "border-slate-200 hover:border-slate-300"
+                  "p-3 bg-white border border-slate-200 rounded-[4px] text-xs hover:border-slate-300 transition-colors space-y-2 shadow-2xs",
+                  isNewlyAdded && "animate-in fade-in slide-in-from-top-4 duration-500 ease-out"
                 )}
               >
-                {/* Emerging Entry Header Badge */}
-                {isNewlyAdded && (
-                  <div className="flex items-center justify-between pb-2 mb-1.5 border-b border-blue-200/70 text-blue-900 bg-blue-50/80 -mx-3 -mt-3 p-2.5 rounded-t-[3px]">
-                    <div className="flex items-center gap-2">
-                      <span className="relative flex h-2 w-2">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                        <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
-                      </span>
-                      <span className="font-semibold text-xs text-blue-950 flex items-center gap-1.5">
-                        <Sparkles className="w-3.5 h-3.5 text-blue-600 animate-spin" style={{ animationDuration: "4s" }} />
-                        <span>Baru Diarsipkan dari Ruang Telaah (Triage Klaim)</span>
-                      </span>
-                    </div>
-                    <span className="text-[10px] font-bold text-blue-700 bg-blue-100 px-2 py-0.5 rounded-[4px] border border-blue-200 uppercase tracking-wide">
-                      Entry Terkini
-                    </span>
-                  </div>
-                )}
-
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="font-semibold text-slate-900 tabular-nums">

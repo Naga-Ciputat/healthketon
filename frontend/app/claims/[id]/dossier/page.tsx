@@ -386,55 +386,37 @@ export default function DossierPage() {
         currentText={diffDetails?.currentText}
       />
 
-      {/* Archiving Transition Floating Miniature Card Overlay */}
+      {/* Archiving Transition Miniature Card Overlay */}
       {archivingState?.active && (
-        <div className="fixed inset-0 z-50 pointer-events-none flex items-center justify-center bg-slate-900/30 backdrop-blur-[1.5px] transition-opacity duration-300">
+        <div className="fixed inset-0 z-50 pointer-events-none flex items-center justify-center bg-slate-900/20 backdrop-blur-[1px] transition-opacity duration-300">
           <div
             style={{
               transform:
                 archivingState.step === "fly"
-                  ? "translate(-38vw, -14vh) scale(0.22)"
+                  ? "translate(-38vw, -14vh) scale(0.25)"
                   : "translate(0, 0) scale(1)",
               opacity: archivingState.step === "fly" ? 0 : 1,
               transition:
                 archivingState.step === "fly"
-                  ? "all 550ms cubic-bezier(0.4, 0, 0.2, 1)"
-                  : "all 350ms cubic-bezier(0.16, 1, 0.3, 1)",
+                  ? "all 500ms cubic-bezier(0.4, 0, 0.2, 1)"
+                  : "all 300ms cubic-bezier(0.16, 1, 0.3, 1)",
             }}
-            className="w-full max-w-sm bg-white rounded-[6px] border border-blue-300 shadow-2xl p-4 space-y-3 pointer-events-auto ring-4 ring-blue-500/20"
+            className="w-full max-w-xs bg-white rounded-[4px] border border-slate-200 shadow-xl p-3.5 space-y-2 pointer-events-auto"
           >
-            <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-              <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-[4px] bg-blue-50 border border-blue-200 text-blue-600 flex items-center justify-center">
-                  <Archive className="w-4 h-4 animate-bounce" />
-                </div>
-                <div>
-                  <span className="text-xs font-bold text-slate-900 block">
-                    Mengarsipkan Putusan...
-                  </span>
-                  <span className="text-[10.5px] text-slate-500">
-                    Menuju Jejak Audit &amp; Arsip
-                  </span>
-                </div>
-              </div>
-              <span className="text-[10px] font-semibold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-[4px] border border-blue-200">
-                Sinkronisasi
+            <div className="flex items-center justify-between border-b border-slate-100 pb-1.5">
+              <span className="text-xs font-semibold text-slate-800 tabular-nums">
+                {archivingState.claimId}
               </span>
+              {getStatusBadge(archivingState.action)}
             </div>
 
-            <div className="space-y-2 text-xs">
-              <div className="flex items-center justify-between">
-                <span className="font-bold text-slate-900 tabular-nums text-sm">
-                  {archivingState.claimId}
-                </span>
-                {getStatusBadge(archivingState.action)}
-              </div>
+            <div className="space-y-1 text-xs">
               <p className="text-[11.5px] text-slate-600 truncate">
                 {activeClaim.hospitalName}
               </p>
-              <div className="pt-2 text-[11px] text-slate-500 flex justify-between items-center border-t border-slate-100">
-                <span>Efisiensi Tercatat:</span>
-                <span className="font-bold text-emerald-700 tabular-nums">
+              <div className="pt-1 text-[11px] text-slate-500 flex justify-between items-center border-t border-slate-100">
+                <span>Efisiensi:</span>
+                <span className="font-semibold text-emerald-700 tabular-nums">
                   Rp {(archivingState.action === "DISETUJUI" ? 0 : activeClaim.deltaTariff).toLocaleString("id-ID")}
                 </span>
               </div>

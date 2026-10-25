@@ -29,6 +29,12 @@ The interface should avoid common visual patterns associated with generic AI-gen
 - **No Excessive Glassmorphism**: Avoid excessive `backdrop-blur`, translucent stacked panels, floating glass surfaces, or blurred decorative backgrounds.
 - **No Decorative Blobs**: Avoid floating blobs, abstract gradients, and ornamental background shapes that do not contribute to the product's information hierarchy.
 - **No Decorative Side Borders (Single-Edge Accent Bars)**: Strictly avoid single-sided decorative accent borders (e.g. `border-left: 3px solid var(--accent)`, `border-right`, or pseudo-element colored stripes on one edge) on buttons, navigation items, pills, tabs, or cards. On elements with rounded corners (`border-radius`), this creates an unsightly, asymmetric curved sliver. Always use clean surface contrast, typography weight, or a subtle uniform 1px perimeter border instead.
+- **No Superfluous Sync/Success Banners (Anti-Lebay)**: Never add celebratory or redundant confirmation notification banners (e.g. *"Putusan Klaim #... Berhasil Tersinkronisasi"*, *"Data Telah Dicatat"*, *"Operasi Sukses"*). Updates should be seamless and quiet; the updated state is self-evident.
+- **No Over-Highlighted "New" Entries or Design Waste**: When a newly added or archived entry appears in a list, stream, or table:
+  - Do NOT apply colored background washes (e.g. blue or green tint).
+  - Do NOT apply thick colored accent rings or outlines (`ring-2 ring-blue-500`, etc.).
+  - Do NOT prepend decorative banner headers, pulsing dots (`animate-ping`), or ornamental tags like *"ENTRY TERKINI"*, *"BARU DIARSIPKAN"*, or *"STATUS TERCATAT"*.
+  - Keep the card styling identical to all standard entries. If an entrance animation is needed, use only a subtle, natural fade and slide-in from top (`slide-in-from-top-4 fade-in duration-500 ease-out`), pushing existing rows downward smoothly.
 - **Prefer Solid Surfaces**: Components should generally use solid surfaces with clear boundaries, subtle borders, and intentional spacing.
 
 ---
