@@ -14,6 +14,7 @@ import {
   SlidersHorizontal,
   Layers,
   Filter,
+  MapPin,
 } from "lucide-react";
 import {
   BENCHMARK_COHORTS,
@@ -21,15 +22,16 @@ import {
   createCustomCohort,
   ALL_BENCHMARK_CASES,
 } from "@/lib/benchmarkCohorts";
+import { HospitalLandmarkMap } from "@/components/widgets/HospitalLandmarkMap";
 import { cn } from "@/lib/utils";
 
 export default function BenchmarkLauncherPage() {
   const router = useRouter();
 
-  // Mode: "PRESET" vs "CUSTOM"
-  const [configMode, setConfigMode] = useState<"PRESET" | "CUSTOM">("PRESET");
+  // Mode: "MAP" vs "CUSTOM"
+  const [configMode, setConfigMode] = useState<"MAP" | "CUSTOM">("MAP");
 
-  // Preset Mode State
+  // Selected Landmark Hospital State
   const [selectedCohortId, setSelectedCohortId] = useState<string>("RS_SEJAHTERA");
 
   // Custom Mode State
@@ -56,7 +58,7 @@ export default function BenchmarkLauncherPage() {
     return createCustomCohort(customHospital, selectedModus, minRecall, maxFpr);
   }, [customHospital, selectedModus, minRecall, maxFpr]);
 
-  const activeCohort = configMode === "PRESET" ? selectedPreset : customCohort;
+  const activeCohort = configMode === "MAP" ? selectedPreset : customCohort;
 
   const handleToggleModus = (modusKey: string) => {
     if (selectedModus.includes(modusKey)) {
@@ -69,7 +71,7 @@ export default function BenchmarkLauncherPage() {
   };
 
   const handleLaunch = () => {
-    if (configMode === "PRESET") {
+    if (configMode === "MAP") {
       router.push(
         `/benchmark/evaluation-suite?cohort=${selectedPreset.id}&minRecall=${minRecall}&maxFpr=${maxFpr}`
       );
@@ -117,15 +119,15 @@ export default function BenchmarkLauncherPage() {
           </div>
         </div>
 
-        {/* Section 1: Pemilihan Mode (Preset vs Kustom) */}
+        {/* Section 1: Pemilihan Faskes Landmark (Peta Interaktif vs Custom) */}
         <div className="space-y-3">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
             <div>
               <h3 className="text-xs font-semibold text-slate-900 uppercase tracking-tight">
-                Metode Pengujian Kasus
+                Metode Pemilihan Fasilitas Kesehatan
               </h3>
               <p className="text-[11px] text-slate-500">
-                Pilih paket preset kluster fasilitas kesehatan atau atur parameter custom
+                Pilih landmark rumah sakit pada peta interaktif atau atur parameter custom
               </p>
             </div>
 
@@ -133,22 +135,22 @@ export default function BenchmarkLauncherPage() {
             <div className="inline-flex p-0.5 bg-slate-100 border border-slate-200 rounded-[4px] text-xs">
               <button
                 type="button"
-                onClick={() => setConfigMode("PRESET")}
+                onClick={() => setConfigMode("MAP")}
                 className={cn(
-                  "px-3 py-1 font-medium rounded-[3px] transition-colors flex items-center gap-1.5",
-                  configMode === "PRESET"
+                  "px-3 py-1 font-medium rounded-[3px] transition-colors flex items-center gap-1.5 cursor-pointer",
+                  configMode === "MAP"
                     ? "bg-white text-slate-900 shadow-2xs font-semibold"
                     : "text-slate-600 hover:text-slate-900"
                 )}
               >
-                <Layers className="w-3.5 h-3.5" />
-                <span>Paket Preset Faskes</span>
+                <MapPin className="w-3.5 h-3.5 text-blue-600" />
+                <span>Peta Landmark RS</span>
               </button>
               <button
                 type="button"
                 onClick={() => setConfigMode("CUSTOM")}
                 className={cn(
-                  "px-3 py-1 font-medium rounded-[3px] transition-colors flex items-center gap-1.5",
+                  "px-3 py-1 font-medium rounded-[3px] transition-colors flex items-center gap-1.5 cursor-pointer",
                   configMode === "CUSTOM"
                     ? "bg-white text-slate-900 shadow-2xs font-semibold"
                     : "text-slate-600 hover:text-slate-900"
@@ -160,82 +162,12 @@ export default function BenchmarkLauncherPage() {
             </div>
           </div>
 
-          {/* MODE 1: PRESET COHORTS */}
-          {configMode === "PRESET" && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {BENCHMARK_COHORTS.map((cohort) => {
-                const isSelected = cohort.id === selectedCohortId;
-                return (
-                  <div
-                    key={cohort.id}
-                    onClick={() => setSelectedCohortId(cohort.id)}
-                    className={cn(
-                      "cursor-pointer rounded-[4px] p-4 text-xs transition-all relative select-none flex flex-col justify-between",
-                      isSelected
-                        ? "bg-white border-2 border-blue-600 shadow-xs"
-                        : "bg-white border border-slate-200 hover:border-slate-300 hover:bg-slate-50/50 shadow-2xs"
-                    )}
-                  >
-                    <div className="space-y-2">
-                      <div className="flex items-start justify-between gap-2">
-                        <div className="flex items-center gap-2">
-                          <div
-                            className={cn(
-                              "w-4 h-4 rounded-[3px] border flex items-center justify-center transition-colors flex-shrink-0",
-                              isSelected
-                                ? "bg-blue-600 border-blue-600 text-white"
-                                : "border-slate-300 bg-white"
-                            )}
-                          >
-                            {isSelected && <Check className="w-3 h-3 stroke-[3]" />}
-                          </div>
-                          <h4 className="font-semibold text-slate-900 text-[13px]">
-                            {cohort.title}
-                          </h4>
-                        </div>
-                        <span className="bg-slate-100 text-slate-700 border border-slate-200 text-[10.5px] px-2 py-0.5 rounded-[4px] font-medium flex-shrink-0">
-                          {cohort.badge}
-                        </span>
-                      </div>
-
-                      <div className="flex items-center gap-1.5 text-[11px] text-slate-600">
-                        <Building2 className="w-3 h-3 text-slate-400 flex-shrink-0" />
-                        <span className="font-medium text-slate-800">{cohort.hospitalName}</span>
-                        <span className="text-slate-300">·</span>
-                        <span className="text-slate-500 truncate">{cohort.specialization}</span>
-                      </div>
-
-                      <p className="text-[11.5px] text-slate-600 leading-relaxed">
-                        {cohort.description}
-                      </p>
-
-                      <div className="flex items-center gap-1.5 flex-wrap pt-1">
-                        {cohort.focusModus.map((f, i) => (
-                          <span
-                            key={i}
-                            className="bg-slate-50 border border-slate-200 text-slate-700 px-1.5 py-0.5 rounded-[3px] text-[10px] font-medium"
-                          >
-                            {f}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="flex items-center justify-between pt-3 mt-3 border-t border-slate-100 text-[11px] text-slate-500">
-                      <div className="flex items-center gap-2 tabular-nums">
-                        <strong className="text-slate-900">{cohort.caseCount} Kasus</strong>
-                        <span className="text-slate-300">·</span>
-                        <span className="text-emerald-700 font-medium">
-                          {cohort.anomalyCount} Anomali
-                        </span>
-                        <span className="text-slate-300">·</span>
-                        <span className="text-slate-600">{cohort.cleanCount} Wajar</span>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+          {/* MODE 1: MODERN HOSPITAL LANDMARK MAP */}
+          {configMode === "MAP" && (
+            <HospitalLandmarkMap
+              selectedCohortId={selectedCohortId}
+              onSelectCohort={(cohortId) => setSelectedCohortId(cohortId)}
+            />
           )}
 
           {/* MODE 2: CUSTOM CONFIGURATION */}
