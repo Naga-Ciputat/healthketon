@@ -240,12 +240,13 @@ export function HospitalLandmarkMap({
         })
         .addTo(map);
 
-      // Colorful Google Maps-esque Esri World Street Map (Crisp roads, green parks, blue waterways, no API key, zero watermark)
+      // Genuine Google Maps Clean Layer (Soft roads, calm parks, pastel water, no over-highlighted highway veins)
       L.tileLayer(
-        "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
+        "https://mt{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}",
         {
-          maxZoom: 17,
-          attribution: "Esri World Street Map",
+          subdomains: ["0", "1", "2", "3"],
+          maxZoom: 19,
+          attribution: "&copy; Google Maps",
         }
       ).addTo(map);
 
@@ -288,12 +289,12 @@ export function HospitalLandmarkMap({
       displayableHospitals.forEach((lm) => {
         const isSelected = selectedCohortId === lm.cohortId;
 
-        // Realistic 3D Isometric Towering Hospital Building Pin (Menjulang dengan Arsitektur Kaca & Palang Merah)
+        // Clean 3D Isometric Hospital Building Pin (Grounded, flat base without floating shadow or dangling tabs)
         const markerHtml = `
           <div class="flex flex-col items-center group cursor-pointer transition-transform duration-200 ${
             isSelected
-              ? "scale-115 -translate-y-2 z-50"
-              : "scale-100 hover:scale-105 hover:-translate-y-1 z-20"
+              ? "scale-110 z-50"
+              : "scale-100 hover:scale-105 z-20"
           }">
             <!-- Floating Label Pill with Hospital Name & Case Count -->
             <div class="${
@@ -310,114 +311,94 @@ export function HospitalLandmarkMap({
               } px-1.5 py-0.2 rounded-[3px] text-[9.5px] font-bold tabular-nums">${lm.caseCount}</span>
             </div>
 
-            <!-- 3D Isometric Hospital Skyscraper SVG -->
+            <!-- 3D Isometric Hospital Skyscraper SVG (Flat grounded base, no shadow, no dangling protrusion) -->
             <div class="relative flex items-center justify-center">
-              <svg width="52" height="70" viewBox="0 0 52 70" fill="none" xmlns="http://www.w3.org/2000/svg" class="drop-shadow-sm transition-transform duration-200">
-                <!-- Ground Drop Shadow -->
-                <ellipse cx="26" cy="63" rx="22" ry="6.5" fill="rgba(15,23,42,0.24)" filter="blur(0.8px)"/>
-
-                ${
-                  isSelected
-                    ? `
-                    <!-- Ground Active Pulse Halo -->
-                    <ellipse cx="26" cy="63" rx="24" ry="7.5" fill="none" stroke="#2563eb" stroke-width="2.5" class="animate-pulse opacity-80"/>
-                    <ellipse cx="26" cy="63" rx="16" ry="5" fill="#3b82f6" fill-opacity="0.3"/>
-                  `
-                    : ""
-                }
-
+              <svg width="48" height="56" viewBox="0 0 48 56" fill="none" xmlns="http://www.w3.org/2000/svg" class="transition-transform duration-200">
                 <!-- Tower Main Body: Left Facade (Shadowed Architectural Wall) -->
-                <polygon points="6,18 26,28 26,58 6,48" fill="${
+                <polygon points="6,17 24,26 24,54 6,45" fill="${
                   isSelected ? "#1d4ed8" : "#334155"
-                }" stroke="${isSelected ? "#1e40af" : "#1e293b"}" stroke-width="0.5"/>
+                }" stroke="${isSelected ? "#1e40af" : "#1e293b"}" stroke-width="0.6"/>
 
                 <!-- Architectural Glass Windows on Left Facade (4 floors) -->
-                <polygon points="8,24 11,25.5 11,28 8,26.5" fill="${
+                <polygon points="8,23 13,25.5 13,28 8,25.5" fill="${
                   isSelected ? "#93c5fd" : "#94a3b8"
                 }"/>
-                <polygon points="14,27 24,32 24,34.5 14,29.5" fill="${
+                <polygon points="16,27 21,29.5 21,32 16,29.5" fill="${
                   isSelected ? "#93c5fd" : "#94a3b8"
                 }"/>
-                <polygon points="8,31 11,32.5 11,35 8,33.5" fill="${
+                <polygon points="8,30 13,32.5 13,35 8,32.5" fill="${
                   isSelected ? "#93c5fd" : "#94a3b8"
                 }"/>
-                <polygon points="14,34 24,39 24,41.5 14,36.5" fill="${
+                <polygon points="16,34 21,36.5 21,39 16,36.5" fill="${
                   isSelected ? "#93c5fd" : "#94a3b8"
                 }"/>
-                <polygon points="8,38 11,39.5 11,42 8,40.5" fill="${
+                <polygon points="8,37 13,39.5 13,42 8,39.5" fill="${
                   isSelected ? "#93c5fd" : "#94a3b8"
                 }"/>
-                <polygon points="14,41 24,46 24,48.5 14,43.5" fill="${
-                  isSelected ? "#93c5fd" : "#94a3b8"
-                }"/>
-                <polygon points="8,45 11,46.5 11,49 8,47.5" fill="${
-                  isSelected ? "#93c5fd" : "#94a3b8"
-                }"/>
-                <polygon points="14,48 24,53 24,55.5 14,50.5" fill="${
+                <polygon points="16,41 21,43.5 21,46 16,43.5" fill="${
                   isSelected ? "#93c5fd" : "#94a3b8"
                 }"/>
 
                 <!-- Tower Main Body: Right Facade (Sunlit Facade with Bright Glass Curtain) -->
-                <polygon points="26,28 46,18 46,48 26,58" fill="${
+                <polygon points="24,26 42,17 42,45 24,54" fill="${
                   isSelected ? "#3b82f6" : "#64748b"
-                }" stroke="${isSelected ? "#2563eb" : "#475569"}" stroke-width="0.5"/>
+                }" stroke="${isSelected ? "#2563eb" : "#475569"}" stroke-width="0.6"/>
 
                 <!-- Architectural Glass Windows on Right Facade (4 floors) -->
-                <polygon points="28,31 38,26 38,28.5 28,33.5" fill="${
+                <polygon points="27,27.5 32,25 32,27.5 27,30" fill="${
                   isSelected ? "#dbeafe" : "#e2e8f0"
                 }"/>
-                <polygon points="41,24.5 44,23 44,25.5 41,27" fill="${
+                <polygon points="35,23.5 40,21 40,23.5 35,26" fill="${
                   isSelected ? "#dbeafe" : "#e2e8f0"
                 }"/>
-                <polygon points="28,38 38,33 38,35.5 28,40.5" fill="${
+                <polygon points="27,34.5 32,32 32,34.5 27,37" fill="${
                   isSelected ? "#dbeafe" : "#e2e8f0"
                 }"/>
-                <polygon points="41,31.5 44,30 44,32.5 41,34" fill="${
+                <polygon points="35,30.5 40,28 40,30.5 35,33" fill="${
                   isSelected ? "#dbeafe" : "#e2e8f0"
                 }"/>
-                <polygon points="28,45 38,40 38,42.5 28,47.5" fill="${
+                <polygon points="27,41.5 32,39 32,41.5 27,44" fill="${
                   isSelected ? "#dbeafe" : "#e2e8f0"
                 }"/>
-                <polygon points="41,38.5 44,37 44,39.5 41,41" fill="${
+                <polygon points="35,37.5 40,35 40,37.5 35,40" fill="${
                   isSelected ? "#dbeafe" : "#e2e8f0"
                 }"/>
-                <polygon points="28,52 38,47 38,49.5 28,54.5" fill="${
-                  isSelected ? "#dbeafe" : "#e2e8f0"
+
+                <!-- Ground Level Hospital Entrance Door (Cleanly integrated flush inside wall) -->
+                <polygon points="26,46 32,43 32,49 26,52" fill="${
+                  isSelected ? "#1e40af" : "#1e293b"
                 }"/>
-                <polygon points="41,45.5 44,44 44,46.5 41,48" fill="${
-                  isSelected ? "#dbeafe" : "#e2e8f0"
+                <polygon points="27,47 31,45 31,48.5 27,51" fill="${
+                  isSelected ? "#93c5fd" : "#cbd5e1"
                 }"/>
 
                 <!-- Rooftop Plane (Top-lit Isometric Diamond) -->
-                <polygon points="26,8 46,18 26,28 6,18" fill="${
+                <polygon points="24,8 42,17 24,26 6,17" fill="${
                   isSelected ? "#60a5fa" : "#94a3b8"
                 }" stroke="${isSelected ? "#3b82f6" : "#64748b"}" stroke-width="0.5"/>
 
                 <!-- Rooftop Elevator Penthouse Block -->
-                <polygon points="26,2 32,5 26,8 20,5" fill="${
+                <polygon points="24,2 29,4.5 24,7 19,4.5" fill="${
                   isSelected ? "#dbeafe" : "#cbd5e1"
                 }"/>
-                <polygon points="20,5 26,8 26,12 20,9" fill="${
+                <polygon points="19,4.5 24,7 24,10.5 19,8" fill="${
                   isSelected ? "#1d4ed8" : "#334155"
                 }"/>
-                <polygon points="26,8 32,5 32,9 26,12" fill="${
+                <polygon points="24,7 29,4.5 29,8 24,10.5" fill="${
                   isSelected ? "#2563eb" : "#475569"
                 }"/>
 
                 <!-- White Medical Helipad Platform & Red Cross -->
-                <ellipse cx="26" cy="18" rx="8" ry="4.5" fill="#ffffff" stroke="${
+                <ellipse cx="24" cy="17" rx="7.5" ry="4" fill="#ffffff" stroke="${
                   isSelected ? "#2563eb" : "#cbd5e1"
                 }" stroke-width="1"/>
-                <path d="M25 15h2v6h-2z" fill="#ef4444"/>
-                <path d="M23 17h6v2h-6z" fill="#ef4444"/>
+                <path d="M23 14.5h2v5h-2z" fill="#ef4444"/>
+                <path d="M21.5 16h5v2h-5z" fill="#ef4444"/>
 
-                <!-- Ground Level Hospital Entrance Canopy -->
-                <polygon points="23,56.5 29,53.5 29,58.5 23,61.5" fill="${
-                  isSelected ? "#1e40af" : "#0f172a"
-                }" opacity="0.85"/>
-                <polygon points="20,58 26,55 26,58 20,61" fill="${
-                  isSelected ? "#38bdf8" : "#60a5fa"
-                }" opacity="0.9"/>
+                <!-- Crisp Ground Baseline (Flush & Neplok ke Permukaan) -->
+                <polyline points="6,45 24,54 42,45" stroke="${
+                  isSelected ? "#1e40af" : "#1e293b"
+                }" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
             </div>
           </div>
@@ -426,8 +407,8 @@ export function HospitalLandmarkMap({
         const customIcon = L.divIcon({
           className: "hospital-landmark-marker",
           html: markerHtml,
-          iconSize: [160, 95],
-          iconAnchor: [80, 88],
+          iconSize: [160, 82],
+          iconAnchor: [80, 78],
         });
 
         const marker = L.marker([lm.lat, lm.lng], {
