@@ -38,94 +38,154 @@ interface JabodetabekLandmark {
 
 const JABODETABEK_LANDMARKS: JabodetabekLandmark[] = [
   {
-    id: "HOSP-01",
+    id: "HOSP-RSCM",
+    cohortId: "RS_RSCM",
+    name: "RSUPN Dr. Cipto Mangunkusumo",
+    region: "Salemba, Jakarta Pusat",
+    zone: "Jakarta Pusat",
+    hospitalClass: "Tipe A (Rujukan Nasional)",
+    specialization: "Pusat Rujukan Nasional: Bedah Kompleks, Transplantasi & Kardiovaskular",
+    caseCount: 10,
+    anomalyCount: 6,
+    cleanCount: 4,
+    focusModus: ["Alkes Implan Stent", "Upcoding Sepsis Lab", "Unbundling Bedah Mayor"],
+    lat: -6.1969,
+    lng: 106.8471,
+  },
+  {
+    id: "HOSP-HARAPANKITA",
+    cohortId: "RS_HARAPANKITA",
+    name: "RS Jantung Harapan Kita",
+    region: "Slipi, Jakarta Barat",
+    zone: "Jakarta Barat",
+    hospitalClass: "Tipe A (Pusat Jantung)",
+    specialization: "Pusat Jantung Nasional: Kateterisasi PCI, Stent DES & Bedah CABG",
+    caseCount: 10,
+    anomalyCount: 7,
+    cleanCount: 3,
+    focusModus: ["Inflated Stent DES", "Unbundling Kateterisasi", "Severity Kardiogenik"],
+    lat: -6.1868,
+    lng: 106.7993,
+  },
+  {
+    id: "HOSP-DHARMAIS",
+    cohortId: "RS_DHARMAIS",
+    name: "RS Kanker Dharmais",
+    region: "Palmerah, Jakarta Barat",
+    zone: "Jakarta Barat",
+    hospitalClass: "Tipe A (Pusat Kanker)",
+    specialization: "Pusat Kanker Nasional: Protokol Kemoterapi Sitostatika & Onkologi",
+    caseCount: 10,
+    anomalyCount: 6,
+    cleanCount: 4,
+    focusModus: ["Note Cloning Terapi", "Unbundling Chemoport", "Upcoding Kaheksia"],
+    lat: -6.1878,
+    lng: 106.7978,
+  },
+  {
+    id: "HOSP-FATMAWATI",
+    cohortId: "RS_FATMAWATI",
+    name: "RSUP Fatmawati",
+    region: "Cilandak, Jakarta Selatan",
+    zone: "Jakarta Selatan",
+    hospitalClass: "Tipe A (Ortopedi & Trauma)",
+    specialization: "Pusat Trauma & Ortopedi: Implan Plat Fraktur Tulang & Rekonstruksi Sendi",
+    caseCount: 10,
+    anomalyCount: 6,
+    cleanCount: 4,
+    focusModus: ["Implan Plat Ortopedi", "Unbundling Fluoroskopi C-Arm", "SOAP Fisioterapi"],
+    lat: -6.2952,
+    lng: 106.7937,
+  },
+  {
+    id: "HOSP-SULIANTI",
+    cohortId: "RS_SULIANTI",
+    name: "RSPI Prof. Dr. Sulianti Saroso",
+    region: "Sunter, Jakarta Utara",
+    zone: "Jakarta Utara",
+    hospitalClass: "Tipe A (Pusat Infeksi)",
+    specialization: "Pusat Penyakit Infeksi: Ruang Isolasi Tekanan Negatif & Audit Sepsis A41.9",
+    caseCount: 10,
+    anomalyCount: 5,
+    cleanCount: 5,
+    focusModus: ["Upcoding Sepsis A41.9", "Kultur Darah Laboratorium", "Unbundling APD/Isolasi"],
+    lat: -6.1309,
+    lng: 106.8624,
+  },
+  {
+    id: "HOSP-PERSAHABATAN",
+    cohortId: "RS_PERSAHABATAN",
+    name: "RSUP Persahabatan",
+    region: "Rawamangun, Jakarta Timur",
+    zone: "Jakarta Timur",
+    hospitalClass: "Tipe A (Pusat Respirasi)",
+    specialization: "Pusat Respirasi Nasional: Pemakaian Ventilator ICU >96 Jam & Bronkoskopi",
+    caseCount: 10,
+    anomalyCount: 6,
+    cleanCount: 4,
+    focusModus: ["Upcoding Ventilator >96 Jam", "Unbundling Toraks WSD", "Duplikasi CPPT Paru"],
+    lat: -6.2023,
+    lng: 106.8856,
+  },
+  {
+    id: "HOSP-SEJAHTERA",
     cohortId: "RS_SEJAHTERA",
     name: "RS Sejahtera Medika",
-    region: "Salemba, Jakarta Pusat (DKI Jakarta)",
-    zone: "DKI Jakarta",
-    hospitalClass: "Kelas A",
-    specialization: "Kasus Bedah Mayor, Kardiologi & Alkes Implan",
+    region: "Matraman, Jakarta Pusat",
+    zone: "Jakarta Pusat",
+    hospitalClass: "Kelas A (Mitra BPJS)",
+    specialization: "Pusat Bedah Mayor, Kardiologi & Alkes Implan Vaskular",
     caseCount: 10,
     anomalyCount: 6,
     cleanCount: 4,
     focusModus: ["Inflated Stent", "Upcoding Sepsis", "Unbundling Tindakan"],
-    lat: -6.1950,
-    lng: 106.8480,
+    lat: -6.2085,
+    lng: 106.8450,
   },
   {
-    id: "HOSP-02",
+    id: "HOSP-MITRA",
     cohortId: "RS_MITRA",
     name: "RS Mitra Sehat",
-    region: "BSD City, Tangerang Selatan (Banten)",
+    region: "BSD City, Tangerang Selatan",
     zone: "Tangerang Selatan",
-    hospitalClass: "Kelas B",
-    specialization: "Kasus Rawat Inap, Neurologi & Severity Level",
+    hospitalClass: "Kelas B (Rujukan Barat)",
+    specialization: "Rawat Inap Neurologi & Severity Level Akut",
     caseCount: 10,
     anomalyCount: 6,
     cleanCount: 4,
-    focusModus: ["Severity Upcoding", "Kaidah Koding", "Unbundling Pasca-Rawat"],
+    focusModus: ["Severity Upcoding G-4-14", "Kaidah Koding", "Unbundling Pasca-Rawat"],
     lat: -6.3020,
     lng: 106.6740,
   },
   {
-    id: "HOSP-04",
+    id: "HOSP-SENTOSA",
     cohortId: "RS_SENTOSA",
     name: "RS Sentosa Kasih",
-    region: "Margonda, Kota Depok (Jawa Barat)",
-    zone: "Kota Depok",
-    hospitalClass: "Kelas C",
-    specialization: "Deteksi Fraud Semantik & Duplikasi Catatan Medis",
+    region: "Margonda, Perbatasan Depok-Jaksel",
+    zone: "Depok / Jaksel",
+    hospitalClass: "Kelas C (Mitra Khusus)",
+    specialization: "Deteksi Fraud Semantik & Duplikasi Catatan Medis SOAP Massal",
     caseCount: 10,
     anomalyCount: 6,
     cleanCount: 4,
-    focusModus: ["Note Cloning SOAP", "Template CPPT Massal", "Vektor Semantik"],
-    lat: -6.3980,
-    lng: 106.8280,
-  },
-  {
-    id: "HOSP-06",
-    cohortId: "MULTI_CENTER_BPJS",
-    name: "RS Hermina Medika (Bekasi)",
-    region: "Ahmad Yani, Kota Bekasi (Jawa Barat)",
-    zone: "Kota Bekasi",
-    hospitalClass: "Kelas B",
-    specialization: "Mitra Koridor Jawa Barat - Kaidah Koding INA-CBG",
-    caseCount: 10,
-    anomalyCount: 5,
-    cleanCount: 5,
-    focusModus: ["Kaidah Koding", "Unbundling Paket", "Alkes Bedah"],
-    lat: -6.2380,
-    lng: 106.9920,
-  },
-  {
-    id: "HOSP-05",
-    cohortId: "MULTI_CENTER_BPJS",
-    name: "RSUD Salak Medika (Bogor)",
-    region: "Pajajaran, Kota Bogor (Jawa Barat)",
-    zone: "Kota Bogor",
-    hospitalClass: "Kelas B",
-    specialization: "Mitra Koridor Selatan - Audit Resep & Rekam Medis",
-    caseCount: 10,
-    anomalyCount: 4,
-    cleanCount: 6,
-    focusModus: ["Audit Obat Kronis", "Klaim Rawat Inap", "Severity II"],
-    lat: -6.5890,
-    lng: 106.7970,
+    focusModus: ["Note Cloning SOAP", "Template CPPT Massal", "Kemiripan Semantik"],
+    lat: -6.3680,
+    lng: 106.8330,
   },
   {
     id: "HOSP-MULTI",
     cohortId: "MULTI_CENTER_BPJS",
     name: "Aglomerasi Jabodetabek (Multi-Faskes)",
-    region: "Seluruh Koridor Metropolitan Jabodetabek",
+    region: "Koridor Metropolitan DKI Jakarta & Sekitarnya",
     zone: "Aglomerasi Jabodetabek",
     hospitalClass: "Jaringan Terintegrasi KCU",
-    specialization: "Golden Dataset 30 Kasus Terstandar Jabodetabek",
+    specialization: "Golden Dataset 30 Kasus Terstandar Jabodetabek (Evaluasi Multi-Center)",
     caseCount: 30,
     anomalyCount: 18,
     cleanCount: 12,
     focusModus: ["Alkes Implan", "Severity Inflation", "Note Cloning", "Unbundling"],
-    lat: -6.2400,
-    lng: 106.8300,
+    lat: -6.2200,
+    lng: 106.8270,
   },
 ];
 
@@ -143,7 +203,7 @@ export function HospitalLandmarkMap({
     JABODETABEK_LANDMARKS.find((lm) => lm.cohortId === selectedCohortId) ||
     JABODETABEK_LANDMARKS[0];
 
-  // Initialize Real Leaflet Map
+  // Initialize Real Leaflet Map with Google Maps-like Colorful Tiles
   useEffect(() => {
     let isMounted = true;
 
@@ -155,12 +215,12 @@ export function HospitalLandmarkMap({
 
       if (!isMounted || !mapContainerRef.current) return;
 
-      // Center of Jabodetabek: [-6.26, 106.82], Zoom 10.5
+      // Center of Jakarta Metropolitan: [-6.215, 106.83], Zoom 11.5
       const map = L.map(mapContainerRef.current, {
-        center: [-6.26, 106.82],
-        zoom: 10,
+        center: [-6.215, 106.83],
+        zoom: 11,
         minZoom: 9,
-        maxZoom: 16,
+        maxZoom: 17,
         zoomControl: false,
         attributionControl: false,
       });
@@ -180,19 +240,12 @@ export function HospitalLandmarkMap({
         })
         .addTo(map);
 
-      // Clean, modern Esri World Light Gray Canvas (No API key required, zero watermark)
+      // Colorful Google Maps-esque Esri World Street Map (Crisp roads, green parks, blue waterways, no API key, zero watermark)
       L.tileLayer(
-        "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}",
+        "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
         {
-          maxZoom: 16,
-        }
-      ).addTo(map);
-
-      // Reference Labels layer for Jabodetabek districts and roads (No API key required)
-      L.tileLayer(
-        "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}",
-        {
-          maxZoom: 16,
+          maxZoom: 17,
+          attribution: "Esri World Street Map",
         }
       ).addTo(map);
 
@@ -235,58 +288,146 @@ export function HospitalLandmarkMap({
       displayableHospitals.forEach((lm) => {
         const isSelected = selectedCohortId === lm.cohortId;
 
-        // Modern Custom HTML Marker Pin
+        // Realistic 3D Isometric Towering Hospital Building Pin (Menjulang dengan Arsitektur Kaca & Palang Merah)
         const markerHtml = `
           <div class="flex flex-col items-center group cursor-pointer transition-transform duration-200 ${
-            isSelected ? "scale-110 z-50" : "scale-100 z-20 hover:scale-105"
+            isSelected
+              ? "scale-115 -translate-y-2 z-50"
+              : "scale-100 hover:scale-105 hover:-translate-y-1 z-20"
           }">
-            <!-- Floating Label Pill -->
+            <!-- Floating Label Pill with Hospital Name & Case Count -->
             <div class="${
               isSelected
-                ? "bg-slate-900 text-white border-slate-900 font-semibold shadow-md ring-2 ring-blue-500/30"
-                : "bg-white/95 text-slate-800 border-slate-200 font-medium shadow-xs hover:border-slate-300"
-            } border px-2 py-0.5 rounded-[3px] text-[10px] tracking-tight whitespace-nowrap mb-1 flex items-center gap-1">
+                ? "bg-slate-900 text-white border-slate-900 font-bold shadow-md ring-2 ring-blue-500/50"
+                : "bg-white/95 text-slate-800 border-slate-200 font-semibold shadow-xs hover:border-slate-300"
+            } border px-2 py-0.5 rounded-[4px] text-[10.5px] tracking-tight whitespace-nowrap mb-0.5 flex items-center gap-1.5 transition-all">
+              <span class="w-1.5 h-1.5 rounded-full ${
+                isSelected ? "bg-blue-400 animate-pulse" : "bg-emerald-500"
+              }"></span>
               <span>${lm.name}</span>
               <span class="${
-                isSelected ? "bg-slate-800 text-blue-300" : "bg-slate-100 text-slate-500"
-              } px-1 rounded-[2px] text-[9px] tabular-nums">${lm.caseCount}</span>
+                isSelected ? "bg-blue-600 text-white" : "bg-slate-100 text-slate-700"
+              } px-1.5 py-0.2 rounded-[3px] text-[9.5px] font-bold tabular-nums">${lm.caseCount}</span>
             </div>
 
-            <!-- Pin Head -->
+            <!-- 3D Isometric Hospital Skyscraper SVG -->
             <div class="relative flex items-center justify-center">
-              ${
-                isSelected
-                  ? `<div class="absolute -inset-1 rounded-[4px] bg-blue-500/25 animate-ping"></div>`
-                  : ""
-              }
-              <div class="w-7 h-7 rounded-[4px] ${
-                isSelected
-                  ? "bg-blue-600 border-2 border-white text-white shadow-md"
-                  : "bg-white border border-slate-300 text-slate-700 shadow-2xs group-hover:border-blue-500 group-hover:text-blue-600"
-              } flex items-center justify-center transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M18 20V6a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v14"></path>
-                  <path d="M2 20h20"></path>
-                  <path d="M14 12v.01"></path>
-                  <path d="M10 12v.01"></path>
-                  <path d="M14 16v.01"></path>
-                  <path d="M10 16v.01"></path>
-                </svg>
-              </div>
-            </div>
+              <svg width="52" height="70" viewBox="0 0 52 70" fill="none" xmlns="http://www.w3.org/2000/svg" class="drop-shadow-sm transition-transform duration-200">
+                <!-- Ground Drop Shadow -->
+                <ellipse cx="26" cy="63" rx="22" ry="6.5" fill="rgba(15,23,42,0.24)" filter="blur(0.8px)"/>
 
-            <!-- Triangle Pin Tip -->
-            <div class="w-0 h-0 border-l-[4px] border-l-transparent border-r-[4px] border-r-transparent border-t-[5px] ${
-              isSelected ? "border-t-blue-600" : "border-t-slate-300"
-            } -mt-0.5"></div>
+                ${
+                  isSelected
+                    ? `
+                    <!-- Ground Active Pulse Halo -->
+                    <ellipse cx="26" cy="63" rx="24" ry="7.5" fill="none" stroke="#2563eb" stroke-width="2.5" class="animate-pulse opacity-80"/>
+                    <ellipse cx="26" cy="63" rx="16" ry="5" fill="#3b82f6" fill-opacity="0.3"/>
+                  `
+                    : ""
+                }
+
+                <!-- Tower Main Body: Left Facade (Shadowed Architectural Wall) -->
+                <polygon points="6,18 26,28 26,58 6,48" fill="${
+                  isSelected ? "#1d4ed8" : "#334155"
+                }" stroke="${isSelected ? "#1e40af" : "#1e293b"}" stroke-width="0.5"/>
+
+                <!-- Architectural Glass Windows on Left Facade (4 floors) -->
+                <polygon points="8,24 11,25.5 11,28 8,26.5" fill="${
+                  isSelected ? "#93c5fd" : "#94a3b8"
+                }"/>
+                <polygon points="14,27 24,32 24,34.5 14,29.5" fill="${
+                  isSelected ? "#93c5fd" : "#94a3b8"
+                }"/>
+                <polygon points="8,31 11,32.5 11,35 8,33.5" fill="${
+                  isSelected ? "#93c5fd" : "#94a3b8"
+                }"/>
+                <polygon points="14,34 24,39 24,41.5 14,36.5" fill="${
+                  isSelected ? "#93c5fd" : "#94a3b8"
+                }"/>
+                <polygon points="8,38 11,39.5 11,42 8,40.5" fill="${
+                  isSelected ? "#93c5fd" : "#94a3b8"
+                }"/>
+                <polygon points="14,41 24,46 24,48.5 14,43.5" fill="${
+                  isSelected ? "#93c5fd" : "#94a3b8"
+                }"/>
+                <polygon points="8,45 11,46.5 11,49 8,47.5" fill="${
+                  isSelected ? "#93c5fd" : "#94a3b8"
+                }"/>
+                <polygon points="14,48 24,53 24,55.5 14,50.5" fill="${
+                  isSelected ? "#93c5fd" : "#94a3b8"
+                }"/>
+
+                <!-- Tower Main Body: Right Facade (Sunlit Facade with Bright Glass Curtain) -->
+                <polygon points="26,28 46,18 46,48 26,58" fill="${
+                  isSelected ? "#3b82f6" : "#64748b"
+                }" stroke="${isSelected ? "#2563eb" : "#475569"}" stroke-width="0.5"/>
+
+                <!-- Architectural Glass Windows on Right Facade (4 floors) -->
+                <polygon points="28,31 38,26 38,28.5 28,33.5" fill="${
+                  isSelected ? "#dbeafe" : "#e2e8f0"
+                }"/>
+                <polygon points="41,24.5 44,23 44,25.5 41,27" fill="${
+                  isSelected ? "#dbeafe" : "#e2e8f0"
+                }"/>
+                <polygon points="28,38 38,33 38,35.5 28,40.5" fill="${
+                  isSelected ? "#dbeafe" : "#e2e8f0"
+                }"/>
+                <polygon points="41,31.5 44,30 44,32.5 41,34" fill="${
+                  isSelected ? "#dbeafe" : "#e2e8f0"
+                }"/>
+                <polygon points="28,45 38,40 38,42.5 28,47.5" fill="${
+                  isSelected ? "#dbeafe" : "#e2e8f0"
+                }"/>
+                <polygon points="41,38.5 44,37 44,39.5 41,41" fill="${
+                  isSelected ? "#dbeafe" : "#e2e8f0"
+                }"/>
+                <polygon points="28,52 38,47 38,49.5 28,54.5" fill="${
+                  isSelected ? "#dbeafe" : "#e2e8f0"
+                }"/>
+                <polygon points="41,45.5 44,44 44,46.5 41,48" fill="${
+                  isSelected ? "#dbeafe" : "#e2e8f0"
+                }"/>
+
+                <!-- Rooftop Plane (Top-lit Isometric Diamond) -->
+                <polygon points="26,8 46,18 26,28 6,18" fill="${
+                  isSelected ? "#60a5fa" : "#94a3b8"
+                }" stroke="${isSelected ? "#3b82f6" : "#64748b"}" stroke-width="0.5"/>
+
+                <!-- Rooftop Elevator Penthouse Block -->
+                <polygon points="26,2 32,5 26,8 20,5" fill="${
+                  isSelected ? "#dbeafe" : "#cbd5e1"
+                }"/>
+                <polygon points="20,5 26,8 26,12 20,9" fill="${
+                  isSelected ? "#1d4ed8" : "#334155"
+                }"/>
+                <polygon points="26,8 32,5 32,9 26,12" fill="${
+                  isSelected ? "#2563eb" : "#475569"
+                }"/>
+
+                <!-- White Medical Helipad Platform & Red Cross -->
+                <ellipse cx="26" cy="18" rx="8" ry="4.5" fill="#ffffff" stroke="${
+                  isSelected ? "#2563eb" : "#cbd5e1"
+                }" stroke-width="1"/>
+                <path d="M25 15h2v6h-2z" fill="#ef4444"/>
+                <path d="M23 17h6v2h-6z" fill="#ef4444"/>
+
+                <!-- Ground Level Hospital Entrance Canopy -->
+                <polygon points="23,56.5 29,53.5 29,58.5 23,61.5" fill="${
+                  isSelected ? "#1e40af" : "#0f172a"
+                }" opacity="0.85"/>
+                <polygon points="20,58 26,55 26,58 20,61" fill="${
+                  isSelected ? "#38bdf8" : "#60a5fa"
+                }" opacity="0.9"/>
+              </svg>
+            </div>
           </div>
         `;
 
         const customIcon = L.divIcon({
           className: "hospital-landmark-marker",
           html: markerHtml,
-          iconSize: [160, 60],
-          iconAnchor: [80, 56],
+          iconSize: [160, 95],
+          iconAnchor: [80, 88],
         });
 
         const marker = L.marker([lm.lat, lm.lng], {
@@ -303,7 +444,7 @@ export function HospitalLandmarkMap({
 
       // Fly to active selection or fit Jabodetabek bounds
       if (selectedCohortId === "MULTI_CENTER_BPJS") {
-        map.flyTo([-6.26, 106.82], 10, {
+        map.flyTo([-6.215, 106.83], 11, {
           duration: 0.8,
         });
       } else {
@@ -311,7 +452,7 @@ export function HospitalLandmarkMap({
           (lm) => lm.cohortId === selectedCohortId
         );
         if (target) {
-          map.flyTo([target.lat, target.lng], 12, {
+          map.flyTo([target.lat, target.lng], 12.5, {
             duration: 0.8,
           });
         }
@@ -335,61 +476,61 @@ export function HospitalLandmarkMap({
         <MapPin className="w-3.5 h-3.5 text-blue-600 flex-shrink-0" />
         <span className="font-semibold text-slate-900">Peta Faskes Wilayah Jabodetabek</span>
         <span className="text-slate-300">·</span>
-        <span className="text-slate-500 text-[11px]">Klik landmark pada peta untuk memilih</span>
+        <span className="text-slate-500 text-[11px]">Klik gedung landmark pada peta untuk memilih</span>
       </div>
 
-        {/* Floating Active Landmark Inspector Overlay (Right side of Map) */}
-        <div className="absolute bottom-4 right-4 max-w-sm w-full md:w-80 bg-white/95 backdrop-blur-xs border border-slate-200 rounded-[4px] p-3.5 shadow-md space-y-2 z-[1000] pointer-events-auto">
-          <div className="flex items-start justify-between gap-2">
-            <div>
-              <span className="text-[10px] font-semibold text-blue-700 bg-blue-50 border border-blue-200 px-1.5 py-0.2 rounded-[2px] uppercase">
-                {activeLandmark.hospitalClass}
-              </span>
-              <h4 className="font-bold text-slate-900 text-xs mt-1">
-                {activeLandmark.name}
-              </h4>
-              <p className="text-[11px] text-slate-500 flex items-center gap-1 mt-0.5">
-                <MapPin className="w-3 h-3 text-slate-400" />
-                <span>{activeLandmark.region}</span>
-              </p>
-            </div>
-
-            <div className="text-right flex-shrink-0">
-              <span className="text-base font-extrabold text-slate-900 tabular-nums">
-                {activeLandmark.caseCount}
-              </span>
-              <span className="text-[10px] text-slate-500 block">Kasus Uji</span>
-            </div>
+      {/* Floating Active Landmark Inspector Overlay (Right side of Map) */}
+      <div className="absolute bottom-4 right-4 max-w-sm w-full md:w-80 bg-white/95 backdrop-blur-xs border border-slate-200 rounded-[4px] p-3.5 shadow-md space-y-2 z-[1000] pointer-events-auto">
+        <div className="flex items-start justify-between gap-2">
+          <div>
+            <span className="text-[10px] font-semibold text-blue-700 bg-blue-50 border border-blue-200 px-1.5 py-0.2 rounded-[2px] uppercase">
+              {activeLandmark.hospitalClass}
+            </span>
+            <h4 className="font-bold text-slate-900 text-xs mt-1">
+              {activeLandmark.name}
+            </h4>
+            <p className="text-[11px] text-slate-500 flex items-center gap-1 mt-0.5">
+              <MapPin className="w-3 h-3 text-slate-400" />
+              <span>{activeLandmark.region}</span>
+            </p>
           </div>
 
-          <p className="text-[11px] text-slate-600 leading-snug border-t border-slate-100 pt-2">
-            {activeLandmark.specialization}
-          </p>
-
-          <div className="flex items-center gap-1.5 flex-wrap pt-1">
-            {activeLandmark.focusModus.map((fm, idx) => (
-              <span
-                key={idx}
-                className="bg-slate-50 border border-slate-200 text-slate-700 text-[10px] px-1.5 py-0.5 rounded-[3px] font-medium"
-              >
-                {fm}
-              </span>
-            ))}
-          </div>
-
-          <div className="flex items-center justify-between text-[11px] pt-2 border-t border-slate-100 text-slate-500 tabular-nums">
-            <span className="text-emerald-700 font-semibold">
-              {activeLandmark.anomalyCount} Kasus Anomali
+          <div className="text-right flex-shrink-0">
+            <span className="text-base font-extrabold text-slate-900 tabular-nums">
+              {activeLandmark.caseCount}
             </span>
-            <span>·</span>
-            <span className="text-slate-600">
-              {activeLandmark.cleanCount} Kasus Wajar
-            </span>
-            <span className="bg-emerald-50 text-emerald-800 text-[10px] px-1.5 py-0.2 rounded-[2px] font-medium border border-emerald-200 ml-auto">
-              Aktif Terpilih
-            </span>
+            <span className="text-[10px] text-slate-500 block">Kasus Uji</span>
           </div>
         </div>
+
+        <p className="text-[11px] text-slate-600 leading-snug border-t border-slate-100 pt-2">
+          {activeLandmark.specialization}
+        </p>
+
+        <div className="flex items-center gap-1.5 flex-wrap pt-1">
+          {activeLandmark.focusModus.map((fm, idx) => (
+            <span
+              key={idx}
+              className="bg-slate-50 border border-slate-200 text-slate-700 text-[10px] px-1.5 py-0.5 rounded-[3px] font-medium"
+            >
+              {fm}
+            </span>
+          ))}
+        </div>
+
+        <div className="flex items-center justify-between text-[11px] pt-2 border-t border-slate-100 text-slate-500 tabular-nums">
+          <span className="text-emerald-700 font-semibold">
+            {activeLandmark.anomalyCount} Kasus Anomali
+          </span>
+          <span>·</span>
+          <span className="text-slate-600">
+            {activeLandmark.cleanCount} Kasus Wajar
+          </span>
+          <span className="bg-emerald-50 text-emerald-800 text-[10px] px-1.5 py-0.2 rounded-[2px] font-medium border border-emerald-200 ml-auto">
+            Aktif Terpilih
+          </span>
+        </div>
       </div>
+    </div>
   );
 }
