@@ -127,7 +127,7 @@ export default function BenchmarkLauncherPage() {
                 Metode Pemilihan Fasilitas Kesehatan
               </h3>
               <p className="text-[11px] text-slate-500">
-                Pilih landmark rumah sakit pada peta interaktif atau atur parameter custom
+                Pilih landmark rumah sakit wilayah Jabodetabek pada peta interaktif atau atur parameter custom
               </p>
             </div>
 
