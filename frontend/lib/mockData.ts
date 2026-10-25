@@ -42,6 +42,35 @@ export interface DocumentSection {
   }[];
 }
 
+export interface ClinicalEvent {
+  id: string;
+  timestamp: string;
+  dayOffset: string;
+  department: string;
+  eventTitle: string;
+  clinicalNotes: string;
+  hasConflict?: boolean;
+  conflictTag?: string;
+  targetDocumentId?: "resumeMedis" | "laporanOperasi" | "hasilLab" | "kuitansiAlkes";
+  targetSubstring?: string;
+  pageNumber?: number;
+}
+
+export interface PatientEncounter {
+  id: string;
+  encounterType: "PRIOR_ADMISSION" | "CURRENT_ADMISSION";
+  admissionDate: string;
+  dischargeDate: string;
+  hospitalName: string;
+  dpjpName: string;
+  primaryDiagnosis: { code: string; name: string };
+  secondaryDiagnoses?: string[];
+  inacbgCode: string;
+  claimedTariff: number;
+  intervalDays?: number;
+  notes: string;
+}
+
 export interface ClaimItem {
   id: string;
   hospitalName: string;
@@ -77,6 +106,9 @@ export interface ClaimItem {
     disputeDraftSummary: string;
   };
   documents: DocumentSection[];
+  timelineEvents?: ClinicalEvent[];
+  priorEncounters?: PatientEncounter[];
+  readmissionIntervalDays?: number;
 }
 
 export interface AuditTrailEntry {
@@ -324,6 +356,100 @@ export const INITIAL_CLAIMS: ClaimItem[] = [
             ],
           },
         ],
+      },
+    ],
+    readmissionIntervalDays: 15,
+    priorEncounters: [
+      {
+        id: "ENC-2026-SEP-4829",
+        encounterType: "PRIOR_ADMISSION",
+        admissionDate: "21 Sep 2026",
+        dischargeDate: "24 Sep 2026",
+        hospitalName: "RS Sejahtera Medika",
+        dpjpName: "dr. Hendra Sp.JP",
+        primaryDiagnosis: { code: "I20.0", name: "Unstable Angina Pectoris (UAP)" },
+        secondaryDiagnoses: ["I10 - Essential (primary) hypertension"],
+        inacbgCode: "I-4-11-I",
+        claimedTariff: 18500000,
+        intervalDays: 15,
+        notes: "Pasien dirawat 4 hari dengan sindroma koroner akut UAP, dilakukan terapi medikamentosa agresif, direncanakan evaluasi kateterisasi elektif.",
+      },
+      {
+        id: "ENC-2026-OCT-4829",
+        encounterType: "CURRENT_ADMISSION",
+        admissionDate: "09 Okt 2026",
+        dischargeDate: "11 Okt 2026",
+        hospitalName: "RS Sejahtera Medika",
+        dpjpName: "dr. Hendra Sp.JP",
+        primaryDiagnosis: { code: "I21.0", name: "Acute Transmural Myocardial Infarction of Anterior Wall (STEMI)" },
+        secondaryDiagnoses: ["A41.9 - Sepsis, unspecified (Anomali Upcoding)", "I10 - Essential hypertension"],
+        inacbgCode: "I-4-10-III",
+        claimedTariff: 45000000,
+        intervalDays: 15,
+        notes: "Readmisi 15 hari pasca rawat inap UAP di faskes dan DPJP yang sama. Menjadi indikasi evaluasi klausul readmisi < 30 hari kesinambungan perawatan Permenkes 3/2023.",
+      },
+    ],
+    timelineEvents: [
+      {
+        id: "EVT-01",
+        timestamp: "09 Okt 2026 12:45 WIB",
+        dayOffset: "Hari 1 — 12:45",
+        department: "Instalasi Gawat Darurat (IGD)",
+        eventTitle: "Triase & Penerimaan Pasien Akut",
+        clinicalNotes: "Pasien datang rujukan mandiri mengeluh nyeri dada tipikal substernal tembus ke punggung kiri sejak 3 jam SMRS. EKG lead V1-V4 menunjukkan ST elevasi 3mm. Didiagnosis STEMI Anterior Akut, rencana CITO Primary PCI.",
+        hasConflict: false,
+        targetDocumentId: "resumeMedis",
+        pageNumber: 1,
+      },
+      {
+        id: "EVT-02",
+        timestamp: "09 Okt 2026 13:30 WIB",
+        dayOffset: "Hari 1 — 13:30",
+        department: "Laboratorium Patologi Klinik",
+        eventTitle: "Biomarker Troponin & Skrining Infeksi",
+        clinicalNotes: "Troponin I terukur 14.8 ng/mL (Positif Infark Miokard). Skrining sepsis menunjukkan Leukosit 7.800/uL dan Prokalsitonin 0.1 ng/mL (<0.5 ng/mL). Tidak memenuhi kriteria klinis sepsis sistemik A41.9.",
+        hasConflict: true,
+        conflictTag: "Biomarker Lab Menolak Sepsis (A41.9)",
+        targetDocumentId: "hasilLab",
+        targetSubstring: "Prokalsitonin: 0.1 ng/mL",
+        pageNumber: 1,
+      },
+      {
+        id: "EVT-03",
+        timestamp: "09 Okt 2026 14:15 - 15:45 WIB",
+        dayOffset: "Hari 1 — 14:15",
+        department: "Cath Lab / Ruang Tindakan Kardiologi",
+        eventTitle: "Prosedur Primary PCI & Pemasangan Stent",
+        clinicalNotes: "Punksi radial dekstra. LAD stenosis 95% berhasil distenting 1 unit DES (Xience Alpine). Percobaan stenting pada arteri LCx dibatalkan karena tortuosity anatomi ekstrem; alkes kedua dikembalikan ke depo farmasi.",
+        hasConflict: true,
+        conflictTag: "Laporan Bedah: Hanya 1 Stent Terpasang",
+        targetDocumentId: "laporanOperasi",
+        targetSubstring: "Percobaan stenting pada cabang LCx batal dipasang",
+        pageNumber: 1,
+      },
+      {
+        id: "EVT-04",
+        timestamp: "09 Okt - 11 Okt 2026",
+        dayOffset: "Hari 1 s.d 3",
+        department: "Intensive Cardiac Care Unit (CVCU)",
+        eventTitle: "Observasi Hemodinamik Pasca-Intervensi",
+        clinicalNotes: "Pasien dirawat intensif dalam kondisi stabil. Tanda vital normal, TD 120/75 mmHg, HR 76 x/m, suhu 36.7 C (afebris). Tidak terdapat bukti respon inflamasi sistemik atau syok septik pasca tindakan.",
+        hasConflict: false,
+        targetDocumentId: "resumeMedis",
+        pageNumber: 1,
+      },
+      {
+        id: "EVT-05",
+        timestamp: "11 Okt 2026 10:15 WIB",
+        dayOffset: "Hari 3 — Pulang",
+        department: "Depo Farmasi & Kasir JKN",
+        eventTitle: "Rincian Billing Klaim & Tagihan Alkes",
+        clinicalNotes: "Lembar billing menagihkan 2 unit stent DES @ Rp 10.000.000 (total Rp 20.000.000) dan biaya angiografi unbundled Rp 4.500.000, bertentangan dengan laporan bedah (1 stent batal) dan kaidah koding INA-CBG.",
+        hasConflict: true,
+        conflictTag: "Kuitansi Menggelembungkan 2 Stent & Unbundling",
+        targetDocumentId: "kuitansiAlkes",
+        targetSubstring: "Total Alkes Implan Ditagihkan: 2 Unit Stent DES",
+        pageNumber: 1,
       },
     ],
   },
