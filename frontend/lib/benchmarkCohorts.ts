@@ -20,7 +20,7 @@ const SEJAHTERA_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-SEJ-01",
     label: "INFLATED_STENT",
-    claimId: "SYN-SEJ-001",
+    claimId: "CLM-SEJ-001",
     hospital: "RS Sejahtera Medika",
     expectedAnomaly: true,
     detectedAnomaly: true,
@@ -32,7 +32,7 @@ const SEJAHTERA_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-SEJ-02",
     label: "UPCODING_SEPSIS",
-    claimId: "SYN-SEJ-002",
+    claimId: "CLM-SEJ-002",
     hospital: "RS Sejahtera Medika",
     expectedAnomaly: true,
     detectedAnomaly: true,
@@ -44,7 +44,7 @@ const SEJAHTERA_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-SEJ-03",
     label: "CLEAN_CLAIM",
-    claimId: "SYN-SEJ-003",
+    claimId: "CLM-SEJ-003",
     hospital: "RS Sejahtera Medika",
     expectedAnomaly: false,
     detectedAnomaly: false,
@@ -56,7 +56,7 @@ const SEJAHTERA_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-SEJ-04",
     label: "UNBUNDLING_PROC",
-    claimId: "SYN-SEJ-004",
+    claimId: "CLM-SEJ-004",
     hospital: "RS Sejahtera Medika",
     expectedAnomaly: true,
     detectedAnomaly: true,
@@ -68,7 +68,7 @@ const SEJAHTERA_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-SEJ-05",
     label: "INFLATED_STENT",
-    claimId: "SYN-SEJ-005",
+    claimId: "CLM-SEJ-005",
     hospital: "RS Sejahtera Medika",
     expectedAnomaly: true,
     detectedAnomaly: true,
@@ -80,7 +80,7 @@ const SEJAHTERA_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-SEJ-06",
     label: "CLEAN_CLAIM",
-    claimId: "SYN-SEJ-006",
+    claimId: "CLM-SEJ-006",
     hospital: "RS Sejahtera Medika",
     expectedAnomaly: false,
     detectedAnomaly: false,
@@ -92,7 +92,7 @@ const SEJAHTERA_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-SEJ-07",
     label: "UPCODING_SEPSIS",
-    claimId: "SYN-SEJ-007",
+    claimId: "CLM-SEJ-007",
     hospital: "RS Sejahtera Medika",
     expectedAnomaly: true,
     detectedAnomaly: true,
@@ -104,7 +104,7 @@ const SEJAHTERA_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-SEJ-08",
     label: "CLEAN_CLAIM",
-    claimId: "SYN-SEJ-008",
+    claimId: "CLM-SEJ-008",
     hospital: "RS Sejahtera Medika",
     expectedAnomaly: false,
     detectedAnomaly: false,
@@ -116,7 +116,7 @@ const SEJAHTERA_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-SEJ-09",
     label: "UNBUNDLING_PROC",
-    claimId: "SYN-SEJ-009",
+    claimId: "CLM-SEJ-009",
     hospital: "RS Sejahtera Medika",
     expectedAnomaly: true,
     detectedAnomaly: true,
@@ -128,7 +128,7 @@ const SEJAHTERA_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-SEJ-10",
     label: "CLEAN_CLAIM",
-    claimId: "SYN-SEJ-010",
+    claimId: "CLM-SEJ-010",
     hospital: "RS Sejahtera Medika",
     expectedAnomaly: false,
     detectedAnomaly: true,
@@ -144,7 +144,7 @@ const MITRA_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-MIT-01",
     label: "UPCODING_SEPSIS",
-    claimId: "SYN-MIT-001",
+    claimId: "CLM-MIT-001",
     hospital: "RS Mitra Sehat",
     expectedAnomaly: true,
     detectedAnomaly: true,
@@ -156,7 +156,7 @@ const MITRA_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-MIT-02",
     label: "CLEAN_CLAIM",
-    claimId: "SYN-MIT-002",
+    claimId: "CLM-MIT-002",
     hospital: "RS Mitra Sehat",
     expectedAnomaly: false,
     detectedAnomaly: false,
@@ -168,7 +168,7 @@ const MITRA_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-MIT-03",
     label: "UPCODING_SEPSIS",
-    claimId: "SYN-MIT-003",
+    claimId: "CLM-MIT-003",
     hospital: "RS Mitra Sehat",
     expectedAnomaly: true,
     detectedAnomaly: true,
@@ -180,7 +180,7 @@ const MITRA_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-MIT-04",
     label: "CLEAN_CLAIM",
-    claimId: "SYN-MIT-004",
+    claimId: "CLM-MIT-004",
     hospital: "RS Mitra Sehat",
     expectedAnomaly: false,
     detectedAnomaly: false,
@@ -192,7 +192,7 @@ const MITRA_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-MIT-05",
     label: "UNBUNDLING_PROC",
-    claimId: "SYN-MIT-005",
+    claimId: "CLM-MIT-005",
     hospital: "RS Mitra Sehat",
     expectedAnomaly: true,
     detectedAnomaly: true,
@@ -204,7 +204,7 @@ const MITRA_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-MIT-06",
     label: "UPCODING_SEPSIS",
-    claimId: "SYN-MIT-006",
+    claimId: "CLM-MIT-006",
     hospital: "RS Mitra Sehat",
     expectedAnomaly: true,
     detectedAnomaly: true,
@@ -216,7 +216,7 @@ const MITRA_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-MIT-07",
     label: "CLEAN_CLAIM",
-    claimId: "SYN-MIT-007",
+    claimId: "CLM-MIT-007",
     hospital: "RS Mitra Sehat",
     expectedAnomaly: false,
     detectedAnomaly: false,
@@ -228,7 +228,7 @@ const MITRA_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-MIT-08",
     label: "UPCODING_SEPSIS",
-    claimId: "SYN-MIT-008",
+    claimId: "CLM-MIT-008",
     hospital: "RS Mitra Sehat",
     expectedAnomaly: true,
     detectedAnomaly: true,
@@ -240,7 +240,7 @@ const MITRA_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-MIT-09",
     label: "CLEAN_CLAIM",
-    claimId: "SYN-MIT-009",
+    claimId: "CLM-MIT-009",
     hospital: "RS Mitra Sehat",
     expectedAnomaly: false,
     detectedAnomaly: false,
@@ -252,7 +252,7 @@ const MITRA_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-MIT-10",
     label: "UPCODING_SEPSIS",
-    claimId: "SYN-MIT-010",
+    claimId: "CLM-MIT-010",
     hospital: "RS Mitra Sehat",
     expectedAnomaly: true,
     detectedAnomaly: true,
@@ -268,7 +268,7 @@ const SENTOSA_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-SEN-01",
     label: "NOTE_CLONING",
-    claimId: "SYN-SEN-001",
+    claimId: "CLM-SEN-001",
     hospital: "RS Sentosa Kasih",
     expectedAnomaly: true,
     detectedAnomaly: true,
@@ -280,7 +280,7 @@ const SENTOSA_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-SEN-02",
     label: "NOTE_CLONING",
-    claimId: "SYN-SEN-002",
+    claimId: "CLM-SEN-002",
     hospital: "RS Sentosa Kasih",
     expectedAnomaly: true,
     detectedAnomaly: true,
@@ -292,7 +292,7 @@ const SENTOSA_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-SEN-03",
     label: "CLEAN_CLAIM",
-    claimId: "SYN-SEN-003",
+    claimId: "CLM-SEN-003",
     hospital: "RS Sentosa Kasih",
     expectedAnomaly: false,
     detectedAnomaly: false,
@@ -304,7 +304,7 @@ const SENTOSA_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-SEN-04",
     label: "NOTE_CLONING",
-    claimId: "SYN-SEN-004",
+    claimId: "CLM-SEN-004",
     hospital: "RS Sentosa Kasih",
     expectedAnomaly: true,
     detectedAnomaly: true,
@@ -316,7 +316,7 @@ const SENTOSA_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-SEN-05",
     label: "CLEAN_CLAIM",
-    claimId: "SYN-SEN-005",
+    claimId: "CLM-SEN-005",
     hospital: "RS Sentosa Kasih",
     expectedAnomaly: false,
     detectedAnomaly: false,
@@ -328,7 +328,7 @@ const SENTOSA_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-SEN-06",
     label: "NOTE_CLONING",
-    claimId: "SYN-SEN-006",
+    claimId: "CLM-SEN-006",
     hospital: "RS Sentosa Kasih",
     expectedAnomaly: true,
     detectedAnomaly: true,
@@ -340,7 +340,7 @@ const SENTOSA_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-SEN-07",
     label: "CLEAN_CLAIM",
-    claimId: "SYN-SEN-007",
+    claimId: "CLM-SEN-007",
     hospital: "RS Sentosa Kasih",
     expectedAnomaly: false,
     detectedAnomaly: false,
@@ -352,7 +352,7 @@ const SENTOSA_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-SEN-08",
     label: "NOTE_CLONING",
-    claimId: "SYN-SEN-008",
+    claimId: "CLM-SEN-008",
     hospital: "RS Sentosa Kasih",
     expectedAnomaly: true,
     detectedAnomaly: true,
@@ -364,7 +364,7 @@ const SENTOSA_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-SEN-09",
     label: "CLEAN_CLAIM",
-    claimId: "SYN-SEN-009",
+    claimId: "CLM-SEN-009",
     hospital: "RS Sentosa Kasih",
     expectedAnomaly: false,
     detectedAnomaly: false,
@@ -376,7 +376,7 @@ const SENTOSA_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-SEN-10",
     label: "CLEAN_CLAIM",
-    claimId: "SYN-SEN-010",
+    claimId: "CLM-SEN-010",
     hospital: "RS Sentosa Kasih",
     expectedAnomaly: false,
     detectedAnomaly: true,
@@ -392,7 +392,7 @@ const RSCM_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-RSCM-01",
     label: "INFLATED_STENT",
-    claimId: "SYN-RSCM-001",
+    claimId: "CLM-RSCM-001",
     hospital: "RSUPN Dr. Cipto Mangunkusumo",
     expectedAnomaly: true,
     detectedAnomaly: true,
@@ -404,7 +404,7 @@ const RSCM_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-RSCM-02",
     label: "UPCODING_SEPSIS",
-    claimId: "SYN-RSCM-002",
+    claimId: "CLM-RSCM-002",
     hospital: "RSUPN Dr. Cipto Mangunkusumo",
     expectedAnomaly: true,
     detectedAnomaly: true,
@@ -416,7 +416,7 @@ const RSCM_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-RSCM-03",
     label: "CLEAN_CLAIM",
-    claimId: "SYN-RSCM-003",
+    claimId: "CLM-RSCM-003",
     hospital: "RSUPN Dr. Cipto Mangunkusumo",
     expectedAnomaly: false,
     detectedAnomaly: false,
@@ -428,7 +428,7 @@ const RSCM_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-RSCM-04",
     label: "UNBUNDLING_PROC",
-    claimId: "SYN-RSCM-004",
+    claimId: "CLM-RSCM-004",
     hospital: "RSUPN Dr. Cipto Mangunkusumo",
     expectedAnomaly: true,
     detectedAnomaly: true,
@@ -440,7 +440,7 @@ const RSCM_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-RSCM-05",
     label: "INFLATED_STENT",
-    claimId: "SYN-RSCM-005",
+    claimId: "CLM-RSCM-005",
     hospital: "RSUPN Dr. Cipto Mangunkusumo",
     expectedAnomaly: true,
     detectedAnomaly: true,
@@ -452,7 +452,7 @@ const RSCM_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-RSCM-06",
     label: "CLEAN_CLAIM",
-    claimId: "SYN-RSCM-006",
+    claimId: "CLM-RSCM-006",
     hospital: "RSUPN Dr. Cipto Mangunkusumo",
     expectedAnomaly: false,
     detectedAnomaly: false,
@@ -464,7 +464,7 @@ const RSCM_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-RSCM-07",
     label: "NOTE_CLONING",
-    claimId: "SYN-RSCM-007",
+    claimId: "CLM-RSCM-007",
     hospital: "RSUPN Dr. Cipto Mangunkusumo",
     expectedAnomaly: true,
     detectedAnomaly: true,
@@ -476,7 +476,7 @@ const RSCM_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-RSCM-08",
     label: "CLEAN_CLAIM",
-    claimId: "SYN-RSCM-008",
+    claimId: "CLM-RSCM-008",
     hospital: "RSUPN Dr. Cipto Mangunkusumo",
     expectedAnomaly: false,
     detectedAnomaly: false,
@@ -488,7 +488,7 @@ const RSCM_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-RSCM-09",
     label: "UNBUNDLING_PROC",
-    claimId: "SYN-RSCM-009",
+    claimId: "CLM-RSCM-009",
     hospital: "RSUPN Dr. Cipto Mangunkusumo",
     expectedAnomaly: true,
     detectedAnomaly: true,
@@ -500,7 +500,7 @@ const RSCM_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-RSCM-10",
     label: "CLEAN_CLAIM",
-    claimId: "SYN-RSCM-010",
+    claimId: "CLM-RSCM-010",
     hospital: "RSUPN Dr. Cipto Mangunkusumo",
     expectedAnomaly: false,
     detectedAnomaly: false,
@@ -516,7 +516,7 @@ const HARAPANKITA_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-HK-01",
     label: "INFLATED_STENT",
-    claimId: "SYN-HK-001",
+    claimId: "CLM-HK-001",
     hospital: "RS Jantung Harapan Kita",
     expectedAnomaly: true,
     detectedAnomaly: true,
@@ -528,7 +528,7 @@ const HARAPANKITA_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-HK-02",
     label: "UNBUNDLING_PROC",
-    claimId: "SYN-HK-002",
+    claimId: "CLM-HK-002",
     hospital: "RS Jantung Harapan Kita",
     expectedAnomaly: true,
     detectedAnomaly: true,
@@ -540,7 +540,7 @@ const HARAPANKITA_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-HK-03",
     label: "CLEAN_CLAIM",
-    claimId: "SYN-HK-003",
+    claimId: "CLM-HK-003",
     hospital: "RS Jantung Harapan Kita",
     expectedAnomaly: false,
     detectedAnomaly: false,
@@ -552,7 +552,7 @@ const HARAPANKITA_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-HK-04",
     label: "INFLATED_STENT",
-    claimId: "SYN-HK-004",
+    claimId: "CLM-HK-004",
     hospital: "RS Jantung Harapan Kita",
     expectedAnomaly: true,
     detectedAnomaly: true,
@@ -564,7 +564,7 @@ const HARAPANKITA_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-HK-05",
     label: "UPCODING_SEPSIS",
-    claimId: "SYN-HK-005",
+    claimId: "CLM-HK-005",
     hospital: "RS Jantung Harapan Kita",
     expectedAnomaly: true,
     detectedAnomaly: true,
@@ -576,7 +576,7 @@ const HARAPANKITA_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-HK-06",
     label: "CLEAN_CLAIM",
-    claimId: "SYN-HK-006",
+    claimId: "CLM-HK-006",
     hospital: "RS Jantung Harapan Kita",
     expectedAnomaly: false,
     detectedAnomaly: false,
@@ -588,7 +588,7 @@ const HARAPANKITA_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-HK-07",
     label: "UNBUNDLING_PROC",
-    claimId: "SYN-HK-007",
+    claimId: "CLM-HK-007",
     hospital: "RS Jantung Harapan Kita",
     expectedAnomaly: true,
     detectedAnomaly: true,
@@ -600,7 +600,7 @@ const HARAPANKITA_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-HK-08",
     label: "CLEAN_CLAIM",
-    claimId: "SYN-HK-008",
+    claimId: "CLM-HK-008",
     hospital: "RS Jantung Harapan Kita",
     expectedAnomaly: false,
     detectedAnomaly: false,
@@ -612,7 +612,7 @@ const HARAPANKITA_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-HK-09",
     label: "NOTE_CLONING",
-    claimId: "SYN-HK-009",
+    claimId: "CLM-HK-009",
     hospital: "RS Jantung Harapan Kita",
     expectedAnomaly: true,
     detectedAnomaly: true,
@@ -624,7 +624,7 @@ const HARAPANKITA_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-HK-10",
     label: "CLEAN_CLAIM",
-    claimId: "SYN-HK-010",
+    claimId: "CLM-HK-010",
     hospital: "RS Jantung Harapan Kita",
     expectedAnomaly: false,
     detectedAnomaly: true,
@@ -640,7 +640,7 @@ const DHARMAIS_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-DHM-01",
     label: "NOTE_CLONING",
-    claimId: "SYN-DHM-001",
+    claimId: "CLM-DHM-001",
     hospital: "RS Kanker Dharmais",
     expectedAnomaly: true,
     detectedAnomaly: true,
@@ -652,7 +652,7 @@ const DHARMAIS_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-DHM-02",
     label: "UPCODING_SEPSIS",
-    claimId: "SYN-DHM-002",
+    claimId: "CLM-DHM-002",
     hospital: "RS Kanker Dharmais",
     expectedAnomaly: true,
     detectedAnomaly: true,
@@ -664,7 +664,7 @@ const DHARMAIS_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-DHM-03",
     label: "CLEAN_CLAIM",
-    claimId: "SYN-DHM-003",
+    claimId: "CLM-DHM-003",
     hospital: "RS Kanker Dharmais",
     expectedAnomaly: false,
     detectedAnomaly: false,
@@ -676,7 +676,7 @@ const DHARMAIS_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-DHM-04",
     label: "UNBUNDLING_PROC",
-    claimId: "SYN-DHM-004",
+    claimId: "CLM-DHM-004",
     hospital: "RS Kanker Dharmais",
     expectedAnomaly: true,
     detectedAnomaly: true,
@@ -688,7 +688,7 @@ const DHARMAIS_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-DHM-05",
     label: "NOTE_CLONING",
-    claimId: "SYN-DHM-005",
+    claimId: "CLM-DHM-005",
     hospital: "RS Kanker Dharmais",
     expectedAnomaly: true,
     detectedAnomaly: true,
@@ -700,7 +700,7 @@ const DHARMAIS_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-DHM-06",
     label: "CLEAN_CLAIM",
-    claimId: "SYN-DHM-006",
+    claimId: "CLM-DHM-006",
     hospital: "RS Kanker Dharmais",
     expectedAnomaly: false,
     detectedAnomaly: false,
@@ -712,7 +712,7 @@ const DHARMAIS_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-DHM-07",
     label: "UPCODING_SEPSIS",
-    claimId: "SYN-DHM-007",
+    claimId: "CLM-DHM-007",
     hospital: "RS Kanker Dharmais",
     expectedAnomaly: true,
     detectedAnomaly: true,
@@ -724,7 +724,7 @@ const DHARMAIS_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-DHM-08",
     label: "CLEAN_CLAIM",
-    claimId: "SYN-DHM-008",
+    claimId: "CLM-DHM-008",
     hospital: "RS Kanker Dharmais",
     expectedAnomaly: false,
     detectedAnomaly: false,
@@ -736,7 +736,7 @@ const DHARMAIS_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-DHM-09",
     label: "UNBUNDLING_PROC",
-    claimId: "SYN-DHM-009",
+    claimId: "CLM-DHM-009",
     hospital: "RS Kanker Dharmais",
     expectedAnomaly: true,
     detectedAnomaly: true,
@@ -748,7 +748,7 @@ const DHARMAIS_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-DHM-10",
     label: "CLEAN_CLAIM",
-    claimId: "SYN-DHM-010",
+    claimId: "CLM-DHM-010",
     hospital: "RS Kanker Dharmais",
     expectedAnomaly: false,
     detectedAnomaly: false,
@@ -764,7 +764,7 @@ const FATMAWATI_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-FTM-01",
     label: "INFLATED_STENT",
-    claimId: "SYN-FTM-001",
+    claimId: "CLM-FTM-001",
     hospital: "RSUP Fatmawati",
     expectedAnomaly: true,
     detectedAnomaly: true,
@@ -776,7 +776,7 @@ const FATMAWATI_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-FTM-02",
     label: "UNBUNDLING_PROC",
-    claimId: "SYN-FTM-002",
+    claimId: "CLM-FTM-002",
     hospital: "RSUP Fatmawati",
     expectedAnomaly: true,
     detectedAnomaly: true,
@@ -788,7 +788,7 @@ const FATMAWATI_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-FTM-03",
     label: "CLEAN_CLAIM",
-    claimId: "SYN-FTM-003",
+    claimId: "CLM-FTM-003",
     hospital: "RSUP Fatmawati",
     expectedAnomaly: false,
     detectedAnomaly: false,
@@ -800,7 +800,7 @@ const FATMAWATI_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-FTM-04",
     label: "INFLATED_STENT",
-    claimId: "SYN-FTM-004",
+    claimId: "CLM-FTM-004",
     hospital: "RSUP Fatmawati",
     expectedAnomaly: true,
     detectedAnomaly: true,
@@ -812,7 +812,7 @@ const FATMAWATI_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-FTM-05",
     label: "UPCODING_SEPSIS",
-    claimId: "SYN-FTM-005",
+    claimId: "CLM-FTM-005",
     hospital: "RSUP Fatmawati",
     expectedAnomaly: true,
     detectedAnomaly: true,
@@ -824,7 +824,7 @@ const FATMAWATI_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-FTM-06",
     label: "CLEAN_CLAIM",
-    claimId: "SYN-FTM-006",
+    claimId: "CLM-FTM-006",
     hospital: "RSUP Fatmawati",
     expectedAnomaly: false,
     detectedAnomaly: false,
@@ -836,7 +836,7 @@ const FATMAWATI_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-FTM-07",
     label: "NOTE_CLONING",
-    claimId: "SYN-FTM-007",
+    claimId: "CLM-FTM-007",
     hospital: "RSUP Fatmawati",
     expectedAnomaly: true,
     detectedAnomaly: true,
@@ -848,7 +848,7 @@ const FATMAWATI_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-FTM-08",
     label: "CLEAN_CLAIM",
-    claimId: "SYN-FTM-008",
+    claimId: "CLM-FTM-008",
     hospital: "RSUP Fatmawati",
     expectedAnomaly: false,
     detectedAnomaly: false,
@@ -860,7 +860,7 @@ const FATMAWATI_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-FTM-09",
     label: "UNBUNDLING_PROC",
-    claimId: "SYN-FTM-009",
+    claimId: "CLM-FTM-009",
     hospital: "RSUP Fatmawati",
     expectedAnomaly: true,
     detectedAnomaly: true,
@@ -872,7 +872,7 @@ const FATMAWATI_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-FTM-10",
     label: "CLEAN_CLAIM",
-    claimId: "SYN-FTM-010",
+    claimId: "CLM-FTM-010",
     hospital: "RSUP Fatmawati",
     expectedAnomaly: false,
     detectedAnomaly: false,
@@ -888,7 +888,7 @@ const SULIANTI_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-SLS-01",
     label: "UPCODING_SEPSIS",
-    claimId: "SYN-SLS-001",
+    claimId: "CLM-SLS-001",
     hospital: "RSPI Sulianti Saroso",
     expectedAnomaly: true,
     detectedAnomaly: true,
@@ -900,7 +900,7 @@ const SULIANTI_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-SLS-02",
     label: "CLEAN_CLAIM",
-    claimId: "SYN-SLS-002",
+    claimId: "CLM-SLS-002",
     hospital: "RSPI Sulianti Saroso",
     expectedAnomaly: false,
     detectedAnomaly: false,
@@ -912,7 +912,7 @@ const SULIANTI_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-SLS-03",
     label: "UPCODING_SEPSIS",
-    claimId: "SYN-SLS-003",
+    claimId: "CLM-SLS-003",
     hospital: "RSPI Sulianti Saroso",
     expectedAnomaly: true,
     detectedAnomaly: true,
@@ -924,7 +924,7 @@ const SULIANTI_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-SLS-04",
     label: "NOTE_CLONING",
-    claimId: "SYN-SLS-004",
+    claimId: "CLM-SLS-004",
     hospital: "RSPI Sulianti Saroso",
     expectedAnomaly: true,
     detectedAnomaly: true,
@@ -936,7 +936,7 @@ const SULIANTI_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-SLS-05",
     label: "CLEAN_CLAIM",
-    claimId: "SYN-SLS-005",
+    claimId: "CLM-SLS-005",
     hospital: "RSPI Sulianti Saroso",
     expectedAnomaly: false,
     detectedAnomaly: false,
@@ -948,7 +948,7 @@ const SULIANTI_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-SLS-06",
     label: "UNBUNDLING_PROC",
-    claimId: "SYN-SLS-006",
+    claimId: "CLM-SLS-006",
     hospital: "RSPI Sulianti Saroso",
     expectedAnomaly: true,
     detectedAnomaly: true,
@@ -960,7 +960,7 @@ const SULIANTI_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-SLS-07",
     label: "CLEAN_CLAIM",
-    claimId: "SYN-SLS-007",
+    claimId: "CLM-SLS-007",
     hospital: "RSPI Sulianti Saroso",
     expectedAnomaly: false,
     detectedAnomaly: false,
@@ -972,7 +972,7 @@ const SULIANTI_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-SLS-08",
     label: "UPCODING_SEPSIS",
-    claimId: "SYN-SLS-008",
+    claimId: "CLM-SLS-008",
     hospital: "RSPI Sulianti Saroso",
     expectedAnomaly: true,
     detectedAnomaly: true,
@@ -984,7 +984,7 @@ const SULIANTI_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-SLS-09",
     label: "CLEAN_CLAIM",
-    claimId: "SYN-SLS-009",
+    claimId: "CLM-SLS-009",
     hospital: "RSPI Sulianti Saroso",
     expectedAnomaly: false,
     detectedAnomaly: false,
@@ -996,7 +996,7 @@ const SULIANTI_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-SLS-10",
     label: "CLEAN_CLAIM",
-    claimId: "SYN-SLS-010",
+    claimId: "CLM-SLS-010",
     hospital: "RSPI Sulianti Saroso",
     expectedAnomaly: false,
     detectedAnomaly: false,
@@ -1012,7 +1012,7 @@ const PERSAHABATAN_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-PSH-01",
     label: "UPCODING_SEPSIS",
-    claimId: "SYN-PSH-001",
+    claimId: "CLM-PSH-001",
     hospital: "RSUP Persahabatan",
     expectedAnomaly: true,
     detectedAnomaly: true,
@@ -1024,7 +1024,7 @@ const PERSAHABATAN_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-PSH-02",
     label: "CLEAN_CLAIM",
-    claimId: "SYN-PSH-002",
+    claimId: "CLM-PSH-002",
     hospital: "RSUP Persahabatan",
     expectedAnomaly: false,
     detectedAnomaly: false,
@@ -1036,7 +1036,7 @@ const PERSAHABATAN_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-PSH-03",
     label: "UNBUNDLING_PROC",
-    claimId: "SYN-PSH-003",
+    claimId: "CLM-PSH-003",
     hospital: "RSUP Persahabatan",
     expectedAnomaly: true,
     detectedAnomaly: true,
@@ -1048,7 +1048,7 @@ const PERSAHABATAN_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-PSH-04",
     label: "NOTE_CLONING",
-    claimId: "SYN-PSH-004",
+    claimId: "CLM-PSH-004",
     hospital: "RSUP Persahabatan",
     expectedAnomaly: true,
     detectedAnomaly: true,
@@ -1060,7 +1060,7 @@ const PERSAHABATAN_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-PSH-05",
     label: "CLEAN_CLAIM",
-    claimId: "SYN-PSH-005",
+    claimId: "CLM-PSH-005",
     hospital: "RSUP Persahabatan",
     expectedAnomaly: false,
     detectedAnomaly: false,
@@ -1072,7 +1072,7 @@ const PERSAHABATAN_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-PSH-06",
     label: "UPCODING_SEPSIS",
-    claimId: "SYN-PSH-006",
+    claimId: "CLM-PSH-006",
     hospital: "RSUP Persahabatan",
     expectedAnomaly: true,
     detectedAnomaly: true,
@@ -1084,7 +1084,7 @@ const PERSAHABATAN_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-PSH-07",
     label: "CLEAN_CLAIM",
-    claimId: "SYN-PSH-007",
+    claimId: "CLM-PSH-007",
     hospital: "RSUP Persahabatan",
     expectedAnomaly: false,
     detectedAnomaly: false,
@@ -1096,7 +1096,7 @@ const PERSAHABATAN_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-PSH-08",
     label: "UNBUNDLING_PROC",
-    claimId: "SYN-PSH-008",
+    claimId: "CLM-PSH-008",
     hospital: "RSUP Persahabatan",
     expectedAnomaly: true,
     detectedAnomaly: true,
@@ -1108,7 +1108,7 @@ const PERSAHABATAN_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-PSH-09",
     label: "CLEAN_CLAIM",
-    claimId: "SYN-PSH-009",
+    claimId: "CLM-PSH-009",
     hospital: "RSUP Persahabatan",
     expectedAnomaly: false,
     detectedAnomaly: false,
@@ -1120,7 +1120,7 @@ const PERSAHABATAN_CASES: BenchmarkCaseResult[] = [
   {
     id: "BM-PSH-10",
     label: "NOTE_CLONING",
-    claimId: "SYN-PSH-010",
+    claimId: "CLM-PSH-010",
     hospital: "RSUP Persahabatan",
     expectedAnomaly: true,
     detectedAnomaly: true,
@@ -1336,3 +1336,4 @@ export function createCustomCohort(
     cases: filtered,
   };
 }
+

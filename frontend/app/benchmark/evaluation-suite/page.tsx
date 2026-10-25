@@ -264,7 +264,7 @@ function BenchmarkSuiteContent() {
               <div className="flex items-center gap-2">
                 <Activity className="w-4 h-4 text-blue-600 animate-pulse" />
                 <span className="font-semibold text-slate-900">
-                  Inferensi Batch Model AI Sedang Berjalan:
+                  Evaluasi Batch Berkas Klaim Sedang Berjalan:
                 </span>
                 {currentEvalIndex !== null && results[currentEvalIndex] && (
                   <span className="text-slate-600 truncate">
@@ -482,7 +482,7 @@ function BenchmarkSuiteContent() {
                           }}
                           className="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-medium text-blue-700 bg-white border border-slate-200 rounded-[4px] hover:bg-slate-50 transition-colors shadow-2xs"
                         >
-                          <span>Telemetri</span>
+                          <span>Rincian</span>
                           <ExternalLink className="w-2.5 h-2.5" />
                         </button>
                       </td>

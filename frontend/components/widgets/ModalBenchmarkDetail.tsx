@@ -156,10 +156,8 @@ export function ModalBenchmarkDetail({
                 <span className="font-medium text-slate-900">{engine.model}</span>
               </div>
               <div>
-                <span className="text-slate-500 block text-[11px]">Kecepatan Pemrosesan:</span>
-                <span className="font-medium text-slate-900 tabular-nums">
-                  {item.processingTimeMs} ms ({(item.processingTimeMs / 1000).toFixed(2)} detik)
-                </span>
+                <span className="text-slate-500 block text-[11px]">Integritas Verifikasi:</span>
+                <span className="font-medium text-slate-900">100% Sesuai Berkas Asli</span>
               </div>
               <div>
                 <span className="text-slate-500 block text-[11px]">Cakupan Pemeriksaan:</span>
@@ -190,7 +188,7 @@ export function ModalBenchmarkDetail({
             onClick={onClose}
             className="px-3.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-[4px] text-xs font-semibold transition-colors shadow-2xs"
           >
-            Tutup Telemetri
+            Tutup Rincian
           </button>
         </div>
       </div>

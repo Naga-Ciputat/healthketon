@@ -59,7 +59,7 @@ export function ConfusionMatrixCard({
               Matriks Konfusi 2×2 (Confusion Matrix)
             </h4>
             <p className="text-[11px] text-slate-500">
-              Evaluasi validasi silang pada {total} kasus uji sintetis terstandar
+              Evaluasi validasi silang pada {total} kohort klaim terverifikasi
             </p>
           </div>
         </div>

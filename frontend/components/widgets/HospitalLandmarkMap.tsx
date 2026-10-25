@@ -232,14 +232,6 @@ export function HospitalLandmarkMap({
         })
         .addTo(map);
 
-      // Attribution control at bottom-left
-      L.control
-        .attribution({
-          position: "bottomleft",
-          prefix: "Peta Jabodetabek &copy; Google Maps",
-        })
-        .addTo(map);
-
       // Clean Google Maps Layer with ALL non-hospital POIs disabled (No malls, museums, commercial landmarks)
       L.tileLayer(
         "https://mt{s}.google.com/vt/lyrs=m&apistyle=s.t:2|p.v:off&x={x}&y={y}&z={z}",
