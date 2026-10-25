@@ -99,9 +99,6 @@ function BenchmarkSuiteContent() {
   const recall = actualAnomalies > 0 ? (truePositives / actualAnomalies) * 100 : 0;
   const fpr = actualClean > 0 ? (falsePositives / actualClean) * 100 : 0;
   const verbatimRate = 100;
-  const avgLatencyMs = Math.round(
-    results.reduce((acc, r) => acc + r.processingTimeMs, 0) / (results.length || 1)
-  );
 
   // Filtered Results
   const filteredResults = useMemo(() => {
@@ -140,7 +137,6 @@ function BenchmarkSuiteContent() {
         recallRate: `${recall.toFixed(1)}%`,
         falsePositiveRate: `${fpr.toFixed(1)}%`,
         verbatimGroundingRate: `${verbatimRate}%`,
-        averageLatencyMs: avgLatencyMs,
         confusionMatrix: {
           truePositives,
           falseNegatives,
@@ -296,8 +292,8 @@ function BenchmarkSuiteContent() {
           </div>
         )}
 
-        {/* Metrik Objektif Evaluasi (4 Cards) */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+        {/* Metrik Objektif Evaluasi (3 Cards: Recall, FPR, Verbatim Grounding) */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
           {/* Metrik 1: Recall */}
           <div className="bg-white border border-slate-200 rounded-[4px] p-4 space-y-1 shadow-2xs">
             <div className="flex items-center justify-between text-xs text-slate-500">
@@ -348,22 +344,6 @@ function BenchmarkSuiteContent() {
             </div>
             <span className="text-[11px] text-slate-500 block">
               Pencocokan kutipan rekam medis asli
-            </span>
-          </div>
-
-          {/* Metrik 4: Latensi */}
-          <div className="bg-white border border-slate-200 rounded-[4px] p-4 space-y-1 shadow-2xs">
-            <div className="flex items-center justify-between text-xs text-slate-500">
-              <span className="font-medium">Rata-Rata Latensi</span>
-              <span className="text-[10px] font-semibold text-slate-700 bg-slate-100 px-1.5 py-0.5 rounded-[4px] border border-slate-200">
-                Target &lt; 60s
-              </span>
-            </div>
-            <div className="text-2xl font-bold text-slate-900 tabular-nums">
-              {(avgLatencyMs / 1000).toFixed(2)}s
-            </div>
-            <span className="text-[11px] text-slate-500 block">
-              Pemrosesan otomatis instan
             </span>
           </div>
         </div>
@@ -436,7 +416,6 @@ function BenchmarkSuiteContent() {
                   <th className="py-2.5 px-3.5">Standar Baku Verifikator</th>
                   <th className="py-2.5 px-3.5">Hasil Deteksi Sistem</th>
                   <th className="py-2.5 px-3.5 text-center">Grounding</th>
-                  <th className="py-2.5 px-3.5 text-right">Latensi</th>
                   <th className="py-2.5 px-3.5 text-center">Klasifikasi</th>
                   <th className="py-2.5 px-3 text-center">Aksi</th>
                 </tr>
@@ -444,7 +423,7 @@ function BenchmarkSuiteContent() {
               <tbody className="divide-y divide-slate-100">
                 {filteredResults.length === 0 ? (
                   <tr>
-                    <td colSpan={8} className="py-8 text-center text-xs text-slate-400">
+                    <td colSpan={7} className="py-8 text-center text-xs text-slate-400">
                       Tidak ada kasus pengujian yang cocok dengan filter.
                     </td>
                   </tr>
@@ -476,9 +455,6 @@ function BenchmarkSuiteContent() {
                           <CheckCircle2 className="w-3 h-3 text-emerald-600" />
                           100%
                         </span>
-                      </td>
-                      <td className="px-3.5 py-2.5 text-right text-slate-600 tabular-nums">
-                        {item.processingTimeMs} ms
                       </td>
                       <td className="px-3.5 py-2.5 text-center">
                         <span
