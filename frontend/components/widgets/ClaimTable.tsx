@@ -17,6 +17,7 @@ import {
   ArrowUp,
   ArrowDown,
   Inbox,
+  History,
 } from "lucide-react";
 import { cn, formatAnomalyCategory } from "@/lib/utils";
 import { ClaimItem } from "@/lib/mockData";
@@ -317,6 +318,12 @@ export function ClaimTable({
                       <span className="text-[11px] text-slate-400 tabular-nums">
                         {claim.patientAge} th • {claim.patientGender === "L" ? "Laki-laki" : "Perempuan"}
                       </span>
+                      {claim.readmissionIntervalDays && (
+                        <span className="inline-flex items-center gap-1 mt-1 px-1.5 py-0.5 rounded-[3px] bg-amber-50 text-amber-800 border border-amber-200 text-[10px] font-medium w-fit">
+                          <History className="w-2.5 h-2.5 text-amber-600 flex-shrink-0" />
+                          <span>Readmisi {claim.readmissionIntervalDays} Hari</span>
+                        </span>
+                      )}
                     </div>
                   </td>
 

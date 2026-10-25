@@ -10,6 +10,9 @@ import { DossierActionBar, ActionType } from "@/components/widgets/DossierAction
 import { ModalDisputeLetter } from "@/components/widgets/ModalDisputeLetter";
 import { DiffViewerModal } from "@/components/widgets/DiffViewerModal";
 import { ClaimSwitcher } from "@/components/widgets/ClaimSwitcher";
+import { ClinicalTimelineGraph } from "@/components/widgets/ClinicalTimelineGraph";
+import { LiveAgentAuditModal } from "@/components/widgets/LiveAgentAuditModal";
+import { ReadmissionHistoryDrawer } from "@/components/widgets/ReadmissionHistoryDrawer";
 import { AuditLogItem } from "@/components/widgets/AuditLogStream";
 import { ClaimItem, CitationLocation, FindingItem, INITIAL_CLAIMS } from "@/lib/mockData";
 import { getStoredClaims, updateClaimStatus, addAuditLogEntry, saveClaims } from "@/lib/claimStore";
@@ -29,6 +32,8 @@ import {
   CheckCircle2,
   AlertTriangle,
   Archive,
+  Bot,
+  History,
 } from "lucide-react";
 
 export default function DossierPage() {
@@ -87,6 +92,9 @@ export default function DossierPage() {
   const [isDiffOpen, setIsDiffOpen] = useState(false);
   const [diffDetails, setDiffDetails] = useState<FindingItem["comparisonDetails"] | null>(null);
   const [selectedActionType, setSelectedActionType] = useState<ActionType>("PENDING_KLARIFIKASI_RS");
+  const [isLiveAuditOpen, setIsLiveAuditOpen] = useState(false);
+  const [isReadmissionDrawerOpen, setIsReadmissionDrawerOpen] = useState(false);
+  const [selectedTimelineEventId, setSelectedTimelineEventId] = useState<string | null>(null);
 
   // Archiving Transition Animation State
   const [archivingState, setArchivingState] = useState<{
@@ -287,7 +295,31 @@ export default function DossierPage() {
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5">
+          {activeClaim.readmissionIntervalDays && (
+            <button
+              type="button"
+              onClick={() => setIsReadmissionDrawerOpen(true)}
+              className="inline-flex items-center gap-1.5 px-2 py-1 text-[11px] font-medium text-amber-800 bg-amber-50 hover:bg-amber-100/70 border border-amber-200 rounded-[4px] transition-colors shadow-2xs"
+              title="Lihat Evaluasi Readmisi <= 30 Hari Sesuai Permenkes 3/2023"
+            >
+              <History className="w-3 h-3 text-amber-700 flex-shrink-0" />
+              <span>Readmisi {activeClaim.readmissionIntervalDays} Hari</span>
+            </button>
+          )}
+
+          <button
+            type="button"
+            onClick={() => setIsLiveAuditOpen(true)}
+            className="inline-flex items-center gap-1.5 px-2 py-1 text-[11px] font-medium text-blue-800 bg-blue-50 hover:bg-blue-100/70 border border-blue-200 rounded-[4px] transition-colors shadow-2xs"
+            title="Buka Simulasi Transparansi Audit Multi-Agent"
+          >
+            <Bot className="w-3.5 h-3.5 text-blue-600 flex-shrink-0" />
+            <span>Simulasi Multi-Agent</span>
+          </button>
+
+          <span className="text-slate-300">|</span>
+
           <div className="text-[11px] text-slate-500">
             Diajukan: <span className="font-semibold text-slate-800 tabular-nums">Rp {activeClaim.claimedTariff.toLocaleString("id-ID")}</span>
           </div>
@@ -315,6 +347,26 @@ export default function DossierPage() {
           </div>
 
           <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            {/* Visual Clinical Journey Timeline */}
+            {activeClaim.timelineEvents && activeClaim.timelineEvents.length > 0 && (
+              <ClinicalTimelineGraph
+                events={activeClaim.timelineEvents}
+                selectedEventId={selectedTimelineEventId}
+                onSelectEvent={(evt) => {
+                  setSelectedTimelineEventId(evt.id);
+                  if (evt.targetDocumentId) {
+                    handleJumpToCitation({
+                      documentId: evt.targetDocumentId,
+                      documentTitle: evt.department,
+                      pageNumber: evt.pageNumber || 1,
+                      paragraphIndex: 0,
+                      exactSubstring: evt.targetSubstring || "",
+                    });
+                  }
+                }}
+              />
+            )}
+
             {/* Tariff Delta Calculator */}
             <TariffDeltaCalculator claim={activeClaim} />
 
@@ -378,6 +430,20 @@ export default function DossierPage() {
         similarityScore={diffDetails?.similarityScore || 94}
         donorText={diffDetails?.donorText}
         currentText={diffDetails?.currentText}
+      />
+
+      {/* Live Multi-Agent Audit Stepper Modal */}
+      <LiveAgentAuditModal
+        isOpen={isLiveAuditOpen}
+        onClose={() => setIsLiveAuditOpen(false)}
+        claim={activeClaim}
+      />
+
+      {/* 30-Day Readmission History Drawer */}
+      <ReadmissionHistoryDrawer
+        isOpen={isReadmissionDrawerOpen}
+        onClose={() => setIsReadmissionDrawerOpen(false)}
+        claim={activeClaim}
       />
 
       {/* Archiving Transition Miniature Card Overlay */}
