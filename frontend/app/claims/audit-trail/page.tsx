@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { TopHeader } from "@/components/widgets/TopHeader";
 import { AuditLogStream, AuditLogItem } from "@/components/widgets/AuditLogStream";
 import { getStoredAuditLogs } from "@/lib/claimStore";
@@ -8,7 +9,10 @@ import { fetchAuditLogsFromBackend } from "@/lib/api";
 import { ShieldCheck, Download, Check, Banknote, ChevronDown, FileText, FileSpreadsheet } from "lucide-react";
 import { ModalReconciliationReport } from "@/components/widgets/ModalReconciliationReport";
 
-export default function AuditTrailPage() {
+function AuditTrailContent() {
+  const searchParams = useSearchParams();
+  const newClaimId = searchParams.get("newClaimId");
+
   const [logs, setLogs] = useState<AuditLogItem[]>([]);
   const [isExportMenuOpen, setIsExportMenuOpen] = useState(false);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
@@ -19,12 +23,16 @@ export default function AuditTrailPage() {
     // 1. Initial fast local load
     setLogs(getStoredAuditLogs());
 
-    // 2. Fetch live audit trail from PostgreSQL
+    // 2. Fetch live audit trail from PostgreSQL (safely merging newly added local entries)
     fetchAuditLogsFromBackend().then((liveLogs) => {
       if (liveLogs && liveLogs.length > 0) {
-        setLogs(liveLogs);
+        const local = getStoredAuditLogs();
+        const existingIds = new Set(liveLogs.map((l) => l.id));
+        const newlyAddedLocal = local.filter((l) => !existingIds.has(l.id));
+        const merged = [...newlyAddedLocal, ...liveLogs];
+        setLogs(merged);
         if (typeof window !== "undefined") {
-          localStorage.setItem("clarix_bpjs_audit_logs_v1", JSON.stringify(liveLogs));
+          localStorage.setItem("clarix_bpjs_audit_logs_v1", JSON.stringify(merged));
         }
       }
     });
@@ -244,7 +252,11 @@ Catatan: ${l.notes}
         </div>
 
         {/* Audit Log Stream Component */}
-        <AuditLogStream entries={logs} title="Riwayat Keputusan Verifikator" />
+        <AuditLogStream
+          entries={logs}
+          highlightClaimId={newClaimId}
+          title="Riwayat Keputusan Verifikator"
+        />
       </div>
 
       {/* Modal Berita Acara Rekonsiliasi Kolektif */}
@@ -255,5 +267,19 @@ Catatan: ${l.notes}
         totalEfficiency={totalEfficiency}
       />
     </div>
+  );
+}
+
+export default function AuditTrailPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center h-full bg-slate-50 text-xs text-slate-500">
+          Memuat repositori jejak audit...
+        </div>
+      }
+    >
+      <AuditTrailContent />
+    </Suspense>
   );
 }

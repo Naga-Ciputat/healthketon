@@ -14,6 +14,7 @@ import { AuditLogItem } from "@/components/widgets/AuditLogStream";
 import { ClaimItem, CitationLocation, FindingItem, INITIAL_CLAIMS } from "@/lib/mockData";
 import { getStoredClaims, updateClaimStatus, addAuditLogEntry, saveClaims } from "@/lib/claimStore";
 import { fetchClaimDetailFromBackend } from "@/lib/api";
+import { cn } from "@/lib/utils";
 import {
   ArrowLeft,
   ChevronLeft,
@@ -27,6 +28,7 @@ import {
   Sliders,
   CheckCircle2,
   AlertTriangle,
+  Archive,
 } from "lucide-react";
 
 export default function DossierPage() {
@@ -85,6 +87,14 @@ export default function DossierPage() {
   const [isDiffOpen, setIsDiffOpen] = useState(false);
   const [diffDetails, setDiffDetails] = useState<FindingItem["comparisonDetails"] | null>(null);
   const [selectedActionType, setSelectedActionType] = useState<ActionType>("PENDING_KLARIFIKASI_RS");
+
+  // Archiving Transition Animation State
+  const [archivingState, setArchivingState] = useState<{
+    active: boolean;
+    step: "pop" | "fly" | null;
+    claimId: string;
+    action: ActionType;
+  } | null>(null);
 
   // Handle jump from Citation click to Document Viewer
   const handleJumpToCitation = (citation: CitationLocation) => {
@@ -178,8 +188,24 @@ export default function DossierPage() {
     };
     addAuditLogEntry(newLog);
 
+    // Close modal and start animated transition to Audit Trail
     setIsDisputeOpen(false);
-    router.push("/claims/audit-trail");
+    setArchivingState({
+      active: true,
+      step: "pop",
+      claimId: activeClaim.id,
+      action: selectedActionType,
+    });
+
+    // Step 2: Animate card shrinking & flying toward Audit Trail tab in sidebar
+    setTimeout(() => {
+      setArchivingState((prev) => (prev ? { ...prev, step: "fly" } : null));
+    }, 400);
+
+    // Step 3: Route smoothly to Audit Trail page
+    setTimeout(() => {
+      router.push(`/claims/audit-trail?newClaimId=${activeClaim.id}&action=${selectedActionType}`);
+    }, 950);
   };
 
   const currentIndex = claims.findIndex((c) => c.id.toLowerCase() === activeClaim.id.toLowerCase());
@@ -187,7 +213,12 @@ export default function DossierPage() {
   const nextClaim = currentIndex >= 0 && currentIndex < claims.length - 1 ? claims[currentIndex + 1] : null;
 
   return (
-    <div className="flex flex-col h-full bg-slate-50/50">
+    <div
+      className={cn(
+        "flex flex-col h-full bg-slate-50/50 transition-all duration-500",
+        archivingState?.active && "scale-[0.99] opacity-80 blur-[0.5px]"
+      )}
+    >
       {/* Top Header */}
       <TopHeader
         title={
@@ -354,6 +385,63 @@ export default function DossierPage() {
         donorText={diffDetails?.donorText}
         currentText={diffDetails?.currentText}
       />
+
+      {/* Archiving Transition Floating Miniature Card Overlay */}
+      {archivingState?.active && (
+        <div className="fixed inset-0 z-50 pointer-events-none flex items-center justify-center bg-slate-900/30 backdrop-blur-[1.5px] transition-opacity duration-300">
+          <div
+            style={{
+              transform:
+                archivingState.step === "fly"
+                  ? "translate(-38vw, -14vh) scale(0.22)"
+                  : "translate(0, 0) scale(1)",
+              opacity: archivingState.step === "fly" ? 0 : 1,
+              transition:
+                archivingState.step === "fly"
+                  ? "all 550ms cubic-bezier(0.4, 0, 0.2, 1)"
+                  : "all 350ms cubic-bezier(0.16, 1, 0.3, 1)",
+            }}
+            className="w-full max-w-sm bg-white rounded-[6px] border border-blue-300 shadow-2xl p-4 space-y-3 pointer-events-auto ring-4 ring-blue-500/20"
+          >
+            <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 rounded-[4px] bg-blue-50 border border-blue-200 text-blue-600 flex items-center justify-center">
+                  <Archive className="w-4 h-4 animate-bounce" />
+                </div>
+                <div>
+                  <span className="text-xs font-bold text-slate-900 block">
+                    Mengarsipkan Putusan...
+                  </span>
+                  <span className="text-[10.5px] text-slate-500">
+                    Menuju Jejak Audit &amp; Arsip
+                  </span>
+                </div>
+              </div>
+              <span className="text-[10px] font-semibold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-[4px] border border-blue-200">
+                Sinkronisasi
+              </span>
+            </div>
+
+            <div className="space-y-2 text-xs">
+              <div className="flex items-center justify-between">
+                <span className="font-bold text-slate-900 tabular-nums text-sm">
+                  {archivingState.claimId}
+                </span>
+                {getStatusBadge(archivingState.action)}
+              </div>
+              <p className="text-[11.5px] text-slate-600 truncate">
+                {activeClaim.hospitalName}
+              </p>
+              <div className="pt-2 text-[11px] text-slate-500 flex justify-between items-center border-t border-slate-100">
+                <span>Efisiensi Tercatat:</span>
+                <span className="font-bold text-emerald-700 tabular-nums">
+                  Rp {(archivingState.action === "DISETUJUI" ? 0 : activeClaim.deltaTariff).toLocaleString("id-ID")}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
