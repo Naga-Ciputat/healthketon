@@ -78,3 +78,22 @@ export function formatClassificationResult(status: string): string {
       return status.replace(/_/g, " ");
   }
 }
+
+/**
+ * Format date / time into standard Indonesian WIB (Asia/Jakarta, UTC+7) string
+ * Example output: "25 Okt 2026, 20:30 WIB"
+ */
+export function formatWIBDate(input?: Date | string | number): string {
+  const d = input ? new Date(input) : new Date();
+  const formatter = new Intl.DateTimeFormat("id-ID", {
+    timeZone: "Asia/Jakarta",
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
+  return `${formatter.format(d).replace(/\./g, ":")} WIB`;
+}
+

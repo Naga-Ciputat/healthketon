@@ -8,6 +8,7 @@ import { getStoredAuditLogs } from "@/lib/claimStore";
 import { fetchAuditLogsFromBackend } from "@/lib/api";
 import { ShieldCheck, Download, Check, Banknote, ChevronDown, FileText, FileSpreadsheet } from "lucide-react";
 import { ModalReconciliationReport } from "@/components/widgets/ModalReconciliationReport";
+import { formatWIBDate } from "@/lib/utils";
 
 function AuditTrailContent() {
   const searchParams = useSearchParams();
@@ -122,7 +123,7 @@ function AuditTrailContent() {
   const handleExportTXT = () => {
     setIsExportMenuOpen(false);
     const headerText = `REKAPITULASI BERITA ACARA AUDIT KLAIM BPJS KESEHATAN
-Waktu Ekspor: ${new Date().toLocaleString("id-ID")}
+Waktu Ekspor: ${formatWIBDate()}
 Total Putusan: ${logs.length} berkas
 Total Efisiensi Rekonsiliasi: ${formatRupiah(totalEfficiency)}
 ========================================================================

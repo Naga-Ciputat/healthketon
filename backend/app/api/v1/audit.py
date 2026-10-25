@@ -1,10 +1,24 @@
 from fastapi import APIRouter, HTTPException
 from typing import Optional, List
 from pydantic import BaseModel
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 from app.core.database import get_db_pool
 
 router = APIRouter(prefix="/audit-logs", tags=["Audit Trail"])
+
+# Waktu Indonesia Barat (WIB) = UTC+7 (permanen tanpa DST)
+WIB = timezone(timedelta(hours=7))
+MONTHS_ID = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Ags", "Sep", "Okt", "Nov", "Des"]
+
+
+def format_wib(dt: Optional[datetime]) -> str:
+    """Mengonversi timestamp database ke format resmi WIB (Asia/Jakarta, UTC+7)."""
+    if not dt:
+        return ""
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+    dt_wib = dt.astimezone(WIB)
+    return f"{dt_wib.day} {MONTHS_ID[dt_wib.month - 1]} {dt_wib.year}, {dt_wib.strftime('%H:%M')} WIB"
 
 
 class CreateAuditLogRequest(BaseModel):
@@ -23,7 +37,7 @@ class CreateAuditLogRequest(BaseModel):
 
 @router.get("")
 async def list_audit_logs():
-    """Mengambil daftar log audit verifikasi append-only dari database PostgreSQL."""
+    """Mengambil daftar log audit verifikasi append-only dari database PostgreSQL dalam zona waktu WIB."""
     pool = await get_db_pool()
     query = """
         SELECT 
@@ -38,7 +52,7 @@ async def list_audit_logs():
             official_letter_number,
             verifier_notes,
             official_letter_draft,
-            to_char(created_at, 'DD Mon YYYY, HH24:MI') || ' WIB' AS formatted_time
+            created_at
         FROM audit_trail_logs
         ORDER BY created_at DESC;
     """
@@ -53,7 +67,7 @@ async def list_audit_logs():
             "hospitalName": r["hospital_name"],
             "verifierName": r["verifier_id"],
             "verifierRole": r["verifier_role"],
-            "timestamp": r["formatted_time"],
+            "timestamp": format_wib(r["created_at"]),
             "action": r["action_taken"],
             "finalTariff": float(r["final_tariff"]),
             "savedDeltaRupiah": float(r["saved_delta_rupiah"]),

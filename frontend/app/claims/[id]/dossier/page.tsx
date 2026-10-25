@@ -14,7 +14,7 @@ import { AuditLogItem } from "@/components/widgets/AuditLogStream";
 import { ClaimItem, CitationLocation, FindingItem, INITIAL_CLAIMS } from "@/lib/mockData";
 import { getStoredClaims, updateClaimStatus, addAuditLogEntry, saveClaims } from "@/lib/claimStore";
 import { fetchClaimDetailFromBackend } from "@/lib/api";
-import { cn } from "@/lib/utils";
+import { cn, formatWIBDate } from "@/lib/utils";
 import {
   ArrowLeft,
   ChevronLeft,
@@ -165,13 +165,7 @@ export default function DossierPage() {
       hospitalName: activeClaim.hospitalName,
       verifierName: "dr. Siti Aminah",
       verifierRole: "Verifikator Utama BPJS",
-      timestamp: new Date().toLocaleDateString("id-ID", {
-        day: "numeric",
-        month: "short",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-      }) + " WIB",
+      timestamp: formatWIBDate(),
       action: selectedActionType,
       finalTariff: selectedActionType === "DISETUJUI" ? activeClaim.claimedTariff : activeClaim.fairTariff,
       savedDeltaRupiah: selectedActionType === "DISETUJUI" ? 0 : activeClaim.deltaTariff,
