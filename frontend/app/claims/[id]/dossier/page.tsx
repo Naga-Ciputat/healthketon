@@ -16,6 +16,7 @@ import { AuditLogItem } from "@/components/widgets/AuditLogStream";
 import { ClaimItem, CitationLocation, FindingItem, INITIAL_CLAIMS } from "@/lib/mockData";
 import { getStoredClaims, updateClaimStatus, addAuditLogEntry, saveClaims } from "@/lib/claimStore";
 import { fetchClaimDetailFromBackend } from "@/lib/api";
+import { useCopilot } from "@/lib/copilotContext";
 import { cn, formatWIBDate } from "@/lib/utils";
 import {
   ArrowLeft,
@@ -99,6 +100,32 @@ export default function DossierPage() {
     claimId: string;
     action: ActionType;
   } | null>(null);
+
+  // Connect with Clarix AI Copilot
+  const { setActiveClaim: setCopilotClaim, registerAction } = useCopilot();
+
+  useEffect(() => {
+    if (activeClaim) {
+      setCopilotClaim(activeClaim);
+    }
+  }, [activeClaim, setCopilotClaim]);
+
+  useEffect(() => {
+    registerAction("jumpToCitation", (docId: string, pageNum: number, text: string) => {
+      setActiveCitation({
+        documentId: docId as CitationLocation["documentId"],
+        documentTitle: docId,
+        pageNumber: pageNum,
+        paragraphIndex: 1,
+        exactSubstring: text,
+      });
+    });
+
+    registerAction("openDisputeModal", () => {
+      setSelectedActionType("PENDING_KLARIFIKASI_RS");
+      setIsDisputeOpen(true);
+    });
+  }, [registerAction]);
 
   // Handle jump from Citation click to Document Viewer
   const handleJumpToCitation = (citation: CitationLocation) => {

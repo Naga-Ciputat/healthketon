@@ -9,6 +9,7 @@ import {
   FlaskConical,
   Activity,
   FileText,
+  Sparkles,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -43,6 +44,13 @@ export function ClarixSidebar({
       icon: FlaskConical,
       match: (path: string) => path.startsWith("/benchmark"),
     },
+    {
+      label: "Telisik AI Studio",
+      href: "/intelligence",
+      icon: Sparkles,
+      badge: "Pure AI",
+      match: (path: string) => path.startsWith("/intelligence"),
+    },
   ];
 
   return (
@@ -63,14 +71,14 @@ export function ClarixSidebar({
             <div className="flex flex-col min-w-0">
               <div className="flex items-center gap-1.5">
                 <span className="font-bold text-slate-900 text-sm tracking-tight truncate">
-                  Clarix AI
+                  TELISIK
                 </span>
-                <span className="text-[10.5px] bg-emerald-50 text-emerald-800 font-semibold px-1.5 py-0.2 rounded-[4px] border border-emerald-200">
+                <span className="text-[10px] bg-emerald-50 text-emerald-800 font-semibold px-1.5 py-0.2 rounded-[4px] border border-emerald-200">
                   BPJS
                 </span>
               </div>
-              <span className="text-[11px] text-slate-500 truncate">
-                Verifikasi Klaim Faskes
+              <span className="text-[10.5px] text-slate-500 truncate">
+                Powered by Clarix AI
               </span>
             </div>
           </div>
