@@ -53,10 +53,10 @@ export function MetricHeader({
 
   return (
     <div className={cn("grid grid-cols-1 lg:grid-cols-12 gap-3", className)}>
-      {/* Left Column: 2 Cards Stacked Vertically (Col 4, Compact ~130px total height) */}
-      <div className="flex flex-col gap-2.5 lg:col-span-4 justify-between h-[132px]">
+      {/* Left Column: 2 Cards Stacked Vertically (Col 4, Compact ~142px total height) */}
+      <div className="flex flex-col gap-2.5 lg:col-span-4 justify-between h-[142px]">
         {/* Card 1: Antrean Telaah Klaim (Top Left, Compact) */}
-        <div className="relative overflow-hidden bg-white border border-slate-200 rounded-md px-3.5 py-2.5 shadow-2xs hover:border-slate-300 transition-all flex flex-col justify-center flex-1">
+        <div className="relative overflow-hidden bg-white border border-slate-200 rounded-md px-4 py-3 shadow-2xs hover:border-slate-300 transition-all flex flex-col justify-center flex-1">
           {/* Decorative corner image: claims.png */}
           <div className="absolute -top-3 -right-3 w-20 h-20 pointer-events-none select-none">
             <img
@@ -80,7 +80,7 @@ export function MetricHeader({
         </div>
 
         {/* Card 2: Potensi Koreksi Tagihan (Bottom Left, Compact) */}
-        <div className="relative overflow-hidden bg-white border border-slate-200 rounded-md px-3.5 py-2.5 shadow-2xs hover:border-slate-300 transition-all flex flex-col justify-center flex-1">
+        <div className="relative overflow-hidden bg-white border border-slate-200 rounded-md px-4 py-3 shadow-2xs hover:border-slate-300 transition-all flex flex-col justify-center flex-1">
           {/* Decorative corner image: audit.png */}
           <div className="absolute -top-3 -right-3 w-20 h-20 pointer-events-none select-none">
             <img
@@ -103,16 +103,16 @@ export function MetricHeader({
         </div>
       </div>
 
-      {/* Right Column: Hero Video (Col 8, Frameless, Exact height 132px, Soft edge fading) */}
-      <div className="relative overflow-hidden flex items-center justify-center h-[132px] lg:col-span-8 pointer-events-none select-none">
-        {/* Soft Edge Mask on all sides */}
+      {/* Right Column: Hero Video (Col 8, Frameless, 2x wider with soft edge fading) */}
+      <div className="relative overflow-hidden flex items-center justify-center h-[142px] lg:col-span-8 pointer-events-none select-none">
+        {/* Centered wide video wrapper */}
         <div
-          className="relative w-full h-full flex items-center justify-center overflow-hidden"
+          className="relative w-full max-w-[680px] h-full flex items-center justify-center overflow-hidden"
           style={{
             maskImage:
-              "radial-gradient(ellipse 90% 82% at 50% 50%, black 45%, transparent 96%)",
+              "radial-gradient(ellipse 80% 75% at 50% 50%, black 40%, transparent 95%)",
             WebkitMaskImage:
-              "radial-gradient(ellipse 90% 82% at 50% 50%, black 45%, transparent 96%)",
+              "radial-gradient(ellipse 80% 75% at 50% 50%, black 40%, transparent 95%)",
           }}
         >
           <video
@@ -123,15 +123,19 @@ export function MetricHeader({
             muted
             playsInline
             onTimeUpdate={handleTimeUpdate}
-            className="h-full w-auto max-w-full object-contain pointer-events-none select-none transition-opacity duration-150"
+            className="w-full h-full object-cover pointer-events-none select-none transition-opacity duration-150"
             style={{
+              objectPosition: "center 28%",
               opacity: videoOpacity,
             }}
           />
-        </div>
 
-        {/* Subtle ambient light gradient */}
-        <div className="absolute inset-0 pointer-events-none bg-gradient-to-r from-white/40 via-transparent to-white/40" />
+          {/* Smooth perimeter edge fading overlays */}
+          <div className="absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-slate-50 via-slate-50/60 to-transparent pointer-events-none" />
+          <div className="absolute inset-y-0 right-0 w-20 bg-gradient-to-l from-slate-50 via-slate-50/60 to-transparent pointer-events-none" />
+          <div className="absolute inset-x-0 top-0 h-4 bg-gradient-to-b from-slate-50 via-slate-50/40 to-transparent pointer-events-none" />
+          <div className="absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-slate-50 via-slate-50/60 to-transparent pointer-events-none" />
+        </div>
       </div>
     </div>
   );
