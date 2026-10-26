@@ -420,7 +420,7 @@ async def init_and_seed():
             "Teks riwayat penyakit dan catatan perkembangan SOAP pada resume medis memiliki kemiripan semantik 94% dengan Pasien #CLM-2026-077 yang dirawat 2 hari sebelumnya oleh DPJP yang sama, mengindikasikan copy-paste narasi tanpa pemeriksaan individual yang komprehensif.",
             "Pasien mengeluh nyeri dada substernal menjalar ke lengan kiri sejak 3 jam SMRS disertai keringat dingin, mual, dan rasa tertekan beban berat pada dada sebelah kiri saat beristirahat.",
             "DOC-089-1",
-            "Resume Medis Rawat Inap (RME)",
+            "Resume Medis Rawat Inap",
             1,
             1,
             0,

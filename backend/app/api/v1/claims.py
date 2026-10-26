@@ -264,7 +264,7 @@ async def get_claim_detail(claim_id: str):
         "BILLING_ALKES": "kuitansiAlkes",
     }
     type_to_title = {
-        "RESUME_MEDIS": "Resume Medis Rawat Inap (Lengkap)",
+        "RESUME_MEDIS": "Resume Medis Rawat Inap",
         "LAPORAN_OPERASI": "Laporan Tindakan Bedah / PCI Intervensi",
         "LAB_RESULT": "Hasil Pemeriksaan Laboratorium & Biomarker",
         "BILLING_ALKES": "Rincian Billing Farmasi & Pemakaian Alkes Implan",

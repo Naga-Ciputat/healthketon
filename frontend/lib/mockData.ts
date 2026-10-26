@@ -237,7 +237,7 @@ export const INITIAL_CLAIMS: ClaimItem[] = [
           "Teks riwayat penyakit dan catatan perkembangan SOAP pada resume medis memiliki kemiripan semantik 94% dengan Pasien #CLM-2026-077 yang dirawat 2 hari sebelumnya oleh DPJP yang sama, mengindikasikan copy-paste narasi tanpa pemeriksaan individual yang komprehensif.",
         citation: {
           documentId: "resumeMedis",
-          documentTitle: "Resume Medis Rawat Inap (RME)",
+          documentTitle: "Resume Medis Rawat Inap",
           pageNumber: 1,
           paragraphIndex: 1,
           exactSubstring:
