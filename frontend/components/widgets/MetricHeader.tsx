@@ -86,8 +86,8 @@ export function MetricHeader({
         </div>
       </div>
 
-      {/* Right Column: Hero Video Card (Col 8) */}
-      <div className="relative overflow-hidden bg-white border border-slate-200 rounded-md shadow-2xs hover:border-slate-300 transition-all flex items-center justify-center min-h-[198px] lg:col-span-8">
+      {/* Right Column: Hero Video (Col 8, Frameless) */}
+      <div className="relative overflow-hidden flex items-center justify-center min-h-[198px] lg:col-span-8 pointer-events-none select-none">
         {/* Soft Crop Mask Container (60% width x 70% height with radial gradient fading) */}
         <div
           className="relative w-full h-full flex items-center justify-center overflow-hidden"
