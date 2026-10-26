@@ -48,7 +48,6 @@ export function ClarixSidebar({
       label: "Clarix AI Studio",
       href: "/intelligence",
       icon: Sparkles,
-      badge: "Pure AI",
       match: (path: string) => path.startsWith("/intelligence"),
     },
   ];

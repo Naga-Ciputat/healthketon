@@ -126,9 +126,6 @@ export function ClarixCopilot() {
                   <span className="text-xs font-bold text-slate-900 truncate">
                     Clarix AI Copilot
                   </span>
-                  <span className="text-[9.5px] px-1 py-0.2 rounded bg-blue-50 text-blue-700 border border-blue-200 font-semibold uppercase tracking-wider">
-                    Pure AI
-                  </span>
                 </div>
                 <span className="text-[10.5px] text-slate-500 truncate">
                   {pathname.includes("/dossier") && activeClaim

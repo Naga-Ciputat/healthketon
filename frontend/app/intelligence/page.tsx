@@ -157,11 +157,6 @@ export default function IntelligenceStudioPage() {
       <TopHeader
         title="Clarix AI Studio"
         subtitle="Pusat Investigasi Makro & Analisis Regulasi JKN"
-          badge={
-            <span className="px-2 py-0.5 rounded-[4px] text-[10.5px] font-semibold bg-blue-50 text-blue-700 border border-blue-200">
-              Pure AI Engine
-            </span>
-          }
           rightActions={
             <div className="flex items-center gap-2">
               <span className="text-[11px] text-slate-500">Model Aktif:</span>
