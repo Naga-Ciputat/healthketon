@@ -332,15 +332,10 @@ export default function DossierPage() {
       <div className="flex-1 flex min-h-0 overflow-hidden">
         {/* Left Pane (50%): Evidence Dossier */}
         <div className="w-1/2 border-r border-slate-200 flex flex-col bg-white overflow-hidden">
-          <div className="px-4 py-2 border-b border-slate-200 bg-slate-50/70 flex items-center justify-between flex-shrink-0">
-            <div className="flex items-center gap-2">
-              <ShieldAlert className="w-4 h-4 text-rose-600 flex-shrink-0" />
-              <span className="text-xs font-semibold text-slate-900">
-                Temuan Diskrepansi Bukti Klinis ({(activeClaim?.findings || []).length})
-              </span>
-            </div>
-            <span className="text-[11px] text-slate-500">
-              Confidence Score: <strong className="text-slate-800 tabular-nums">{activeClaim.confidenceScore}%</strong>
+          <div className="px-4 py-2 border-b border-slate-200 bg-slate-50/70 flex items-center gap-2 flex-shrink-0">
+            <ShieldAlert className="w-4 h-4 text-rose-600 flex-shrink-0" />
+            <span className="text-xs font-semibold text-slate-900">
+              Temuan Diskrepansi Bukti Klinis ({(activeClaim?.findings || []).length})
             </span>
           </div>
 
