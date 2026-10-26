@@ -10,7 +10,6 @@ import {
   Download,
   Layers,
   FileSearch,
-  ShieldCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { DocumentSection, CitationLocation } from "@/lib/mockData";
@@ -102,15 +101,9 @@ export function SmartDocumentViewer({
       {/* Viewer Control Toolbar */}
       <div className="h-10 bg-slate-50 border-b border-slate-200 px-3 flex items-center justify-between text-xs text-slate-600 flex-shrink-0 gap-2">
         <div className="flex items-center gap-2 text-[11px] text-slate-500 min-w-0">
-          <span className="font-semibold text-slate-700 truncate max-w-[240px]">
+          <span className="font-semibold text-slate-700 truncate max-w-[280px]">
             {activeDoc.fileName}
           </span>
-          {hasPdf && viewMode === "pdf" && (
-            <div className="hidden sm:inline-flex items-center gap-1 px-1.5 py-0.5 rounded-[3px] bg-emerald-50 text-emerald-800 border border-emerald-200 text-[10px] font-medium">
-              <ShieldCheck className="w-3 h-3 text-emerald-600 flex-shrink-0" />
-              <span>PDF Berstempel Faskes</span>
-            </div>
-          )}
         </div>
 
         {/* Toolbar Controls */}
