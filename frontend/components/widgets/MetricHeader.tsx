@@ -35,11 +35,11 @@ export function MetricHeader({
   }).format(totalInefficiencyRupiah);
 
   return (
-    <div className={cn("grid grid-cols-1 md:grid-cols-2 gap-3.5", className)}>
-      {/* Card 1: Antrean Telaah Klaim */}
-      <div className="relative overflow-hidden bg-white border border-slate-200 rounded-md p-4 shadow-2xs hover:border-slate-300 transition-all flex flex-col justify-between min-h-[122px]">
+    <div className={cn("grid grid-cols-1 md:grid-cols-12 gap-3.5", className)}>
+      {/* Card 1: Antrean Telaah Klaim (Left, Col 3) */}
+      <div className="relative overflow-hidden bg-white border border-slate-200 rounded-md p-4 shadow-2xs hover:border-slate-300 transition-all flex flex-col justify-between min-h-[114px] md:col-span-3">
         {/* Decorative corner image: claims.png */}
-        <div className="absolute -top-6 -right-6 w-36 h-36 sm:w-44 sm:h-44 pointer-events-none select-none">
+        <div className="absolute -top-5 -right-5 w-32 h-32 pointer-events-none select-none">
           <img
             src="/images/decoratives/claims.png"
             alt="Antrean Telaah Klaim"
@@ -59,19 +59,13 @@ export function MetricHeader({
             </h3>
             <span className="text-xs text-slate-500 font-medium">Berkas Masuk</span>
           </div>
-          <div className="flex items-center gap-1.5 mt-2 text-xs">
-            <span className="bg-rose-50 text-rose-700 border border-rose-200 px-1.5 py-0.5 rounded text-[11px] font-semibold flex items-center gap-1">
-              <AlertCircle className="w-3 h-3 text-rose-600" />
-              {highRiskCount} Kasus Perlu Prioritas
-            </span>
-          </div>
         </div>
       </div>
 
-      {/* Card 2: Potensi Koreksi Tagihan */}
-      <div className="relative overflow-hidden bg-white border border-slate-200 rounded-md p-4 shadow-2xs hover:border-slate-300 transition-all flex flex-col justify-between min-h-[122px]">
+      {/* Card 2: Potensi Koreksi Tagihan (Left, Col 4) */}
+      <div className="relative overflow-hidden bg-white border border-slate-200 rounded-md p-4 shadow-2xs hover:border-slate-300 transition-all flex flex-col justify-between min-h-[114px] md:col-span-4">
         {/* Decorative corner image: audit.png */}
-        <div className="absolute -top-6 -right-6 w-36 h-36 sm:w-44 sm:h-44 pointer-events-none select-none">
+        <div className="absolute -top-5 -right-5 w-32 h-32 pointer-events-none select-none">
           <img
             src="/images/decoratives/audit.png"
             alt="Potensi Koreksi Tagihan"
@@ -90,11 +84,38 @@ export function MetricHeader({
               {formattedRupiah}
             </h3>
           </div>
-          <div className="flex items-center gap-1.5 mt-2 text-xs text-slate-600">
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
-            <span className="text-[11.5px]">Dari ketidaksesuaian alkes &amp; upcoding</span>
-          </div>
         </div>
+      </div>
+
+      {/* Card 3: Hero Video Banner (Right, Col 5) */}
+      <div className="relative overflow-hidden bg-white border border-slate-200 rounded-md shadow-2xs hover:border-slate-300 transition-all flex items-center justify-center min-h-[114px] md:col-span-5">
+        {/* Soft Crop Mask Container (60% width x 70% height with radial gradient fading) */}
+        <div
+          className="relative w-full h-full flex items-center justify-center overflow-hidden"
+          style={{
+            maskImage:
+              "radial-gradient(ellipse 85% 80% at 50% 48%, black 45%, transparent 95%)",
+            WebkitMaskImage:
+              "radial-gradient(ellipse 85% 80% at 50% 48%, black 45%, transparent 95%)",
+          }}
+        >
+          <video
+            src="/videos/hero.webm"
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="w-full h-full object-cover pointer-events-none select-none"
+            style={{
+              objectPosition: "center 35%",
+              transform: "scale(1.7)",
+            }}
+          />
+        </div>
+
+        {/* Soft edge ambient light gradient */}
+        <div className="absolute inset-0 pointer-events-none bg-gradient-to-r from-white/60 via-transparent to-white/60" />
+        <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-white/40 via-transparent to-white/30" />
       </div>
     </div>
   );
