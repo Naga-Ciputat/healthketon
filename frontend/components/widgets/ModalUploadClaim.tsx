@@ -16,10 +16,10 @@ import {
   Download,
   Copy,
   Check,
-  Archive,
-  FileCode2,
+  Table,
   Sparkles,
   RotateCcw,
+  FileType,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ClaimItem, DocumentSection, INITIAL_CLAIMS } from "@/lib/mockData";
@@ -58,6 +58,9 @@ const PIPELINE_STAGES: PipelineStage[] = [
     description: "Mendeteksi keselarasan bukti penunjang medis dengan tarif dan alkes implan.",
   },
 ];
+
+const SAMPLE_FPK_CSV = `No_SEP,No_Klaim,Nama_Faskes,No_Kartu_BPJS,Nama_Pasien,Usia,Jenis_Kelamin,DPJP,Tgl_Masuk,Tgl_Keluar,Kode_ICD10_Utama,Nama_Diagnosa_Utama,Kode_ICD10_Sekunder,Nama_Diagnosa_Sekunder,Kode_ICD9CM_Prosedur,Nama_Prosedur,Kode_INACBG,Deskripsi_INACBG,Tarif_Diajukan_RS,Tarif_Standar_Verifikasi,Potensi_Selisih
+0089R0011026V000944,CLM-2026-944,RSUD Dr. Soetomo Surabaya,0001********890,Tn. B***,56,L,"dr. Hendra Wicaksono, Sp.JP(K)",2026-10-18,2026-10-21,I21.0,"Acute transmural myocardial infarction of anterior wall (STEMI)","I10; A41.9","Essential hypertension; Sepsis, unspecified (Anomali Tanpa Bukti Lab)","00.66; 36.06; 88.57","PTCA Balon; Pemasangan Stent Koroner; Arteriografi Koroner",I-4-10-III,"Prosedur Kardiologis Intervensi Mayor dengan Komplikasi Berat (Severity 3)",45000000,24500000,20500000`;
 
 const SAMPLE_CLAIM_JSON: Partial<ClaimItem> = {
   id: "CLM-2026-944",
@@ -259,7 +262,7 @@ export function ModalUploadClaim({
   const [isDraggingOver, setIsDraggingOver] = useState(false);
   const [selectedFileName, setSelectedFileName] = useState<string | null>(null);
   const [showGuide, setShowGuide] = useState(false);
-  const [guideTab, setGuideTab] = useState<"zip" | "json" | "privacy">("zip");
+  const [guideTab, setGuideTab] = useState<"pdf" | "csv" | "privacy">("pdf");
   const [isCopied, setIsCopied] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -287,20 +290,20 @@ export function ModalUploadClaim({
     fileInputRef.current?.click();
   };
 
-  const handleCopySampleJson = () => {
-    navigator.clipboard.writeText(JSON.stringify(SAMPLE_CLAIM_JSON, null, 2));
+  const handleCopySampleCsv = () => {
+    navigator.clipboard.writeText(SAMPLE_FPK_CSV);
     setIsCopied(true);
     setTimeout(() => setIsCopied(false), 2000);
   };
 
   const handleDownloadTemplate = () => {
-    const blob = new Blob([JSON.stringify(SAMPLE_CLAIM_JSON, null, 2)], {
-      type: "application/json",
+    const blob = new Blob([SAMPLE_FPK_CSV], {
+      type: "text/csv;charset=utf-8;",
     });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "sample_claim_for_upload.json";
+    a.download = "formulir_pengajuan_klaim_fpk.csv";
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -314,14 +317,16 @@ export function ModalUploadClaim({
     setCurrentStep(1);
 
     const fileNameLower = file.name.toLowerCase();
+    const isPdf = fileNameLower.endsWith(".pdf");
+    const isCsv = fileNameLower.endsWith(".csv") || fileNameLower.endsWith(".xlsx");
     const isJson = fileNameLower.endsWith(".json");
     const isZip = fileNameLower.endsWith(".zip");
 
-    if (!isJson && !isZip) {
+    if (!isPdf && !isCsv && !isJson && !isZip) {
       setIsProcessing(false);
       setCurrentStep(0);
       setErrorDetails(
-        `Format berkas tidak didukung (${file.name}). Sistem verifikasi klaim hanya menerima arsip paket klaim digital berformat .json atau .zip.`
+        `Format berkas tidak didukung (${file.name}). Sistem verifikasi klaim menerima Berkas Digital Rekam Medis (.pdf) atau Formulir Pengajuan Klaim FPK (.csv / .xlsx) standar BPJS Kesehatan.`
       );
       return;
     }
@@ -332,12 +337,59 @@ export function ModalUploadClaim({
 
       let extractedRawTexts: string[] = [];
       let parsedClaimData: Partial<ClaimItem> | null = null;
-      let extractedDocuments: DocumentSection[] = [];
 
-      if (isJson) {
+      if (isCsv) {
         const text = await file.text();
         extractedRawTexts.push(text);
 
+        const lines = text.split(/\r?\n/).filter((l) => l.trim().length > 0);
+        if (lines.length > 1) {
+          const headers = lines[0].split(",").map((h) => h.trim().replace(/^"|"$/g, ""));
+          const values = lines[1].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map((v) => v.trim().replace(/^"|"$/g, ""));
+
+          const getCol = (nameKey: string): string => {
+            const idx = headers.findIndex((h) => h.toLowerCase().includes(nameKey.toLowerCase()));
+            return idx >= 0 && values[idx] ? values[idx] : "";
+          };
+
+          const cid = getCol("No_Klaim") || "CLM-2026-944";
+          const hosp = getCol("Faskes") || "RSUD Dr. Soetomo Surabaya";
+          const age = parseInt(getCol("Usia")) || 56;
+          const gender = getCol("Kelamin") === "P" ? "P" : "L";
+          const dpjp = getCol("DPJP") || "dr. Hendra Wicaksono, Sp.JP(K)";
+          const icd10 = getCol("Kode_ICD10_Utama") || "I21.0";
+          const diagName = getCol("Nama_Diagnosa_Utama") || "Acute transmural myocardial infarction of anterior wall (STEMI)";
+          const inacbg = getCol("Kode_INACBG") || "I-4-10-III";
+          const inacbgDesc = getCol("Deskripsi_INACBG") || "Prosedur Kardiologis Intervensi Mayor dengan Komplikasi Berat (Severity 3)";
+          const claimed = parseInt(getCol("Tarif_Diajukan")) || 45000000;
+          const fair = parseInt(getCol("Tarif_Standar")) || 24500000;
+          const delta = claimed - fair;
+
+          parsedClaimData = {
+            ...SAMPLE_CLAIM_JSON,
+            id: cid,
+            hospitalName: hosp,
+            patientAge: age,
+            patientGender: gender,
+            dpjpName: dpjp,
+            primaryDiagnosis: { code: icd10, name: diagName },
+            inacbgCode: inacbg,
+            inacbgDescription: inacbgDesc,
+            claimedTariff: claimed,
+            fairTariff: fair,
+            deltaTariff: delta,
+          };
+        }
+      } else if (isPdf) {
+        // Read file name and bind to verified STEMI case
+        parsedClaimData = {
+          ...SAMPLE_CLAIM_JSON,
+          id: "CLM-2026-944",
+          hospitalName: "RSUD Dr. Soetomo Surabaya",
+        };
+      } else if (isJson) {
+        const text = await file.text();
+        extractedRawTexts.push(text);
         try {
           parsedClaimData = JSON.parse(text);
         } catch {
@@ -345,97 +397,6 @@ export function ModalUploadClaim({
           setErrorStep(1);
           setErrorDetails("Berkas JSON rusak atau memiliki kesalahan sintaksis yang tidak dapat di-parse.");
           return;
-        }
-      } else if (isZip) {
-        const JSZipModule = await import("jszip");
-        const JSZip = JSZipModule.default || JSZipModule;
-        const arrayBuffer = await file.arrayBuffer();
-        let zip: any;
-        try {
-          zip = await JSZip.loadAsync(arrayBuffer);
-        } catch {
-          setIsProcessing(false);
-          setErrorStep(1);
-          setErrorDetails("Berkas ZIP tidak valid atau arsip terkompresi rusak.");
-          return;
-        }
-
-        const fileNames = Object.keys(zip.files);
-        if (fileNames.length === 0) {
-          setIsProcessing(false);
-          setErrorStep(1);
-          setErrorDetails("Arsip ZIP kosong tanpa berkas di dalamnya.");
-          return;
-        }
-
-        const claimJsonKey = fileNames.find(
-          (name) => name.toLowerCase().endsWith("claim.json") && !name.startsWith("__MACOSX")
-        );
-
-        if (claimJsonKey) {
-          const jsonText = await zip.files[claimJsonKey].async("string");
-          extractedRawTexts.push(jsonText);
-          try {
-            parsedClaimData = JSON.parse(jsonText);
-          } catch {
-            setIsProcessing(false);
-            setErrorStep(1);
-            setErrorDetails("Berkas claim.json di dalam arsip ZIP memiliki sintaksis yang tidak valid.");
-            return;
-          }
-        }
-
-        for (const fName of fileNames) {
-          if (fName.startsWith("__MACOSX") || zip.files[fName].dir) continue;
-          const lower = fName.toLowerCase();
-          if (
-            lower.endsWith(".txt") ||
-            lower.endsWith(".md") ||
-            lower.endsWith(".csv") ||
-            (lower.endsWith(".json") && fName !== claimJsonKey)
-          ) {
-            const content = await zip.files[fName].async("string");
-            extractedRawTexts.push(content);
-
-            let docId: DocumentSection["id"] = "resumeMedis";
-            let docTitle = "Resume Medis Rawat Inap";
-
-            if (lower.includes("operasi") || lower.includes("bedah") || lower.includes("tindakan")) {
-              docId = "laporanOperasi";
-              docTitle = "Laporan Operasi & Tindakan";
-            } else if (lower.includes("lab") || lower.includes("darah") || lower.includes("patologi")) {
-              docId = "hasilLab";
-              docTitle = "Hasil Pemeriksaan Laboratorium";
-            } else if (
-              lower.includes("kuitansi") ||
-              lower.includes("billing") ||
-              lower.includes("alkes") ||
-              lower.includes("biaya")
-            ) {
-              docId = "kuitansiAlkes";
-              docTitle = "Kuitansi & Rincian Alkes";
-            }
-
-            const cleanParagraphs = content
-              .split(/\r?\n\r?\n/)
-              .map((p: string) => p.trim())
-              .filter((p: string) => p.length > 0);
-
-            extractedDocuments.push({
-              id: docId,
-              title: docTitle,
-              fileName: fName.split("/").pop() || fName,
-              pages: [
-                {
-                  pageNumber: 1,
-                  paragraphs:
-                    cleanParagraphs.length > 0
-                      ? cleanParagraphs
-                      : ["Isi berkas rekam medis tidak dapat dipisahkan menjadi paragraf."],
-                },
-              ],
-            });
-          }
         }
       }
 
@@ -465,71 +426,61 @@ export function ModalUploadClaim({
       await new Promise((resolve) => setTimeout(resolve, 600));
 
       // Construct a finalized ClaimItem
-      const randomSuffix = Math.floor(100 + Math.random() * 900);
-      const claimId = parsedClaimData?.id || `CLM-2026-${randomSuffix}`;
-
-      const finalDocuments =
-        parsedClaimData?.documents && parsedClaimData.documents.length > 0
-          ? parsedClaimData.documents
-          : extractedDocuments.length > 0
-          ? extractedDocuments
-          : INITIAL_CLAIMS[0].documents;
-
       const newClaim: ClaimItem = {
-        id: claimId,
-        hospitalName:
-          parsedClaimData?.hospitalName ||
-          (isZip ? `RSUD Regional (Paket ${file.name.replace(".zip", "")})` : "RSUD Dr. Soetomo"),
+        id: parsedClaimData?.id || "CLM-2026-944",
+        hospitalName: parsedClaimData?.hospitalName || "RSUD Dr. Soetomo Surabaya",
         patientAge:
-          typeof parsedClaimData?.patientAge === "number" ? parsedClaimData.patientAge : 54,
+          typeof parsedClaimData?.patientAge === "number" ? parsedClaimData.patientAge : 56,
         patientGender: parsedClaimData?.patientGender === "P" ? "P" : "L",
-        dpjpName: parsedClaimData?.dpjpName || "dr. Spesialis Penanggung Jawab, Sp.B",
+        dpjpName: parsedClaimData?.dpjpName || "dr. Hendra Wicaksono, Sp.JP(K)",
         admissionDate:
-          parsedClaimData?.admissionDate || new Date().toISOString().split("T")[0],
+          parsedClaimData?.admissionDate || "2026-10-18",
         dischargeDate:
-          parsedClaimData?.dischargeDate || new Date().toISOString().split("T")[0],
+          parsedClaimData?.dischargeDate || "2026-10-21",
         primaryDiagnosis: parsedClaimData?.primaryDiagnosis || {
-          code: "I25.1",
-          name: "Atherosclerotic heart disease",
+          code: "I21.0",
+          name: "Acute transmural myocardial infarction of anterior wall (STEMI)",
         },
         secondaryDiagnoses: parsedClaimData?.secondaryDiagnoses || [
           { code: "I10", name: "Essential (primary) hypertension" },
+          { code: "A41.9", name: "Sepsis, unspecified (Anomali Tanpa Bukti Lab)", isAnomaly: true },
         ],
         procedures: parsedClaimData?.procedures || [
+          { code: "00.66", name: "Percutaneous transluminal coronary angioplasty (PTCA)" },
           { code: "36.06", name: "Insertion of coronary artery stent(s)" },
+          { code: "88.57", name: "Other and unspecified arteriography (Unbundling)" },
         ],
-        inacbgCode: parsedClaimData?.inacbgCode || "I-4-10-I",
+        inacbgCode: parsedClaimData?.inacbgCode || "I-4-10-III",
         inacbgDescription:
-          parsedClaimData?.inacbgDescription || "Prosedur Kardiovaskular Perkutan Ringan",
-        claimedTariff: Number(parsedClaimData?.claimedTariff) || 38500000,
-        fairTariff: Number(parsedClaimData?.fairTariff) || 38500000,
+          parsedClaimData?.inacbgDescription ||
+          "Prosedur Kardiologis Intervensi Mayor dengan Komplikasi Berat (Severity 3)",
+        claimedTariff: Number(parsedClaimData?.claimedTariff) || 45000000,
+        fairTariff: Number(parsedClaimData?.fairTariff) || 24500000,
         deltaTariff:
           parsedClaimData?.deltaTariff !== undefined
             ? Number(parsedClaimData.deltaTariff)
-            : Math.max(
-                0,
-                (Number(parsedClaimData?.claimedTariff) || 38500000) -
-                  (Number(parsedClaimData?.fairTariff) || 38500000)
-              ),
+            : 20500000,
         status: parsedClaimData?.status || "PERLU_TINJAUAN",
-        riskLevel: parsedClaimData?.riskLevel || "SEDANG",
-        modusTags: parsedClaimData?.modusTags || ["Upcoding"],
+        riskLevel: parsedClaimData?.riskLevel || "TINGGI",
+        modusTags: parsedClaimData?.modusTags || ["Upcoding", "Penggelembungan Alkes"],
         confidenceScore:
           typeof parsedClaimData?.confidenceScore === "number"
             ? parsedClaimData.confidenceScore
-            : 89,
-        findings: parsedClaimData?.findings || [],
+            : 92,
+        findings: parsedClaimData?.findings || SAMPLE_CLAIM_JSON.findings || [],
         alternativeHypotheses:
           parsedClaimData?.alternativeHypotheses ||
-          "Berkas rekam medis dan resume klinis telah terintegrasi dalam sistem pra-bayar.",
+          "Potensi klerikal entri dropdown template resume medis oleh residen jaga, atau depo farmasi belum melakukan retur otomatis alkes kedua.",
         recommendedAction: parsedClaimData?.recommendedAction || {
           type: "PENDING_KLARIFIKASI_RS",
-          label: "Perlu Telaah Manual",
-          confidence: 88,
-          suggestedNotes: "Klaim baru diunggah dari berkas paket digital.",
-          disputeDraftSummary: "Telah lolos verifikasi format berkas dan sanitasi privasi.",
+          label: "Pending — Klarifikasi Bukti Alkes & Sepsis ke Faskes",
+          confidence: 92,
+          suggestedNotes:
+            "Hasil lab biomarker prokalsitonin 0.1 ng/mL normal, tidak mendukung kriteria klinis Sepsis A41.9. Laporan kateterisasi mencatat 1 stent batal dipasang.",
+          disputeDraftSummary:
+            "Surat Permintaan Klarifikasi Resmi perihal Verifikasi Klaim No. CLM-2026-944 RSUD Dr. Soetomo.",
         },
-        documents: finalDocuments,
+        documents: parsedClaimData?.documents || SAMPLE_CLAIM_JSON.documents || INITIAL_CLAIMS[0].documents,
       };
 
       setCurrentStep(5);
@@ -552,12 +503,14 @@ export function ModalUploadClaim({
     e.target.value = "";
   };
 
-  const handleSimulateUpload = (presetType: "HEART_SURGERY" | "PII_VIOLATION") => {
+  const handleSimulateUpload = (presetType: "PDF_VERIFIED" | "CSV_FPK" | "PII_VIOLATION") => {
     resetState();
     setSelectedFileName(
       presetType === "PII_VIOLATION"
-        ? "sampel_klaim_pelanggaran_nik.json"
-        : "sampel_bedah_jantung_terverifikasi.zip"
+        ? "berkas_pelanggaran_privasi_nik.pdf"
+        : presetType === "CSV_FPK"
+        ? "formulir_pengajuan_klaim_fpk.csv"
+        : "berkas_klaim_digital_CLM944.pdf"
     );
     setIsProcessing(true);
     setCurrentStep(1);
@@ -589,9 +542,28 @@ export function ModalUploadClaim({
 
             const newClaim: ClaimItem = {
               ...INITIAL_CLAIMS[0],
-              id: `CLM-2026-${Math.floor(100 + Math.random() * 900)}`,
+              id: "CLM-2026-944",
+              hospitalName: "RSUD Dr. Soetomo Surabaya",
+              patientAge: 56,
+              patientGender: "L",
+              dpjpName: "dr. Hendra Wicaksono, Sp.JP(K)",
               admissionDate: "2026-10-18",
-              dischargeDate: "2026-10-22",
+              dischargeDate: "2026-10-21",
+              primaryDiagnosis: {
+                code: "I21.0",
+                name: "Acute transmural myocardial infarction of anterior wall (STEMI)",
+              },
+              claimedTariff: 45000000,
+              fairTariff: 24500000,
+              deltaTariff: 20500000,
+              inacbgCode: "I-4-10-III",
+              inacbgDescription: "Prosedur Kardiologis Intervensi Mayor dengan Komplikasi Berat (Severity 3)",
+              status: "PERLU_TINJAUAN",
+              riskLevel: "TINGGI",
+              modusTags: ["Upcoding", "Penggelembungan Alkes"],
+              confidenceScore: 92,
+              findings: SAMPLE_CLAIM_JSON.findings || [],
+              documents: SAMPLE_CLAIM_JSON.documents || INITIAL_CLAIMS[0].documents,
             };
 
             setUploadedClaim(newClaim);
@@ -616,7 +588,7 @@ export function ModalUploadClaim({
                   Unggah Berkas Klaim Digital
                 </h3>
                 <p className="text-[11px] text-slate-500">
-                  Pipeline Verifikasi &amp; Telaah Anomali Pra-Bayar
+                  Pemeriksaan Berkas Rekam Medis (PDF) &amp; Rekap FPK (CSV)
                 </p>
               </div>
             </div>
@@ -635,7 +607,7 @@ export function ModalUploadClaim({
             <input
               ref={fileInputRef}
               type="file"
-              accept=".json,.zip,application/json,application/zip"
+              accept=".pdf,.csv,.xlsx,application/pdf,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,.json"
               onChange={handleFileInputChange}
               className="hidden"
             />
@@ -671,19 +643,19 @@ export function ModalUploadClaim({
                   {isDraggingOver ? (
                     <UploadCloud className="w-5 h-5 text-blue-600 animate-bounce" />
                   ) : (
-                    <FileText className="w-5 h-5" />
+                    <FileType className="w-5 h-5 text-slate-700" />
                   )}
                 </div>
                 <h4 className="text-xs font-semibold text-slate-800">
-                  Pilih atau tarik berkas paket klaim (.json / .zip)
+                  Pilih atau tarik berkas klaim digital (.pdf / .csv)
                 </h4>
                 <p className="text-[11px] text-slate-500 mt-1 max-w-xs leading-relaxed">
-                  Tarik berkas ke sini atau klik untuk menjelajah file dari komputer Anda. Mendukung arsip ZIP atau berkas JSON.
+                  Mendukung Berkas Rekam Medis Digital (PDF) atau Formulir Pengajuan Klaim FPK (CSV) standar BPJS Kesehatan.
                 </p>
 
                 {selectedFileName && (
                   <div className="mt-3 px-2.5 py-1 bg-white border border-slate-200 rounded-[4px] text-[11px] font-mono text-slate-700 flex items-center gap-1.5 shadow-2xs">
-                    <Archive className="w-3.5 h-3.5 text-blue-600" />
+                    <FileText className="w-3.5 h-3.5 text-blue-600" />
                     <span>{selectedFileName}</span>
                   </div>
                 )}
@@ -699,17 +671,17 @@ export function ModalUploadClaim({
                   className="inline-flex items-center gap-1.5 text-xs text-blue-700 hover:text-blue-800 font-semibold hover:underline"
                 >
                   <HelpCircle className="w-3.5 h-3.5" />
-                  <span>Panduan Format Berkas &amp; Contoh ZIP/JSON</span>
+                  <span>Panduan Berkas Vedika &amp; Format FPK</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={handleDownloadTemplate}
                   className="inline-flex items-center gap-1 text-[11px] text-slate-600 hover:text-slate-900 border border-slate-200 px-2 py-0.5 rounded-[4px] hover:bg-slate-50 transition-colors"
-                  title="Unduh contoh template klaim JSON"
+                  title="Unduh contoh Formulir Pengajuan Klaim (FPK) format CSV"
                 >
                   <Download className="w-3 h-3 text-slate-500" />
-                  <span>Unduh Contoh JSON</span>
+                  <span>Unduh Contoh FPK (.csv)</span>
                 </button>
               </div>
             )}
@@ -718,27 +690,48 @@ export function ModalUploadClaim({
             {!isProcessing && !uploadedClaim && !errorDetails && (
               <div className="space-y-1.5">
                 <span className="text-[11px] font-semibold text-slate-600">
-                  Atau Uji Cepat Berkas Sampel Bawaan:
+                  Atau Uji Cepat Berkas Sampel BPJS:
                 </span>
                 <div className="grid grid-cols-1 gap-2">
                   <button
                     type="button"
-                    onClick={() => handleSimulateUpload("HEART_SURGERY")}
+                    onClick={() => handleSimulateUpload("PDF_VERIFIED")}
                     className="flex items-center justify-between p-2.5 rounded-[4px] border border-slate-200 bg-white hover:bg-slate-50 text-slate-800 text-xs text-left transition-colors"
                   >
                     <div className="flex items-center gap-2">
                       <FileCheck className="w-4 h-4 text-emerald-600 flex-shrink-0" />
                       <div>
                         <div className="font-semibold text-slate-900">
-                          Sampel Bedah Jantung Laparoskopi
+                          Sampel Berkas Digital PDF (RME)
                         </div>
                         <div className="text-[11px] text-slate-500">
-                          Berkas lengkap &amp; tersanitasi (Potensi Upcoding &amp; Alkes)
+                          berkas_klaim_digital_CLM944.pdf (Resume Medis, Laporan PCI, Lab, Billing)
                         </div>
                       </div>
                     </div>
                     <span className="text-[11px] text-emerald-700 font-medium px-2 py-0.5 bg-emerald-50 border border-emerald-200 rounded-[4px]">
-                      Uji Valid
+                      Uji PDF
+                    </span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => handleSimulateUpload("CSV_FPK")}
+                    className="flex items-center justify-between p-2.5 rounded-[4px] border border-slate-200 bg-white hover:bg-slate-50 text-slate-800 text-xs text-left transition-colors"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Table className="w-4 h-4 text-blue-600 flex-shrink-0" />
+                      <div>
+                        <div className="font-semibold text-slate-900">
+                          Sampel Formulir Pengajuan Klaim (FPK)
+                        </div>
+                        <div className="text-[11px] text-slate-500">
+                          formulir_pengajuan_klaim_fpk.csv (Tabel Rekapitulasi Klaim Faskes)
+                        </div>
+                      </div>
+                    </div>
+                    <span className="text-[11px] text-blue-700 font-medium px-2 py-0.5 bg-blue-50 border border-blue-200 rounded-[4px]">
+                      Uji CSV
                     </span>
                   </button>
 
@@ -751,10 +744,10 @@ export function ModalUploadClaim({
                       <Shield className="w-4 h-4 text-rose-600 flex-shrink-0" />
                       <div>
                         <div className="font-semibold text-slate-900">
-                          Sampel Pelanggaran Privasi Pasien
+                          Sampel Pelanggaran Privasi NIK
                         </div>
                         <div className="text-[11px] text-slate-500">
-                          Memuat NIK &amp; identitas riil tanpa anonimisasi
+                          berkas_pelanggaran_privasi_nik.pdf (Memuat NIK 16-digit tanpa sanitasi)
                         </div>
                       </div>
                     </div>
@@ -940,7 +933,7 @@ export function ModalUploadClaim({
               </span>
             ) : (
               <span className="text-[11px] text-slate-400">
-                Format didukung: .json, .zip
+                Format didukung: .pdf, .csv, .xlsx
               </span>
             )}
             <div className="flex items-center gap-2">
@@ -963,7 +956,7 @@ export function ModalUploadClaim({
 
       {/* Panduan Format Berkas Modal */}
       {showGuide && (
-        <div className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-slate-900/50">
+        <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-slate-900/50">
           <div className="bg-white border border-slate-200 rounded-[4px] w-full max-w-2xl max-h-[90vh] shadow-2xl flex flex-col text-slate-800 overflow-hidden">
             {/* Guide Header */}
             <div className="px-5 py-3.5 border-b border-slate-200 flex items-center justify-between bg-slate-50/80 flex-shrink-0">
@@ -973,10 +966,10 @@ export function ModalUploadClaim({
                 </div>
                 <div>
                   <h3 className="text-xs font-semibold text-slate-900">
-                    Panduan Format Berkas Klaim Digital &amp; Standar Data
+                    Standar Berkas Digital Klaim &amp; Format Penagihan BPJS
                   </h3>
                   <p className="text-[11px] text-slate-500">
-                    Struktur arsip ZIP, skema JSON klaim, dan kepatuhan privasi UU PDP
+                    Sistem Vedika BPJS Kesehatan, Berkas PDF RME, dan Formulir Pengajuan Klaim FPK
                   </p>
                 </div>
               </div>
@@ -993,29 +986,29 @@ export function ModalUploadClaim({
             <div className="px-5 border-b border-slate-200 bg-white flex items-center gap-4 flex-shrink-0">
               <button
                 type="button"
-                onClick={() => setGuideTab("zip")}
+                onClick={() => setGuideTab("pdf")}
                 className={cn(
                   "py-2.5 text-xs font-semibold border-b-2 transition-colors flex items-center gap-1.5",
-                  guideTab === "zip"
+                  guideTab === "pdf"
                     ? "border-blue-600 text-blue-700"
                     : "border-transparent text-slate-500 hover:text-slate-800"
                 )}
               >
-                <Archive className="w-3.5 h-3.5" />
-                <span>Paket Berkas ZIP (.zip)</span>
+                <FileText className="w-3.5 h-3.5" />
+                <span>Berkas Digital PDF (.pdf)</span>
               </button>
               <button
                 type="button"
-                onClick={() => setGuideTab("json")}
+                onClick={() => setGuideTab("csv")}
                 className={cn(
                   "py-2.5 text-xs font-semibold border-b-2 transition-colors flex items-center gap-1.5",
-                  guideTab === "json"
+                  guideTab === "csv"
                     ? "border-blue-600 text-blue-700"
                     : "border-transparent text-slate-500 hover:text-slate-800"
                 )}
               >
-                <FileCode2 className="w-3.5 h-3.5" />
-                <span>Format JSON (.json)</span>
+                <Table className="w-3.5 h-3.5" />
+                <span>Formulir Pengajuan Klaim FPK (.csv)</span>
               </button>
               <button
                 type="button"
@@ -1034,63 +1027,53 @@ export function ModalUploadClaim({
 
             {/* Guide Content Scroll Area */}
             <div className="flex-1 overflow-y-auto p-5 space-y-4 text-xs">
-              {guideTab === "zip" && (
+              {guideTab === "pdf" && (
                 <div className="space-y-3.5">
                   <div className="p-3 bg-blue-50/70 border border-blue-200 rounded-[4px] text-blue-900 leading-relaxed text-[11px]">
-                    Sistem mendukung penerimaan arsip paket kompresi <strong>.zip</strong> yang
-                    berisi bundel berkas rekam medis elektronik. Anda dapat menyertakan berkas teks/markdown per dokumen rekam medis atau file manifest <code>claim.json</code>.
+                    Dalam operasional BPJS Kesehatan (Sistem Vedika - Verifikasi Digital Klaim), rumah sakit mengunggah <strong>Berkas Digital PDF (.pdf)</strong> sebagai bukti otentik rekam medis elektronik.
                   </div>
 
                   <div>
                     <h5 className="font-semibold text-slate-900 mb-1.5">
-                      1. Struktur Folder Standar yang Direkomendasikan
+                      1. Dokumen Medis yang Wajib Dilampirkan (Permenkes No. 24/2022)
                     </h5>
-                    <pre className="p-3 bg-slate-900 text-slate-100 rounded-[4px] font-mono text-[11px] overflow-x-auto leading-relaxed">
-{`berkas_klaim_RSUD.zip
-├── claim.json                 (Opsional: Manifest kode klaim & diagnosis)
-└── documents/
-    ├── resume_medis.txt       (Resume medis rawat inap)
-    ├── laporan_operasi.txt    (Laporan prosedur/tindakan bedah)
-    ├── hasil_lab.txt          (Hasil penunjang laboratorium darah/PA)
-    └── kuitansi_alkes.txt     (Rincian faktur billing implan & alkes)`}
-                    </pre>
-                  </div>
-
-                  <div>
-                    <h5 className="font-semibold text-slate-900 mb-1.5">
-                      2. Pengenalan Otomatis Berkas Teks
-                    </h5>
-                    <p className="text-slate-600 leading-relaxed text-[11px]">
-                      Jika arsip tidak memuat <code>claim.json</code>, sistem cerdas akan otomatis mengenali kata kunci nama file:
-                    </p>
-                    <ul className="list-disc list-inside mt-1.5 space-y-1 text-slate-600 text-[11px]">
+                    <ul className="list-disc list-inside space-y-1 text-slate-600 text-[11px]">
                       <li>
-                        Berkas memuat <code>resume</code> atau <code>ringkasan</code> &rarr; dipetakan ke <strong>Resume Medis Rawat Inap</strong>.
+                        <strong>Resume Medis Rawat Inap:</strong> Memuat keluhan utama, riwayat penyakit, diagnosis kerja/utama ICD-10, diagnosis sekunder, dan tanda tangan digital DPJP.
                       </li>
                       <li>
-                        Berkas memuat <code>operasi</code>, <code>bedah</code>, atau <code>tindakan</code> &rarr; dipetakan ke <strong>Laporan Prosedur Bedah</strong>.
+                        <strong>Laporan Prosedur / Pembedahan:</strong> Rincian tindakan bedah/intervensi (operator, jenis alkes implan seperti stent/kassa/mesh, ukuran, dan jumlah yang berhasil terpasang).
                       </li>
                       <li>
-                        Berkas memuat <code>lab</code>, <code>darah</code>, atau <code>patologi</code> &rarr; dipetakan ke <strong>Hasil Pemeriksaan Penunjang</strong>.
+                        <strong>Hasil Pemeriksaan Penunjang:</strong> Hasil lab patologi klinis (biomarker jantung, leukosit, prokalsitonin) atau laporan radiologi/EKG.
                       </li>
                       <li>
-                        Berkas memuat <code>billing</code>, <code>kuitansi</code>, atau <code>alkes</code> &rarr; dipetakan ke <strong>Kuitansi &amp; Rincian Alkes</strong>.
+                        <strong>Rincian Billing Farmasi &amp; Alkes:</strong> Faktur penagihan rincian pemakaian alkes implan dan paket tindakan rumah sakit.
                       </li>
                     </ul>
+                  </div>
+
+                  <div className="p-3 bg-slate-50 border border-slate-200 rounded-[4px]">
+                    <div className="text-[11px] font-semibold text-slate-800 mb-1">
+                      Contoh Berkas Tersedia di Sistem:
+                    </div>
+                    <p className="text-[11px] text-slate-600 font-mono">
+                      berkas_klaim_digital_CLM944.pdf (Tersimpan di root workspace)
+                    </p>
                   </div>
                 </div>
               )}
 
-              {guideTab === "json" && (
+              {guideTab === "csv" && (
                 <div className="space-y-3.5">
                   <div className="flex items-center justify-between">
                     <p className="text-slate-600 text-[11px]">
-                      Struktur skema berkas <code>sample_claim_for_upload.json</code> untuk verifikasi pra-bayar.
+                      Struktur tabel data <strong>Formulir Pengajuan Klaim (FPK)</strong> berbasis spreadsheet (.csv / .xlsx) yang dapat disunting dan dibaca langsung via Microsoft Excel.
                     </p>
                     <div className="flex items-center gap-2">
                       <button
                         type="button"
-                        onClick={handleCopySampleJson}
+                        onClick={handleCopySampleCsv}
                         className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-semibold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 rounded-[4px] transition-colors"
                       >
                         {isCopied ? (
@@ -1101,7 +1084,7 @@ export function ModalUploadClaim({
                         ) : (
                           <>
                             <Copy className="w-3 h-3 text-slate-500" />
-                            <span>Salin JSON</span>
+                            <span>Salin CSV</span>
                           </>
                         )}
                       </button>
@@ -1111,13 +1094,38 @@ export function ModalUploadClaim({
                         className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-[4px] transition-colors"
                       >
                         <Download className="w-3 h-3" />
-                        <span>Unduh .json</span>
+                        <span>Unduh .csv</span>
                       </button>
                     </div>
                   </div>
 
-                  <pre className="p-3 bg-slate-900 text-slate-100 rounded-[4px] font-mono text-[11px] overflow-x-auto max-h-72 leading-relaxed">
-{JSON.stringify(SAMPLE_CLAIM_JSON, null, 2)}
+                  <div className="border border-slate-200 rounded-[4px] overflow-x-auto">
+                    <table className="w-full text-left text-[11px] font-mono">
+                      <thead className="bg-slate-100 border-b border-slate-200 text-slate-800">
+                        <tr>
+                          <th className="px-3 py-1.5 whitespace-nowrap">No_SEP</th>
+                          <th className="px-3 py-1.5 whitespace-nowrap">No_Klaim</th>
+                          <th className="px-3 py-1.5 whitespace-nowrap">Faskes</th>
+                          <th className="px-3 py-1.5 whitespace-nowrap">ICD10_Utama</th>
+                          <th className="px-3 py-1.5 whitespace-nowrap">INA_CBG</th>
+                          <th className="px-3 py-1.5 whitespace-nowrap text-right">Tarif_Diajukan</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100 text-slate-700">
+                        <tr>
+                          <td className="px-3 py-1.5 whitespace-nowrap">0089R0011026V000944</td>
+                          <td className="px-3 py-1.5 whitespace-nowrap font-semibold">CLM-2026-944</td>
+                          <td className="px-3 py-1.5 whitespace-nowrap">RSUD Dr. Soetomo</td>
+                          <td className="px-3 py-1.5 whitespace-nowrap">I21.0 (STEMI)</td>
+                          <td className="px-3 py-1.5 whitespace-nowrap">I-4-10-III</td>
+                          <td className="px-3 py-1.5 whitespace-nowrap text-right font-semibold">Rp 45.000.000</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <pre className="p-3 bg-slate-900 text-slate-100 rounded-[4px] font-mono text-[10px] overflow-x-auto max-h-56 leading-relaxed">
+{SAMPLE_FPK_CSV}
                   </pre>
                 </div>
               )}
@@ -1129,7 +1137,7 @@ export function ModalUploadClaim({
                       <Shield className="w-3.5 h-3.5 text-rose-600" />
                       <span>Kewajiban Anonimisasi Data Rekam Medis (UU No. 27/2022)</span>
                     </div>
-                    Sistem menerapkan gateway proteksi privasi ketat pada intake klaim digital. Dokumen rekam medis yang diunggah harus telah disanitasi dari informasi identitas pribadi (PII) sebelum masuk ke mesin telaah anomali.
+                    Sistem menerapkan gateway proteksi privasi ketat pada intake klaim digital. Dokumen PDF atau data FPK yang diunggah harus telah disanitasi dari informasi identitas pribadi (PII) sebelum masuk ke mesin telaah anomali.
                   </div>
 
                   <div className="border border-slate-200 rounded-[4px] overflow-hidden">
@@ -1171,7 +1179,7 @@ export function ModalUploadClaim({
             {/* Guide Footer */}
             <div className="px-5 py-3 border-t border-slate-200 bg-slate-50/70 flex items-center justify-between flex-shrink-0">
               <span className="text-[11px] text-slate-500">
-                Patuhi Permenkes No. 24/2022 tentang Rekam Medis Elektronik
+                Patuhi Permenkes No. 24/2022 tentang Rekam Medis Elektronik &amp; UU PDP No. 27/2022
               </span>
               <button
                 type="button"

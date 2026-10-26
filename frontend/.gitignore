@@ -39,3 +39,6 @@ next-env.d.ts
 # OS & Temp
 .DS_Store
 Thumbs.db
+
+# Local Experiment
+local-experiment/
