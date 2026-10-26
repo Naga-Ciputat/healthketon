@@ -65,3 +65,7 @@ __pycache__/
 **/env/
 *.egg-info/
 .pytest_cache/
+
+# Playwright Local Scratch & Testing Scripts
+.playwright-scratch/
+**/.playwright-scratch/
