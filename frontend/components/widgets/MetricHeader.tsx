@@ -105,14 +105,14 @@ export function MetricHeader({
 
       {/* Right Column: Hero Video (Col 8, Frameless, 2x wider with soft edge fading) */}
       <div className="relative overflow-hidden flex items-center justify-center h-[142px] lg:col-span-8 pointer-events-none select-none">
-        {/* Centered wide video wrapper */}
+        {/* Centered wide video wrapper with subtle thin edge fading */}
         <div
           className="relative w-full max-w-[680px] h-full flex items-center justify-center overflow-hidden"
           style={{
             maskImage:
-              "radial-gradient(ellipse 80% 75% at 50% 50%, black 40%, transparent 95%)",
+              "radial-gradient(ellipse 96% 92% at 50% 50%, black 82%, transparent 100%)",
             WebkitMaskImage:
-              "radial-gradient(ellipse 80% 75% at 50% 50%, black 40%, transparent 95%)",
+              "radial-gradient(ellipse 96% 92% at 50% 50%, black 82%, transparent 100%)",
           }}
         >
           <video
@@ -130,11 +130,11 @@ export function MetricHeader({
             }}
           />
 
-          {/* Smooth perimeter edge fading overlays */}
-          <div className="absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-slate-50 via-slate-50/60 to-transparent pointer-events-none" />
-          <div className="absolute inset-y-0 right-0 w-20 bg-gradient-to-l from-slate-50 via-slate-50/60 to-transparent pointer-events-none" />
-          <div className="absolute inset-x-0 top-0 h-4 bg-gradient-to-b from-slate-50 via-slate-50/40 to-transparent pointer-events-none" />
-          <div className="absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-slate-50 via-slate-50/60 to-transparent pointer-events-none" />
+          {/* Thin, subtle edge feathering overlays (tipis-tipis) */}
+          <div className="absolute inset-y-0 left-0 w-5 bg-gradient-to-r from-slate-50 to-transparent pointer-events-none" />
+          <div className="absolute inset-y-0 right-0 w-5 bg-gradient-to-l from-slate-50 to-transparent pointer-events-none" />
+          <div className="absolute inset-x-0 top-0 h-2.5 bg-gradient-to-b from-slate-50 to-transparent pointer-events-none" />
+          <div className="absolute inset-x-0 bottom-0 h-3 bg-gradient-to-t from-slate-50 to-transparent pointer-events-none" />
         </div>
       </div>
     </div>
