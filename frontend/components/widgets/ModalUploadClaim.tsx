@@ -284,52 +284,13 @@ export function ModalUploadClaim({
     fileInputRef.current?.click();
   };
 
-  const handleDownloadTemplate = async () => {
-    try {
-      const XLSX = await import("xlsx");
-      const data = [
-        {
-          No_SEP: "0089R0011026V000944",
-          No_Klaim: "CLM-2026-944",
-          Nama_Faskes: "RSUD Dr. Soetomo Surabaya",
-          No_Kartu_BPJS: "0001********890",
-          Nama_Pasien: "Tn. B***",
-          Usia: 56,
-          Jenis_Kelamin: "L",
-          DPJP: "dr. Hendra Wicaksono, Sp.JP(K)",
-          Tgl_Masuk: "2026-10-18",
-          Tgl_Keluar: "2026-10-21",
-          Kode_ICD10_Utama: "I21.0",
-          Nama_Diagnosa_Utama: "Acute transmural myocardial infarction of anterior wall (STEMI)",
-          Kode_ICD10_Sekunder: "I10; A41.9",
-          Nama_Diagnosa_Sekunder: "Essential hypertension; Sepsis, unspecified (Anomali Tanpa Bukti Lab)",
-          Kode_ICD9CM_Prosedur: "00.66; 36.06; 88.57",
-          Nama_Prosedur: "PTCA Balon; Pemasangan Stent Koroner; Arteriografi Koroner",
-          Kode_INACBG: "I-4-10-III",
-          Deskripsi_INACBG: "Prosedur Kardiologis Intervensi Mayor dengan Komplikasi Berat (Severity 3)",
-          Tarif_Diajukan_RS: 45000000,
-          Tarif_Standar_Verifikasi: 24500000,
-          Potensi_Selisih: 20500000,
-        },
-      ];
-      const ws = XLSX.utils.json_to_sheet(data);
-      const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, "FPK_Klaim");
-      const wbout = XLSX.write(wb, { bookType: "xlsx", type: "array" });
-      const blob = new Blob([wbout], {
-        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "formulir_pengajuan_klaim_fpk.xlsx";
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    } catch (e) {
-      console.error("Gagal membuat template Excel:", e);
-    }
+  const handleDownloadTemplate = () => {
+    const a = document.createElement("a");
+    a.href = "/formulir_pengajuan_klaim_fpk.xlsx";
+    a.download = "formulir_pengajuan_klaim_fpk.xlsx";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
   };
 
   const processSelectedFile = async (file: File) => {
@@ -364,40 +325,79 @@ export function ModalUploadClaim({
         const workbook = XLSX.read(arrayBuffer, { type: "array" });
         const sheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[sheetName];
-        const rows: any[] = XLSX.utils.sheet_to_json(worksheet);
+        const rawRows: any[][] = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
-        if (rows.length === 0) {
+        if (rawRows.length === 0) {
           setIsProcessing(false);
           setErrorStep(1);
           setErrorDetails("Berkas Excel FPK kosong tanpa baris data pengajuan klaim.");
           return;
         }
 
-        const row = rows[0];
-        extractedRawTexts.push(JSON.stringify(row));
+        // Find header row (searches first 15 rows for key column keywords)
+        let headerIdx = 0;
+        for (let i = 0; i < Math.min(15, rawRows.length); i++) {
+          const r = rawRows[i];
+          if (
+            Array.isArray(r) &&
+            r.some(
+              (c) =>
+                typeof c === "string" &&
+                (c.toLowerCase().includes("no. sep") ||
+                  c.toLowerCase().includes("no_sep") ||
+                  c.toLowerCase().includes("no. klaim") ||
+                  c.toLowerCase().includes("no_klaim") ||
+                  c.toLowerCase().includes("nama faskes") ||
+                  c.toLowerCase().includes("nama_faskes"))
+            )
+          ) {
+            headerIdx = i;
+            break;
+          }
+        }
 
-        const getField = (...keys: string[]): any => {
-          for (const key of keys) {
-            for (const rk of Object.keys(row)) {
-              if (rk.toLowerCase().includes(key.toLowerCase())) {
-                return row[rk];
-              }
+        const headers = (rawRows[headerIdx] as any[]).map((c) => String(c || "").trim());
+        const dataRow = (rawRows[headerIdx + 1] as any[]) || [];
+
+        extractedRawTexts.push(JSON.stringify(dataRow));
+
+        const getCol = (...nameKeys: string[]): any => {
+          for (const key of nameKeys) {
+            const idx = headers.findIndex((h) => h.toLowerCase().includes(key.toLowerCase()));
+            if (idx >= 0 && dataRow[idx] !== undefined) {
+              return dataRow[idx];
             }
           }
           return undefined;
         };
 
-        const cid = getField("No_Klaim", "Klaim") || "CLM-2026-944";
-        const hosp = getField("Nama_Faskes", "Faskes", "Rumah_Sakit") || "RSUD Dr. Soetomo Surabaya";
-        const age = parseInt(getField("Usia", "Umur")) || 56;
-        const gender = getField("Jenis_Kelamin", "Kelamin") === "P" ? "P" : "L";
-        const dpjp = getField("DPJP", "Dokter") || "dr. Hendra Wicaksono, Sp.JP(K)";
-        const icd10 = getField("Kode_ICD10_Utama", "ICD10") || "I21.0";
-        const diagName = getField("Nama_Diagnosa_Utama", "Diagnosa") || "Acute transmural myocardial infarction of anterior wall (STEMI)";
-        const inacbg = getField("Kode_INACBG", "INACBG") || "I-4-10-III";
-        const inacbgDesc = getField("Deskripsi_INACBG", "Deskripsi") || "Prosedur Kardiologis Intervensi Mayor dengan Komplikasi Berat (Severity 3)";
-        const claimed = parseInt(getField("Tarif_Diajukan", "Tarif_RS", "Diajukan")) || 45000000;
-        const fair = parseInt(getField("Tarif_Standar", "Tarif_Wajar", "Standar")) || 24500000;
+        const cid = String(getCol("No. Klaim", "No_Klaim", "Klaim") || "CLM-2026-944");
+        const hosp = String(getCol("Nama Faskes", "Faskes", "Rumah_Sakit") || "RSUD Dr. Soetomo Surabaya");
+        const age = parseInt(String(getCol("Usia", "Umur") || 56)) || 56;
+        const gender = String(getCol("JK", "Kelamin") || "L").toUpperCase().includes("P") ? "P" : "L";
+        const dpjp = String(getCol("DPJP", "Dokter") || "dr. Hendra Wicaksono, Sp.JP(K)");
+        const icd10 = String(getCol("Kode ICD-10 Utama", "ICD-10 Utama", "ICD10") || "I21.0");
+        const diagName = String(
+          getCol("Diagnosa Kerja Utama", "Diagnosa Utama", "Diagnosa") ||
+            "Acute transmural myocardial infarction of anterior wall (STEMI)"
+        );
+        const inacbg = String(getCol("Grup INA-CBG", "Kode INA-CBG", "INA-CBG") || "I-4-10-III");
+        const inacbgDesc = String(
+          getCol("Deskripsi Kelompok INA-CBG", "Deskripsi INA-CBG", "Deskripsi") ||
+            "Prosedur Kardiologis Intervensi Mayor dengan Komplikasi Berat (Severity 3)"
+        );
+        const claimedRaw = getCol("Tarif Diajukan RS", "Tarif Diajukan", "Tarif RS");
+        const claimed =
+          typeof claimedRaw === "number"
+            ? claimedRaw
+            : parseInt(String(claimedRaw || 45000000).replace(/[^\d]/g, "")) || 45000000;
+
+        const fairRaw = getCol("Tarif Rujukan INA-CBG", "Tarif Standar", "Tarif Rujukan");
+        const fair =
+          typeof fairRaw === "number"
+            ? fairRaw
+            : parseInt(String(fairRaw || 24500000).replace(/[^\d]/g, "")) || 24500000;
+
         const delta = claimed - fair;
 
         parsedClaimData = {
