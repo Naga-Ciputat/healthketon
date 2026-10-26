@@ -103,16 +103,16 @@ export function MetricHeader({
         </div>
       </div>
 
-      {/* Right Column: Hero Video (Col 8, Frameless, Fully Uncropped with Subtle Horizontal Fade) */}
+      {/* Right Column: Hero Video (Col 8, Frameless, Subtle Perimeter Feathering) */}
       <div className="relative overflow-hidden flex items-center justify-center h-[160px] lg:col-span-8 pointer-events-none select-none">
-        {/* Centered wide video wrapper with minimal horizontal fade only */}
+        {/* Centered wide video wrapper with delicate feathering on all edges (sedikit aja) */}
         <div
           className="relative w-full h-full flex items-center justify-center"
           style={{
             maskImage:
-              "linear-gradient(to right, transparent 0%, black 3%, black 97%, transparent 100%)",
+              "radial-gradient(ellipse 94% 88% at 50% 50%, black 82%, transparent 100%)",
             WebkitMaskImage:
-              "linear-gradient(to right, transparent 0%, black 3%, black 97%, transparent 100%)",
+              "radial-gradient(ellipse 94% 88% at 50% 50%, black 82%, transparent 100%)",
           }}
         >
           <video
