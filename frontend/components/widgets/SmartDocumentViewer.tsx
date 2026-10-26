@@ -71,9 +71,9 @@ export function SmartDocumentViewer({
       )}
     >
       {/* Single Unified Header: Document Tabs + Action Controls */}
-      <div className="bg-white border-b border-slate-200 px-3 flex items-center justify-between flex-shrink-0 h-10">
+      <div className="bg-white border-b border-slate-200 px-3 flex items-center justify-between flex-shrink-0 h-10 gap-2">
         {/* Document Tabs */}
-        <div className="flex items-center gap-1 overflow-x-auto py-1">
+        <div className="flex-1 min-w-0 flex items-center gap-1 overflow-x-auto py-1">
           {safeDocs.map((doc) => {
             const isActive = doc.id === activeTabId;
             return (
@@ -96,33 +96,27 @@ export function SmartDocumentViewer({
         </div>
 
         {/* Action Controls for PDF */}
-        <div className="flex items-center gap-2 flex-shrink-0 ml-2">
-          <span className="hidden lg:inline text-[11px] text-slate-500 font-medium truncate max-w-[200px]">
-            {activeDoc.fileName}
-          </span>
-
-          {hasPdf && activeDoc.pdfUrl && (
-            <div className="flex items-center gap-1">
-              <a
-                href={activeDoc.pdfUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-1.5 rounded-[4px] border border-slate-200 bg-white hover:bg-slate-100 text-slate-600 hover:text-slate-900 transition-colors shadow-2xs"
-                title="Buka Dokumen PDF di Tab Baru"
-              >
-                <ExternalLink className="w-3.5 h-3.5" />
-              </a>
-              <a
-                href={activeDoc.pdfUrl}
-                download={activeDoc.fileName}
-                className="p-1.5 rounded-[4px] border border-slate-200 bg-white hover:bg-slate-100 text-slate-600 hover:text-slate-900 transition-colors shadow-2xs"
-                title="Unduh Berkas PDF Asli"
-              >
-                <Download className="w-3.5 h-3.5" />
-              </a>
-            </div>
-          )}
-        </div>
+        {hasPdf && activeDoc.pdfUrl && (
+          <div className="flex items-center gap-1 flex-shrink-0 pl-1 border-l border-slate-200">
+            <a
+              href={activeDoc.pdfUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-1.5 rounded-[4px] border border-slate-200 bg-white hover:bg-slate-100 text-slate-600 hover:text-slate-900 transition-colors shadow-2xs"
+              title="Buka Dokumen PDF di Tab Baru"
+            >
+              <ExternalLink className="w-3.5 h-3.5" />
+            </a>
+            <a
+              href={activeDoc.pdfUrl}
+              download={activeDoc.fileName}
+              className="p-1.5 rounded-[4px] border border-slate-200 bg-white hover:bg-slate-100 text-slate-600 hover:text-slate-900 transition-colors shadow-2xs"
+              title="Unduh Berkas PDF Asli"
+            >
+              <Download className="w-3.5 h-3.5" />
+            </a>
+          </div>
+        )}
       </div>
 
       {/* Citation Highlight Indicator when an evidence citation is active */}
