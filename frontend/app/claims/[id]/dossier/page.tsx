@@ -10,7 +10,6 @@ import { DossierActionBar, ActionType } from "@/components/widgets/DossierAction
 import { ModalDisputeLetter } from "@/components/widgets/ModalDisputeLetter";
 import { DiffViewerModal } from "@/components/widgets/DiffViewerModal";
 import { ClaimSwitcher } from "@/components/widgets/ClaimSwitcher";
-import { ClinicalTimelineGraph } from "@/components/widgets/ClinicalTimelineGraph";
 import { LiveAgentAuditModal } from "@/components/widgets/LiveAgentAuditModal";
 import { ReadmissionHistoryDrawer } from "@/components/widgets/ReadmissionHistoryDrawer";
 import { AuditLogItem } from "@/components/widgets/AuditLogStream";
@@ -94,7 +93,6 @@ export default function DossierPage() {
   const [selectedActionType, setSelectedActionType] = useState<ActionType>("PENDING_KLARIFIKASI_RS");
   const [isLiveAuditOpen, setIsLiveAuditOpen] = useState(false);
   const [isReadmissionDrawerOpen, setIsReadmissionDrawerOpen] = useState(false);
-  const [selectedTimelineEventId, setSelectedTimelineEventId] = useState<string | null>(null);
 
   // Archiving Transition Animation State
   const [archivingState, setArchivingState] = useState<{
@@ -347,26 +345,6 @@ export default function DossierPage() {
           </div>
 
           <div className="flex-1 overflow-y-auto p-4 space-y-4">
-            {/* Visual Clinical Journey Timeline */}
-            {activeClaim.timelineEvents && activeClaim.timelineEvents.length > 0 && (
-              <ClinicalTimelineGraph
-                events={activeClaim.timelineEvents}
-                selectedEventId={selectedTimelineEventId}
-                onSelectEvent={(evt) => {
-                  setSelectedTimelineEventId(evt.id);
-                  if (evt.targetDocumentId) {
-                    handleJumpToCitation({
-                      documentId: evt.targetDocumentId,
-                      documentTitle: evt.department,
-                      pageNumber: evt.pageNumber || 1,
-                      paragraphIndex: 0,
-                      exactSubstring: evt.targetSubstring || "",
-                    });
-                  }
-                }}
-              />
-            )}
-
             {/* Tariff Delta Calculator */}
             <TariffDeltaCalculator claim={activeClaim} />
 
