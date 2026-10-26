@@ -10,7 +10,6 @@ import { DossierActionBar, ActionType } from "@/components/widgets/DossierAction
 import { ModalDisputeLetter } from "@/components/widgets/ModalDisputeLetter";
 import { DiffViewerModal } from "@/components/widgets/DiffViewerModal";
 import { ClaimSwitcher } from "@/components/widgets/ClaimSwitcher";
-import { LiveAgentAuditModal } from "@/components/widgets/LiveAgentAuditModal";
 import { ReadmissionHistoryDrawer } from "@/components/widgets/ReadmissionHistoryDrawer";
 import { AuditLogItem } from "@/components/widgets/AuditLogStream";
 import { ClaimItem, CitationLocation, FindingItem, INITIAL_CLAIMS } from "@/lib/mockData";
@@ -31,7 +30,6 @@ import {
   CheckCircle2,
   AlertTriangle,
   Archive,
-  Bot,
   History,
 } from "lucide-react";
 
@@ -91,7 +89,6 @@ export default function DossierPage() {
   const [isDiffOpen, setIsDiffOpen] = useState(false);
   const [diffDetails, setDiffDetails] = useState<FindingItem["comparisonDetails"] | null>(null);
   const [selectedActionType, setSelectedActionType] = useState<ActionType>("PENDING_KLARIFIKASI_RS");
-  const [isLiveAuditOpen, setIsLiveAuditOpen] = useState(false);
   const [isReadmissionDrawerOpen, setIsReadmissionDrawerOpen] = useState(false);
 
   // Archiving Transition Animation State
@@ -306,18 +303,6 @@ export default function DossierPage() {
             </button>
           )}
 
-          <button
-            type="button"
-            onClick={() => setIsLiveAuditOpen(true)}
-            className="inline-flex items-center gap-1.5 px-2 py-1 text-[11px] font-medium text-blue-800 bg-blue-50 hover:bg-blue-100/70 border border-blue-200 rounded-[4px] transition-colors shadow-2xs"
-            title="Buka Simulasi Transparansi Audit Multi-Agent"
-          >
-            <Bot className="w-3.5 h-3.5 text-blue-600 flex-shrink-0" />
-            <span>Simulasi Multi-Agent</span>
-          </button>
-
-          <span className="text-slate-300">|</span>
-
           <div className="text-[11px] text-slate-500">
             Diajukan: <span className="font-semibold text-slate-800 tabular-nums">Rp {activeClaim.claimedTariff.toLocaleString("id-ID")}</span>
           </div>
@@ -403,13 +388,6 @@ export default function DossierPage() {
         similarityScore={diffDetails?.similarityScore || 94}
         donorText={diffDetails?.donorText}
         currentText={diffDetails?.currentText}
-      />
-
-      {/* Live Multi-Agent Audit Stepper Modal */}
-      <LiveAgentAuditModal
-        isOpen={isLiveAuditOpen}
-        onClose={() => setIsLiveAuditOpen(false)}
-        claim={activeClaim}
       />
 
       {/* 30-Day Readmission History Drawer */}

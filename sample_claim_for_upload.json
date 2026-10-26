@@ -1,0 +1,172 @@
+{
+  "id": "CLM-2026-944",
+  "hospitalName": "RSUD Dr. Soetomo Surabaya",
+  "patientAge": 56,
+  "patientGender": "L",
+  "dpjpName": "dr. Hendra Wicaksono, Sp.JP(K)",
+  "admissionDate": "2026-10-18",
+  "dischargeDate": "2026-10-21",
+  "primaryDiagnosis": {
+    "code": "I21.0",
+    "name": "Acute transmural myocardial infarction of anterior wall (STEMI)"
+  },
+  "secondaryDiagnoses": [
+    { "code": "I10", "name": "Essential (primary) hypertension" },
+    { "code": "A41.9", "name": "Sepsis, unspecified (Anomali Tanpa Bukti Lab)", "isAnomaly": true }
+  ],
+  "procedures": [
+    { "code": "00.66", "name": "Percutaneous transluminal coronary angioplasty (PTCA)" },
+    { "code": "36.06", "name": "Insertion of coronary artery stent(s)" },
+    { "code": "88.57", "name": "Other and unspecified arteriography (Unbundling)" }
+  ],
+  "inacbgCode": "I-4-10-III",
+  "inacbgDescription": "Prosedur Kardiologis Intervensi Mayor dengan Komplikasi Berat (Severity 3)",
+  "claimedTariff": 45000000,
+  "fairTariff": 24500000,
+  "deltaTariff": 20500000,
+  "status": "PERLU_TINJAUAN",
+  "riskLevel": "TINGGI",
+  "modusTags": ["Upcoding", "Penggelembungan Alkes"],
+  "confidenceScore": 92,
+  "alternativeHypotheses": "Potensi klerikal entri dropdown template resume medis oleh residen jaga, atau depo farmasi belum melakukan retur otomatis alkes kedua.",
+  "recommendedAction": {
+    "type": "PENDING_KLARIFIKASI_RS",
+    "label": "Pending — Klarifikasi Bukti Alkes & Sepsis ke Faskes",
+    "confidence": 92,
+    "suggestedNotes": "Hasil lab biomarker prokalsitonin 0.1 ng/mL normal, tidak mendukung kriteria klinis Sepsis A41.9. Laporan kateterisasi mencatat 1 stent batal dipasang.",
+    "disputeDraftSummary": "Surat Permintaan Klarifikasi Resmi perihal Verifikasi Klaim No. CLM-2026-944 RSUD Dr. Soetomo."
+  },
+  "findings": [
+    {
+      "id": "FND-01",
+      "type": "INFLATED_ALKES",
+      "title": "Diskrepansi Jumlah Stent: Ditagihkan 2 Unit, Laporan Operasi Tercatat 1 Unit",
+      "badgeLabel": "Penggelembungan Alkes",
+      "severity": "danger",
+      "description": "Faktur penagihan farmasi menagihkan 2 unit Drug Eluting Stent (DES) seharga Rp 20.000.000, namun Laporan Prosedur PCI mencatat stent kedua pada arteri LCx dibatalkan karena kalsifikasi dan dikembalikan ke depo.",
+      "citation": {
+        "documentId": "laporanOperasi",
+        "documentTitle": "Laporan Prosedur Intervensi PCI",
+        "pageNumber": 1,
+        "paragraphIndex": 3,
+        "exactSubstring": "Rencana pemasangan stent kedua pada arteri LCx dibatalkan demi keamanan pasien karena anatomi ekstrem; alkes kedua dikembalikan ke depo farmasi."
+      },
+      "regulationReference": "Permenkes No. 3 Tahun 2023 Pasal 14 ayat (2) tentang Bukti Penggunaan Alkes Implan",
+      "isVerbatim100": true,
+      "deltaRupiah": 10000000,
+      "comparisonDetails": {
+        "claimedQty": 2,
+        "claimedTariff": 20000000,
+        "actualQty": 1,
+        "actualTariff": 10000000,
+        "diffTariff": 10000000
+      }
+    },
+    {
+      "id": "FND-02",
+      "type": "UPCODING",
+      "title": "Ketidaksesuaian Diagnosis Sekunder: Kode Sepsis A41.9 Tanpa Dukungan Lab",
+      "badgeLabel": "Upcoding Severity",
+      "severity": "danger",
+      "description": "Diagnosis sekunder Sepsis (A41.9) meningkatkan severity grouping ke level 3 (I-4-10-III). Namun biomarker laboratorium menunjukkan Prokalsitonin 0.1 ng/mL (Normal < 0.5 ng/mL) dan Leukosit 7.400 /uL (Normal), tidak memenuhi kriteria klinis sepsis.",
+      "citation": {
+        "documentId": "hasilLab",
+        "documentTitle": "Hasil Laboratorium & Biomarker",
+        "pageNumber": 1,
+        "paragraphIndex": 2,
+        "exactSubstring": "Prokalsitonin: 0.1 ng/mL (Nilai rujukan: < 0.5 ng/mL, Kategori: Bukan sepsis sistemik)."
+      },
+      "regulationReference": "Panduan Klinis Kemenkes HK.01.07/MENKES/1186/2022 Tata Laksana Sepsis",
+      "isVerbatim100": true,
+      "deltaRupiah": 10500000
+    },
+    {
+      "id": "FND-03",
+      "type": "RULE_ANOMALY",
+      "title": "Kaidah Koding INA-CBG: Batas Pemecahan Paket Angiografi",
+      "badgeLabel": "Kaidah Koding INA-CBG",
+      "severity": "info",
+      "description": "Tindakan diagnostik arteriografi koroner (88.57) yang ditagihkan telah masuk dalam paket pembiayaan prosedur kateterisasi terapeutik utama (00.66) dan dilarang ditagihkan terpisah sesuai klausul unbundling INA-CBG.",
+      "citation": {
+        "documentId": "kuitansiAlkes",
+        "documentTitle": "Rincian Billing Farmasi & Pemakaian Alkes Implan",
+        "pageNumber": 1,
+        "paragraphIndex": 1,
+        "exactSubstring": "Paket Prosedur PTCA Balon + Arteriografi Diagnostik Tambahan: Rp 4.500.000"
+      },
+      "regulationReference": "Permenkes No. 3 Tahun 2023 Lampiran II (Kaidah Koding JKN)",
+      "isVerbatim100": true
+    }
+  ],
+  "documents": [
+    {
+      "id": "resumeMedis",
+      "title": "Resume Medis Rawat Inap",
+      "fileName": "Resume_Medis_CLM944.pdf",
+      "pdfUrl": "https://res.cloudinary.com/dj6gxrayb/raw/upload/v1792837499/healthkaton/berkas/Resume_Medis_CLM089.pdf",
+      "pages": [
+        {
+          "pageNumber": 1,
+          "paragraphs": [
+            "RSUD DR. SOETOMO SURABAYA — RESUME MEDIS RAWAT INAP ELEKTRONIK. No RM: 00-51-92. Pasien: Tn. B*** (56 Tahun, Laki-laki). Tanggal Masuk: 18/10/2026. Tanggal Keluar: 21/10/2026. DPJP: dr. Hendra Wicaksono, Sp.JP(K).",
+            "Pasien datang rujukan dengan keluhan nyeri dada tipikal substernal seperti tertindih beban berat menjalar ke leher dan lengan kiri sejak 2 jam SMRS.",
+            "Pemeriksaan Tanda Vital: Tekanan Darah 135/85 mmHg, Nadi 84 x/menit, Suhu 36.8 C, Pernapasan 18 x/menit, SpO2 98%. EKG lead V1-V4 menunjukkan ST-elevasi akut (STEMI Anterior).",
+            "Diagnosis Kerja Utama: STEMI Anterior Akut (I21.0). Diagnosis Tambahan: Sepsis Berat (A41.9), Hipertensi Primer (I10). Rencana Tindakan: CITO Primary Percutaneous Coronary Intervention (PCI)."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "laporanOperasi",
+      "title": "Laporan Tindakan Bedah / PCI Intervensi",
+      "fileName": "Laporan_Operasi_PCI_CLM944.pdf",
+      "pdfUrl": "https://res.cloudinary.com/dj6gxrayb/raw/upload/v1792837500/healthkaton/berkas/Laporan_Operasi_PCI.pdf",
+      "pages": [
+        {
+          "pageNumber": 1,
+          "paragraphs": [
+            "LEMBAR LAPORAN TINDAKAN INTERVENSI KARDIOLOGI. Operator: dr. Hendra Wicaksono, Sp.JP(K). Waktu: 18/10/2026 15:00 - 16:30 WIB.",
+            "Uraian Prosedur: Dilakukan pungsi arteri radialis kanan dengan sheath 6F. Kanulasi ostium LCA menggunakan kateter EBU 3.5.",
+            "Angiografi: Stenosis 95% pada segmen mid-LAD dengan trombus intraluminal. Percabangan LCx menunjukkan kalsifikasi difus dan tortuosity ekstrem.",
+            "Pemasangan Alkes: Dilakukan predilatasi balon dan berhasil dipasang 1 (satu) unit Drug Eluting Stent (DES) ukuran 3.0 x 28 mm pada LAD dengan aliran TIMI 3. Rencana pemasangan stent kedua pada arteri LCx dibatalkan demi keamanan pasien karena anatomi ekstrem; alkes kedua dikembalikan ke depo farmasi."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hasilLab",
+      "title": "Hasil Pemeriksaan Laboratorium & Biomarker",
+      "fileName": "Laboratorium_CLM944.pdf",
+      "pdfUrl": "https://res.cloudinary.com/dj6gxrayb/raw/upload/v1792837501/healthkaton/berkas/Hasil_Lab_Biomarker.pdf",
+      "pages": [
+        {
+          "pageNumber": 1,
+          "paragraphs": [
+            "INSTALASI PATOLOGI KLINIK RSUD DR. SOETOMO. Waktu Sampling: 18/10/2026 14:15 WIB.",
+            "Pemeriksaan Biomarker Jantung: Troponin I Kuantitatif: 16.2 ng/mL (Rujukan: < 0.04 ng/mL) — KESAN: Positif Infark Miokard Akut.",
+            "Skrining Sepsis & Hematologi: Leukosit: 7.400 /uL (Nilai rujukan: 4.500 - 10.000 /uL). Prokalsitonin: 0.1 ng/mL (Nilai rujukan: < 0.5 ng/mL, Kategori: Bukan sepsis sistemik).",
+            "Hemoglobin: 14.5 g/dL, Trombosit: 238.000 /uL, Hematokrit: 42%. Fungsi Ginjal: Ureum 26 mg/dL, Kreatinin 0.88 mg/dL. Elektrolit Serum: Natrium 141, Kalium 4.2, Klorida 101 mmol/L."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "kuitansiAlkes",
+      "title": "Rincian Billing Farmasi & Pemakaian Alkes Implan",
+      "fileName": "Billing_Alkes_CLM944.pdf",
+      "pdfUrl": "https://res.cloudinary.com/dj6gxrayb/raw/upload/v1792837502/healthkaton/berkas/Kuitansi_Rincian_Billing.pdf",
+      "pages": [
+        {
+          "pageNumber": 1,
+          "paragraphs": [
+            "RINCIAN BIAYA PENAGIHAN KHUSUS ALKES & TINDAKAN. No Tagihan: INV-2026-X-5192. Pasien: Tn. B***.",
+            "Paket Prosedur PTCA Balon + Arteriografi Diagnostik Tambahan: Rp 4.500.000",
+            "Drug Eluting Stent (DES) Xience 3.0 x 28 mm — Qty: 1 Unit x Rp 10.000.000 = Rp 10.000.000",
+            "Drug Eluting Stent (DES) Onyx 2.75 x 18 mm — Qty: 1 Unit x Rp 10.000.000 = Rp 10.000.000",
+            "Total Alkes Implan Ditagihkan: 2 Unit Stent DES = Rp 20.000.000. Total Keseluruhan Billing RS: Rp 45.000.000."
+          ]
+        }
+      ]
+    }
+  ]
+}
