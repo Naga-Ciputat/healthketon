@@ -53,8 +53,8 @@ export function MetricHeader({
 
   return (
     <div className={cn("grid grid-cols-1 lg:grid-cols-12 gap-3", className)}>
-      {/* Left Column: 2 Cards Stacked Vertically (Col 4, Compact ~142px total height) */}
-      <div className="flex flex-col gap-2.5 lg:col-span-4 justify-between h-[142px]">
+      {/* Left Column: 2 Cards Stacked Vertically (Col 4, Height 160px) */}
+      <div className="flex flex-col gap-2.5 lg:col-span-4 justify-between h-[160px]">
         {/* Card 1: Antrean Telaah Klaim (Top Left, Compact) */}
         <div className="relative overflow-hidden bg-white border border-slate-200 rounded-md px-4 py-3 shadow-2xs hover:border-slate-300 transition-all flex flex-col justify-center flex-1">
           {/* Decorative corner image: claims.png */}
@@ -103,16 +103,16 @@ export function MetricHeader({
         </div>
       </div>
 
-      {/* Right Column: Hero Video (Col 8, Frameless, 2x wider with soft edge fading) */}
-      <div className="relative overflow-hidden flex items-center justify-center h-[142px] lg:col-span-8 pointer-events-none select-none">
-        {/* Centered wide video wrapper with subtle thin edge fading */}
+      {/* Right Column: Hero Video (Col 8, Frameless, Fully Uncropped with Subtle Horizontal Fade) */}
+      <div className="relative overflow-hidden flex items-center justify-center h-[160px] lg:col-span-8 pointer-events-none select-none">
+        {/* Centered wide video wrapper with minimal horizontal fade only */}
         <div
-          className="relative w-full max-w-[680px] h-full flex items-center justify-center overflow-hidden"
+          className="relative w-full h-full flex items-center justify-center"
           style={{
             maskImage:
-              "radial-gradient(ellipse 96% 92% at 50% 50%, black 82%, transparent 100%)",
+              "linear-gradient(to right, transparent 0%, black 3%, black 97%, transparent 100%)",
             WebkitMaskImage:
-              "radial-gradient(ellipse 96% 92% at 50% 50%, black 82%, transparent 100%)",
+              "linear-gradient(to right, transparent 0%, black 3%, black 97%, transparent 100%)",
           }}
         >
           <video
@@ -123,18 +123,11 @@ export function MetricHeader({
             muted
             playsInline
             onTimeUpdate={handleTimeUpdate}
-            className="w-full h-full object-cover pointer-events-none select-none transition-opacity duration-150"
+            className="h-full w-auto max-w-full object-contain pointer-events-none select-none transition-opacity duration-150"
             style={{
-              objectPosition: "center 28%",
               opacity: videoOpacity,
             }}
           />
-
-          {/* Thin, subtle edge feathering overlays (tipis-tipis) */}
-          <div className="absolute inset-y-0 left-0 w-5 bg-gradient-to-r from-slate-50 to-transparent pointer-events-none" />
-          <div className="absolute inset-y-0 right-0 w-5 bg-gradient-to-l from-slate-50 to-transparent pointer-events-none" />
-          <div className="absolute inset-x-0 top-0 h-2.5 bg-gradient-to-b from-slate-50 to-transparent pointer-events-none" />
-          <div className="absolute inset-x-0 bottom-0 h-3 bg-gradient-to-t from-slate-50 to-transparent pointer-events-none" />
         </div>
       </div>
     </div>
