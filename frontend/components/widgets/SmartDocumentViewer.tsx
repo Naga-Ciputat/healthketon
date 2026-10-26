@@ -6,6 +6,8 @@ import {
   CheckCircle2,
   ExternalLink,
   Download,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { DocumentSection, CitationLocation } from "@/lib/mockData";
@@ -87,6 +89,7 @@ export function SmartDocumentViewer({
   const [isFocusedOnCitation, setIsFocusedOnCitation] = useState(false);
   const [focusNonce, setFocusNonce] = useState(0);
   const highlightedRef = useRef<HTMLDivElement>(null);
+  const tabsContainerRef = useRef<HTMLDivElement>(null);
 
   // Sync active tab & trigger deep zoom whenever a citation is clicked
   useEffect(() => {
@@ -103,6 +106,37 @@ export function SmartDocumentViewer({
       }, 100);
     }
   }, [activeCitation]);
+
+  // Auto-scroll active tab into view when activeTabId changes
+  useEffect(() => {
+    if (tabsContainerRef.current) {
+      const activeBtn = tabsContainerRef.current.querySelector<HTMLButtonElement>(
+        `[data-tab-id="${activeTabId}"]`
+      );
+      if (activeBtn) {
+        activeBtn.scrollIntoView({
+          behavior: "smooth",
+          block: "nearest",
+          inline: "center",
+        });
+      }
+    }
+  }, [activeTabId]);
+
+  const handleTabsWheel = (e: React.WheelEvent<HTMLDivElement>) => {
+    if (tabsContainerRef.current && e.deltaY !== 0) {
+      tabsContainerRef.current.scrollLeft += e.deltaY;
+    }
+  };
+
+  const scrollTabs = (direction: "left" | "right") => {
+    if (tabsContainerRef.current) {
+      tabsContainerRef.current.scrollBy({
+        left: direction === "left" ? -180 : 180,
+        behavior: "smooth",
+      });
+    }
+  };
 
   const activeDoc = safeDocs.find((d) => d.id === activeTabId) || safeDocs[0];
 
@@ -143,28 +177,56 @@ export function SmartDocumentViewer({
       )}
     >
       {/* Single Unified Header: Document Tabs + Action Controls */}
-      <div className="bg-white border-b border-slate-200 px-3 flex items-center justify-between flex-shrink-0 h-10 gap-2">
-        {/* Document Tabs */}
-        <div className="flex-1 min-w-0 flex items-center gap-1 overflow-x-auto py-1">
-          {safeDocs.map((doc) => {
-            const isActive = doc.id === activeTabId;
-            return (
-              <button
-                key={doc.id}
-                type="button"
-                onClick={() => handleTabChange(doc.id)}
-                className={cn(
-                  "flex items-center gap-1.5 px-3 py-1.5 rounded-[4px] text-xs font-semibold transition-colors whitespace-nowrap",
-                  isActive
-                    ? "bg-slate-100 text-slate-900 border border-slate-300 shadow-2xs"
-                    : "text-slate-600 hover:bg-slate-50 hover:text-slate-900 border border-transparent"
-                )}
-              >
-                <FileText className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
-                <span>{doc.title}</span>
-              </button>
-            );
-          })}
+      <div className="bg-white border-b border-slate-200 px-2 flex items-center justify-between flex-shrink-0 h-10 gap-1.5">
+        {/* Document Tabs with Scroll Navigation */}
+        <div className="flex-1 min-w-0 flex items-center gap-0.5 overflow-hidden">
+          <button
+            type="button"
+            onClick={() => scrollTabs("left")}
+            className="p-1 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-[4px] transition-colors flex-shrink-0"
+            title="Geser tab ke kiri"
+            aria-label="Geser tab ke kiri"
+          >
+            <ChevronLeft className="w-3.5 h-3.5" />
+          </button>
+
+          <div
+            ref={tabsContainerRef}
+            onWheel={handleTabsWheel}
+            className="flex-1 min-w-0 flex items-center gap-1 overflow-x-auto py-1 scroll-smooth"
+            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+          >
+            {safeDocs.map((doc) => {
+              const isActive = doc.id === activeTabId;
+              return (
+                <button
+                  key={doc.id}
+                  data-tab-id={doc.id}
+                  type="button"
+                  onClick={() => handleTabChange(doc.id)}
+                  className={cn(
+                    "flex items-center gap-1.5 px-3 py-1.5 rounded-[4px] text-xs font-semibold transition-colors whitespace-nowrap flex-shrink-0",
+                    isActive
+                      ? "bg-slate-100 text-slate-900 border border-slate-300 shadow-2xs"
+                      : "text-slate-600 hover:bg-slate-50 hover:text-slate-900 border border-transparent"
+                  )}
+                >
+                  <FileText className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
+                  <span>{doc.title}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          <button
+            type="button"
+            onClick={() => scrollTabs("right")}
+            className="p-1 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-[4px] transition-colors flex-shrink-0"
+            title="Geser tab ke kanan"
+            aria-label="Geser tab ke kanan"
+          >
+            <ChevronRight className="w-3.5 h-3.5" />
+          </button>
         </div>
 
         {/* Action Controls for PDF */}
