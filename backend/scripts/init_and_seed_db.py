@@ -318,8 +318,8 @@ async def init_and_seed():
             "RESUME_MEDIS",
             "Resume_Medis_CLM089.pdf",
             "RUMAH SAKIT SEJAHTERA MEDIKA — RESUME MEDIS RAWAT INAP ELEKTRONIK. No RM: 00-48-29. Nama: Pasien Anonim (Tn. R). Usia: 58 Tahun. Jenis Kelamin: Laki-laki. Tanggal Masuk: 09/10/2026. Tanggal Keluar: 11/10/2026. DPJP: dr. Hendra Sp.JP.\n\nPasien mengeluh nyeri dada substernal menjalar ke lengan kiri sejak 3 jam SMRS disertai keringat dingin, mual, dan rasa tertekan beban berat pada dada sebelah kiri saat beristirahat.\n\nPemeriksaan Fisik Awal: Keadaan umum sedang, Compos Mentis. Tekanan Darah: 130/80 mmHg, Nadi: 88 x/menit teratur, Suhu: 36.8 C, Pernapasan: 20 x/menit, SpO2: 98% room air. Suara jantung S1/S2 reguler murni, murmur (-), gallop (-). Ronkhi basah halus basal (-).\n\nDiagnosis Kerja Utama: STEMI Anterior Akut (I21.0). Diagnosis Sekunder: Sepsis Berat (A41.9), Hipertensi Grade 1 (I10). Rencana Tindakan: Primary Percutaneous Coronary Intervention (PCI).",
-            json.dumps({"page_count": 2, "verified": True, "pdf_url": "https://res.cloudinary.com/dj6gxrayb/raw/upload/v1792837499/healthkaton/berkas/Resume_Medis_CLM089.pdf"}),
-            "https://res.cloudinary.com/dj6gxrayb/raw/upload/v1792837499/healthkaton/berkas/Resume_Medis_CLM089.pdf",
+            json.dumps({"page_count": 2, "verified": True, "pdf_url": "https://res.cloudinary.com/dj6gxrayb/raw/upload/v1793012606/healthkaton/berkas/Resume_Medis_CLM089.pdf"}),
+            "https://res.cloudinary.com/dj6gxrayb/raw/upload/v1793012606/healthkaton/berkas/Resume_Medis_CLM089.pdf",
         ),
         (
             "DOC-089-2",
@@ -327,8 +327,8 @@ async def init_and_seed():
             "LAPORAN_OPERASI",
             "Laporan_Operasi_PCI.pdf",
             "LAPORAN TINDAKAN INTERVENSI KORONER PERKUTAN (PCI). Operator: dr. Hendra Sp.JP. Tindakan: Primary PCI ke Left Anterior Descending (LAD). Dilakukan pungsi arteri radialis dekstra sheath 6F. Kanulasi ostium LCA dengan guiding catheter EBU 3.5 6F.\n\nHasil Angiografi: Total occlusion pada mid LAD, LCx normal tanpa lesi stenosis bermakna, RCA normal. Dilakukan predilatasi dengan balon semicompliant 2.0 x 15 mm up to 10 atm.\n\nPemasangan Implan: Dilakukan pemasangan 1 (satu) unit Drug-Eluting Stent (DES) Resolute Onyx ukuran 2.75 x 26 mm pada mid LAD dengan inflasi 14 atm selama 20 detik. Post-dilatasi dengan balon noncompliant 3.0 x 12 mm up to 18 atm. Hasil akhir: TIMI Flow 3, residual stenosis 0%, diseksi (-), perforasi (-). Selongsong sheath dilepas, hemostasis dengan compressive bandage.",
-            json.dumps({"page_count": 1, "verified": True, "pdf_url": "https://res.cloudinary.com/dj6gxrayb/raw/upload/v1792837500/healthkaton/berkas/Laporan_Operasi_PCI.pdf"}),
-            "https://res.cloudinary.com/dj6gxrayb/raw/upload/v1792837500/healthkaton/berkas/Laporan_Operasi_PCI.pdf",
+            json.dumps({"page_count": 1, "verified": True, "pdf_url": "https://res.cloudinary.com/dj6gxrayb/raw/upload/v1793012607/healthkaton/berkas/Laporan_Operasi_PCI.pdf"}),
+            "https://res.cloudinary.com/dj6gxrayb/raw/upload/v1793012607/healthkaton/berkas/Laporan_Operasi_PCI.pdf",
         ),
         (
             "DOC-089-3",
@@ -336,8 +336,8 @@ async def init_and_seed():
             "LAB_RESULT",
             "Hasil_Lab_Biomarker.pdf",
             "HASIL PEMERIKSAAN LABORATORIUM PATOLOGI KLINIK. Tanggal Spesimen: 09/10/2026 14:15 WIB. Troponin I Kuantitatif: 14.80 ng/mL (Nilai rujukan < 0.04) -> Tinggi (Kardiak Iskemia). CK-MB: 88 U/L (Rujukan < 24) -> Meningkat.\n\nProfil Darah Lengkap: Hemoglobin: 14.2 g/dL, Leukosit: 8.600 /uL (Nilai rujukan 4.500 - 11.000) -> Batas Normal. Trombosit: 245.000 /uL, Hematokrit: 42%.\n\nBiomarker Inflamasi & Infeksi: Prokalsitonin (PCT): 0.12 ng/mL (Nilai rujukan Sepsis > 0.50 ng/mL, Sepsis Berat > 2.0 ng/mL) -> Dalam Batas Normal / Negatif Sepsis. Laktat Darah: 1.1 mmol/L (Rujukan 0.5 - 2.0) -> Normal. Kultur Darah 2 botol: Tidak ada pertumbuhan mikroorganisme dalam 5 hari inkubasi.",
-            json.dumps({"page_count": 1, "verified": True, "pdf_url": "https://res.cloudinary.com/dj6gxrayb/raw/upload/v1792837501/healthkaton/berkas/Hasil_Lab_Biomarker.pdf"}),
-            "https://res.cloudinary.com/dj6gxrayb/raw/upload/v1792837501/healthkaton/berkas/Hasil_Lab_Biomarker.pdf",
+            json.dumps({"page_count": 1, "verified": True, "pdf_url": "https://res.cloudinary.com/dj6gxrayb/raw/upload/v1793012608/healthkaton/berkas/Hasil_Lab_Biomarker.pdf"}),
+            "https://res.cloudinary.com/dj6gxrayb/raw/upload/v1793012608/healthkaton/berkas/Hasil_Lab_Biomarker.pdf",
         ),
         (
             "DOC-089-4",
@@ -345,8 +345,8 @@ async def init_and_seed():
             "BILLING_ALKES",
             "Kuitansi_Rincian_Billing.pdf",
             "RINCIAN BIAYA PEMAKAIAN ALAT KESEHATAN IMPLAN & FARMASI RAWAT INAP. No Kuitansi: KW-2026-0988. Pasien: Tn. R (RM: 00-48-29).\n\n1. Drug-Eluting Stent (DES) Resolute Onyx 2.75x26mm — Qty: 2 Unit — Satuan: Rp 12.450.000 — Total: Rp 24.900.000.\n2. Balon Kateter Angioplasti PTCA 2.0x15mm — Qty: 1 Unit — Total: Rp 3.800.000.\n3. Balon Noncompliant NC 3.0x12mm — Qty: 1 Unit — Total: Rp 4.200.000.\n4. Sheath Introducer Radialis 6F — Qty: 1 Unit — Total: Rp 650.000.\n5. Paket Prosedur PTCA Balon + Diagnostik Koroner Angiografi Tambahan Rp 4.500.000.",
-            json.dumps({"page_count": 1, "verified": True, "pdf_url": "https://res.cloudinary.com/dj6gxrayb/raw/upload/v1792837502/healthkaton/berkas/Kuitansi_Rincian_Billing.pdf"}),
-            "https://res.cloudinary.com/dj6gxrayb/raw/upload/v1792837502/healthkaton/berkas/Kuitansi_Rincian_Billing.pdf",
+            json.dumps({"page_count": 1, "verified": True, "pdf_url": "https://res.cloudinary.com/dj6gxrayb/raw/upload/v1793012609/healthkaton/berkas/Kuitansi_Rincian_Billing.pdf"}),
+            "https://res.cloudinary.com/dj6gxrayb/raw/upload/v1793012609/healthkaton/berkas/Kuitansi_Rincian_Billing.pdf",
         ),
     ]
 

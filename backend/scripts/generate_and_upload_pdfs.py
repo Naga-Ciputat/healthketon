@@ -297,7 +297,7 @@ def build_resume_medis_clm089():
     diag_data = [
         [Paragraph("Klasifikasi", table_header), Paragraph("Kode ICD", table_header), Paragraph("Deskripsi Diagnosis / Tindakan Klinis", table_header), Paragraph("Status Verifikasi", table_header)],
         [Paragraph("Diagnosis Utama", table_cell_bold), Paragraph("I21.0", table_cell_center), Paragraph("Acute transmural myocardial infarction of anterior wall (STEMI)", table_cell), Paragraph("Valid Sesuai EKG", table_cell_success)],
-        [Paragraph("Diagnosis Sekunder 1", table_cell_bold), Paragraph("A41.9", table_cell_center), Paragraph("Sepsis, Unspecified (Komplikasi Berat Severity III)", table_cell), Paragraph("Diskrepansi Lab (PCT Normal)", table_cell_alert)],
+        [Paragraph("Diagnosis Sekunder 1", table_cell_bold), Paragraph("A41.9", table_cell_center), Paragraph("Sepsis, Unspecified (Komplikasi Berat Severity III)", table_cell), Paragraph("Tervalidasi", table_cell_success)],
         [Paragraph("Diagnosis Sekunder 2", table_cell_bold), Paragraph("I10", table_cell_center), Paragraph("Essential (primary) hypertension", table_cell), Paragraph("Tervalidasi", table_cell_success)],
         [Paragraph("Prosedur Utama", table_cell_bold), Paragraph("00.66", table_cell_center), Paragraph("Percutaneous transluminal coronary angioplasty (PTCA / Primary PCI)", table_cell), Paragraph("Tindakan Selesai", table_cell_success)],
     ]
@@ -375,8 +375,8 @@ def build_laporan_operasi_clm089():
 
     alkes_data = [
         [Paragraph("No", table_header), Paragraph("Nama Alat Kesehatan / Implan", table_header), Paragraph("Spesifikasi Ukuran", table_header), Paragraph("Status Terpasang", table_header), Paragraph("Keterangan Logistik", table_header)],
-        [Paragraph("1", table_cell_center), Paragraph("Drug-Eluting Stent (DES) Resolute Onyx", table_cell_bold), Paragraph("2.75 x 26 mm", table_cell_center), Paragraph("1 Unit TERPASANG (Mid LAD)", table_cell_success), Paragraph("Batch Lot: 8849201-B", table_cell)],
-        [Paragraph("2", table_cell_center), Paragraph("Drug-Eluting Stent (DES) Cadangan LCx", table_cell_bold), Paragraph("2.75 x 18 mm", table_cell_center), Paragraph("0 Unit (BATAL DIPASANG)", table_cell_alert), Paragraph("Retur ke Depo Farmasi CathLab", table_cell_alert)],
+        [Paragraph("1", table_cell_center), Paragraph("Drug-Eluting Stent (DES) Resolute Onyx", table_cell_bold), Paragraph("2.75 x 26 mm", table_cell_center), Paragraph("1 Unit Terpasang (Mid LAD)", table_cell_success), Paragraph("Batch Lot: 8849201-B", table_cell)],
+        [Paragraph("2", table_cell_center), Paragraph("Drug-Eluting Stent (DES) Cadangan LCx", table_cell_bold), Paragraph("2.75 x 18 mm", table_cell_center), Paragraph("0 Unit (Batal Terpasang)", table_cell_center), Paragraph("Retur ke Depo Farmasi CathLab", table_cell)],
         [Paragraph("3", table_cell_center), Paragraph("Balon PTCA Semi-compliant", table_cell), Paragraph("2.0 x 15 mm", table_cell_center), Paragraph("1 Unit (Habis Pakai)", table_cell), Paragraph("Terpakai Predilatasi", table_cell)],
         [Paragraph("4", table_cell_center), Paragraph("Balon PTCA Non-compliant (NC)", table_cell), Paragraph("3.0 x 12 mm", table_cell_center), Paragraph("1 Unit (Habis Pakai)", table_cell), Paragraph("Terpakai Post-dilatasi", table_cell)],
         [Paragraph("5", table_cell_center), Paragraph("Radimount Radial Sheath Introducer", table_cell), Paragraph("6 French (6F)", table_cell_center), Paragraph("1 Unit (Habis Pakai)", table_cell), Paragraph("Hemostasis Radistop Band", table_cell)],
@@ -428,13 +428,13 @@ def build_hasil_lab_clm089():
     lab_table_data = [
         [Paragraph("Pemeriksaan", table_header), Paragraph("Hasil", table_header), Paragraph("Nilai Rujukan", table_header), Paragraph("Satuan", table_header), Paragraph("Interpretasi Klinis", table_header)],
         # Kardiak
-        [Paragraph("<b>Troponin I Kuantitatif (hs-cTnI)</b>", table_cell), Paragraph("<b>14.80</b>", table_cell_alert), Paragraph("< 0.04", table_cell_center), Paragraph("ng/mL", table_cell_center), Paragraph("<b>POSITIF (HIGH) — Infark Miokard Akut</b>", table_cell_alert)],
-        [Paragraph("<b>CK-MB Mass</b>", table_cell), Paragraph("<b>88.0</b>", table_cell_alert), Paragraph("< 24.0", table_cell_center), Paragraph("U/L", table_cell_center), Paragraph("Meningkat Signifikan", table_cell_alert)],
-        # Biomarker Sepsis (Paling penting untuk fraud upcoding)
-        [Paragraph("<b>Prokalsitonin (PCT)</b>", table_cell_bold), Paragraph("<b>0.12</b>", table_cell_success), Paragraph("< 0.50", table_cell_center), Paragraph("ng/mL", table_cell_center), Paragraph("<b>NORMAL — BUKAN SEPSIS SISTEMIK</b><br/><font size='6' color='#475569'>(Sepsis Sistemik >0.50; Sepsis Berat >2.0)</font>", table_cell_success)],
-        [Paragraph("Laktat Darah (Arteri)", table_cell), Paragraph("1.10", table_cell_center), Paragraph("0.50 - 2.00", table_cell_center), Paragraph("mmol/L", table_cell_center), Paragraph("Normal (Perfusi Jaringan Adekuat)", table_cell)],
+        [Paragraph("<b>Troponin I Kuantitatif (hs-cTnI)</b>", table_cell), Paragraph("<b>14.80</b>", table_cell_alert), Paragraph("< 0.04", table_cell_center), Paragraph("ng/mL", table_cell_center), Paragraph("Positif (High)", table_cell_alert)],
+        [Paragraph("<b>CK-MB Mass</b>", table_cell), Paragraph("<b>88.0</b>", table_cell_alert), Paragraph("< 24.0", table_cell_center), Paragraph("U/L", table_cell_center), Paragraph("Meningkat", table_cell_alert)],
+        # Biomarker Sepsis
+        [Paragraph("<b>Prokalsitonin (PCT)</b>", table_cell_bold), Paragraph("<b>0.12</b>", table_cell_center), Paragraph("< 0.50", table_cell_center), Paragraph("ng/mL", table_cell_center), Paragraph("Normal (Bukan Sepsis Sistemik)", table_cell)],
+        [Paragraph("Laktat Darah (Arteri)", table_cell), Paragraph("1.10", table_cell_center), Paragraph("0.50 - 2.00", table_cell_center), Paragraph("mmol/L", table_cell_center), Paragraph("Normal", table_cell)],
         # Hematologi
-        [Paragraph("Leukosit (WBC)", table_cell), Paragraph("8.600", table_cell_center), Paragraph("4.500 - 11.000", table_cell_center), Paragraph("/uL", table_cell_center), Paragraph("Dalam Batas Normal (Tidak Leukositosis)", table_cell_success)],
+        [Paragraph("Leukosit (WBC)", table_cell), Paragraph("8.600", table_cell_center), Paragraph("4.500 - 11.000", table_cell_center), Paragraph("/uL", table_cell_center), Paragraph("Normal", table_cell)],
         [Paragraph("Hemoglobin (Hb)", table_cell), Paragraph("14.2", table_cell_center), Paragraph("13.0 - 17.5", table_cell_center), Paragraph("g/dL", table_cell_center), Paragraph("Normal", table_cell)],
         [Paragraph("Hematokrit (Ht)", table_cell), Paragraph("42.0", table_cell_center), Paragraph("40.0 - 52.0", table_cell_center), Paragraph("%", table_cell_center), Paragraph("Normal", table_cell)],
         [Paragraph("Trombosit (PLT)", table_cell), Paragraph("245.000", table_cell_center), Paragraph("150.000 - 450.000", table_cell_center), Paragraph("/uL", table_cell_center), Paragraph("Normal", table_cell)],
@@ -453,7 +453,6 @@ def build_hasil_lab_clm089():
         ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
         ("TOPPADDING", (0, 0), (-1, -1), 2.5),
         ("BOTTOMPADDING", (0, 0), (-1, -1), 2.5),
-        ("BACKGROUND", (0, 3), (-1, 3), colors.HexColor("#FEF2F2")), # Highlight Prokalsitonin baris
     ]))
     story.append(t_lab)
     story.append(Spacer(1, 3*mm))
@@ -499,11 +498,11 @@ def build_kuitansi_billing_clm089():
 
     bill_table_data = [
         [Paragraph("No", table_header), Paragraph("Deskripsi Alkes / Prosedur Tagihan", table_header), Paragraph("Qty", table_header), Paragraph("Tarif Satuan (Rp)", table_header), Paragraph("Total Biaya (Rp)", table_header)],
-        [Paragraph("1", table_cell_center), Paragraph("<b>Drug-Eluting Stent (DES) Resolute Onyx 2.75x26mm</b><br/><font color='#DC2626'>[Ditagihkan 2 Unit vs Laporan Bedah Terpasang 1 Unit]</font>", table_cell), Paragraph("<b>2 Unit</b>", table_cell_alert), Paragraph("12.450.000", table_cell_right), Paragraph("<b>24.900.000</b>", table_cell_right)],
+        [Paragraph("1", table_cell_center), Paragraph("<b>Drug-Eluting Stent (DES) Resolute Onyx 2.75x26mm</b>", table_cell), Paragraph("2 Unit", table_cell_center), Paragraph("12.450.000", table_cell_right), Paragraph("24.900.000", table_cell_right)],
         [Paragraph("2", table_cell_center), Paragraph("Balon Kateter Angioplasti PTCA 2.0x15mm", table_cell), Paragraph("1 Unit", table_cell_center), Paragraph("3.800.000", table_cell_right), Paragraph("3.800.000", table_cell_right)],
         [Paragraph("3", table_cell_center), Paragraph("Balon Noncompliant NC 3.0x12mm", table_cell), Paragraph("1 Unit", table_cell_center), Paragraph("4.200.000", table_cell_right), Paragraph("4.200.000", table_cell_right)],
         [Paragraph("4", table_cell_center), Paragraph("Sheath Introducer Radialis 6F", table_cell), Paragraph("1 Unit", table_cell_center), Paragraph("650.000", table_cell_right), Paragraph("650.000", table_cell_right)],
-        [Paragraph("5", table_cell_center), Paragraph("<b>Paket Prosedur PTCA Balon + Diagnostik Koroner Angiografi</b><br/><font color='#DC2626'>[Unbundling: Dilarang ditagihkan terpisah dari paket utama]</font>", table_cell), Paragraph("1 Paket", table_cell_alert), Paragraph("4.500.000", table_cell_right), Paragraph("<b>4.500.000</b>", table_cell_right)],
+        [Paragraph("5", table_cell_center), Paragraph("<b>Paket Prosedur PTCA Balon + Diagnostik Koroner Angiografi</b>", table_cell), Paragraph("1 Paket", table_cell_center), Paragraph("4.500.000", table_cell_right), Paragraph("4.500.000", table_cell_right)],
         [Paragraph("6", table_cell_center), Paragraph("Bahan Habis Pakai Kateterisasi & Farmasi CVCU", table_cell), Paragraph("1 Paket", table_cell_center), Paragraph("6.950.000", table_cell_right), Paragraph("6.950.000", table_cell_right)],
         # Total
         [Paragraph("", table_cell), Paragraph("<b>TOTAL TAGIHAN RS DIAJUKAN (CLAIMED TARIFF)</b>", table_cell_bold), Paragraph("<b>-</b>", table_cell_center), Paragraph("<b>IDR</b>", table_cell_right), Paragraph("<b>45.000.000</b>", table_cell_right)],
@@ -517,8 +516,6 @@ def build_kuitansi_billing_clm089():
         ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
         ("TOPPADDING", (0, 0), (-1, -1), 3),
         ("BOTTOMPADDING", (0, 0), (-1, -1), 3),
-        ("BACKGROUND", (0, 1), (-1, 1), colors.HexColor("#FEF2F2")), # Highlight stent inflated
-        ("BACKGROUND", (0, 5), (-1, 5), colors.HexColor("#FEF2F2")), # Highlight unbundling
         ("BACKGROUND", (0, -1), (-1, -1), colors.HexColor("#F1F5F9")),
     ]))
     story.append(t_bill)
@@ -555,7 +552,7 @@ def build_resume_medis_clm012():
         "Tanggal Keluar": "12 Oktober 2026",
         "DPJP Spesialis": "dr. Budi Sp.S, M.Kes",
         "Diagnosa Primer": "I63.9 — Cerebral Infarction, Unspecified (Stroke Iskemik)",
-        "Diagnosa Sekunder": "R40.2 — Coma, Unspecified (Dipertanyakan Koder)",
+        "Diagnosa Sekunder": "R40.2 — Coma, Unspecified",
         "Kode INA-CBG Ditagih": "G-4-14-II (Komplikasi Sedang — Rp 16.000.000)",
     }
     draw_patient_strip(story, pat_info)
@@ -563,7 +560,7 @@ def build_resume_medis_clm012():
     story.append(Paragraph("<b>CATATAN KLINIS & SKALA KESADARAN:</b>", section_heading))
     story.append(Spacer(1, 1.5*mm))
     story.append(Paragraph(
-        "Pasien datang dengan kelemahan anggota gerak kanan mendadak (hemiparesis dextra) sejak 6 jam SMRS. Skor GCS pada saat masuk IGD adalah E4M6V4 (Apatis / Somnolen ringan, BUKAN KOMA R40.2). Pasien masih dapat membuka mata spontan dan merespons perintah verbal sederhana. Penagihan kode komplikasi R40.2 (Koma) tidak memenuhi kriteria diagnosis objektif dan diusulkan downcode ke G-4-14-I (Tarif Wajar Rp 8.200.000).",
+        "Pasien datang dengan keluhan kelemahan anggota gerak kanan mendadak (hemiparesis dextra) sejak 6 jam SMRS. Pemeriksaan kesadaran di IGD mencatat skor GCS E4M6V4 (Somnolen ringan). Pasien masih dapat membuka mata spontan dan merespons instruksi verbal sederhana. Refleks fisiologis meningkat pada sisi kanan, Babinski (+).",
         body_text
     ))
 
@@ -592,15 +589,14 @@ def build_resume_medis_clm077():
         "Tanggal Keluar": "09 Oktober 2026",
         "DPJP Utama": "dr. Hendra Sp.JP, FIHA",
         "Diagnosa": "I21.1 — Acute transmural myocardial infarction of inferior wall",
-        "Status Verifikasi": "DISETUJUI PENUH (Klaim Acuan Historis)",
+        "Status Verifikasi": "Tervalidasi Pelayanan Selesai",
     }
     draw_patient_strip(story, pat_info)
 
     story.append(Paragraph("<b>CATATAN PERKEMBANGAN PASIEN TERINTEGRASI (SOAP):</b>", section_heading))
     story.append(Spacer(1, 1.5*mm))
     story.append(Paragraph(
-        "Pasien mengeluh nyeri dada substernal menjalar ke lengan kiri sejak 3 jam SMRS disertai keringat dingin, mual, dan rasa tertekan beban berat pada dada sebelah kiri saat beristirahat. Pemeriksaan Fisik: TD 130/80 mmHg, Nadi: 88 x/menit, Suhu: 36.8 C.<br/><br/>"
-        "<font color='#0284C7'>[Catatan Audit AI: Teks narasi di atas terdeteksi memiliki kemiripan redaksional 94% dengan Pasien #CLM-2026-089 yang dirawat 2 hari setelahnya oleh DPJP yang sama, mengindikasikan copy-paste narasi RME].</font>",
+        "Pasien mengeluh nyeri dada substernal menjalar ke lengan kiri sejak 3 jam SMRS disertai keringat dingin, mual, dan rasa tertekan beban berat pada dada sebelah kiri saat beristirahat. Pemeriksaan Fisik: TD 130/80 mmHg, Nadi: 88 x/menit, Suhu: 36.8 C.",
         body_text
     ))
 
