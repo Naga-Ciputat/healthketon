@@ -258,7 +258,11 @@ export default function IntelligenceStudioPage() {
                     <div className="bg-white border border-slate-200 rounded-[6px] p-4 shadow-2xs space-y-3">
                       {m.title && (
                         <div className="flex items-center gap-2 pb-2 border-b border-slate-100">
-                          <Sparkles className="w-4 h-4 text-amber-500 flex-shrink-0" />
+                          <img
+                            src="/images/clarix-ai-icon.png"
+                            alt="Clarix AI"
+                            className="w-5 h-5 flex-shrink-0 object-contain"
+                          />
                           <h4 className="text-xs font-bold text-slate-900">{m.title}</h4>
                           <span className="text-[10px] text-slate-400 font-mono ml-auto">{m.timestamp}</span>
                         </div>
@@ -324,7 +328,11 @@ export default function IntelligenceStudioPage() {
 
               {isProcessing && (
                 <div className="flex items-center gap-2 text-xs text-blue-700 bg-blue-50 p-3 rounded-[6px] border border-blue-200 animate-pulse w-fit">
-                  <Bot className="w-4 h-4 animate-spin" />
+                  <img
+                    src="/images/clarix-ai-icon.png"
+                    alt="Clarix AI"
+                    className="w-4 h-4 flex-shrink-0 object-contain animate-pulse"
+                  />
                   <span>Clarix AI sedang menjalankan penalaran makro lintas-faskes...</span>
                 </div>
               )}

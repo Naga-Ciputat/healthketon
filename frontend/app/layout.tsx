@@ -13,6 +13,9 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 export const metadata: Metadata = {
   title: "TELISIK — Platform Verifikasi Klaim Faskes & Anti-Fraud BPJS Kesehatan",
   description: "Sistem investigasi bukti klinis dan tata kelola klaim JKN berbasis Clarix AI Copilot",
+  icons: {
+    icon: "/images/telisik-icon.png",
+  },
 };
 
 export default function RootLayout({

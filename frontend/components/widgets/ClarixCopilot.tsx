@@ -104,7 +104,11 @@ export function ClarixCopilot() {
           title="Buka Asisten Clarix AI (Ctrl + K)"
           aria-label="Buka Asisten Clarix AI"
         >
-          <Sparkles className="w-4 h-4 text-amber-300 animate-pulse flex-shrink-0" />
+          <img
+            src="/images/clarix-ai-icon.png"
+            alt="Clarix AI"
+            className="w-5 h-5 flex-shrink-0 object-contain"
+          />
           <span className="font-semibold tracking-tight">Tanya Clarix AI</span>
           <span className="text-[10px] bg-blue-700/80 px-1.5 py-0.5 rounded text-blue-100 font-mono border border-blue-500/40">
             Ctrl K
@@ -118,9 +122,11 @@ export function ClarixCopilot() {
           {/* Copilot Header */}
           <div className="px-4 py-3 bg-slate-50 border-b border-slate-200 flex items-center justify-between flex-shrink-0">
             <div className="flex items-center gap-2 min-w-0">
-              <div className="w-7 h-7 rounded-[4px] bg-blue-600 text-white flex items-center justify-center flex-shrink-0 shadow-2xs">
-                <Sparkles className="w-4 h-4 text-amber-300" />
-              </div>
+              <img
+                src="/images/clarix-ai-icon.png"
+                alt="Clarix AI"
+                className="w-7 h-7 flex-shrink-0 object-contain"
+              />
               <div className="flex flex-col min-w-0">
                 <div className="flex items-center gap-1.5">
                   <span className="text-xs font-bold text-slate-900 truncate">
@@ -172,7 +178,11 @@ export function ClarixCopilot() {
             {/* Thinking / Inferencing Indicator */}
             {isThinking && (
               <div className="flex items-start gap-2 bg-white p-3 rounded-[6px] border border-blue-100 shadow-2xs animate-pulse">
-                <Bot className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
+                <img
+                  src="/images/clarix-ai-icon.png"
+                  alt="Clarix AI"
+                  className="w-4 h-4 flex-shrink-0 object-contain mt-0.5"
+                />
                 <div className="space-y-1">
                   <span className="text-[11px] font-semibold text-blue-900 block">
                     Clarix AI sedang menelaah rekam medis & regulasi...
@@ -251,9 +261,11 @@ function MessageBubble({
 
   return (
     <div className="flex items-start gap-2 max-w-[95%]">
-      <div className="w-6 h-6 rounded-[4px] bg-blue-100 text-blue-700 flex items-center justify-center flex-shrink-0 mt-0.5 border border-blue-200 shadow-2xs">
-        <Bot className="w-3.5 h-3.5" />
-      </div>
+      <img
+        src="/images/clarix-ai-icon.png"
+        alt="Clarix AI"
+        className="w-6 h-6 flex-shrink-0 mt-0.5 object-contain"
+      />
 
       <div className="flex-1 bg-white border border-slate-200 rounded-[6px] p-3 shadow-2xs space-y-2.5">
         {/* Accordion Reasoning Steps */}

@@ -49,7 +49,11 @@ export function DossierActionBar({
       {/* Recommendation Banner */}
       <div className="flex items-center justify-between px-3 py-2 bg-blue-50 border border-blue-200 rounded-[4px] text-xs">
         <div className="flex items-center gap-2 min-w-0">
-          <Sparkles className="w-4 h-4 text-blue-600 flex-shrink-0" />
+          <img
+            src="/images/clarix-ai-icon.png"
+            alt="Clarix AI"
+            className="w-4 h-4 flex-shrink-0 object-contain"
+          />
           <span className="font-semibold text-blue-950 truncate">
             {recommendedActionText}
           </span>

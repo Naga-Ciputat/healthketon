@@ -48,6 +48,7 @@ export function ClarixSidebar({
       label: "Clarix AI Studio",
       href: "/intelligence",
       icon: Sparkles,
+      customIconSrc: "/images/clarix-ai-icon.png",
       match: (path: string) => path.startsWith("/intelligence"),
     },
   ];
@@ -64,9 +65,11 @@ export function ClarixSidebar({
         {/* Brand Header */}
         <div className="px-4 py-3.5 flex items-center justify-between border-b border-slate-100 bg-white">
           <div className="flex items-center gap-2.5 min-w-0">
-            <div className="w-7 h-7 rounded-md bg-blue-600 text-white flex items-center justify-center shadow-2xs flex-shrink-0">
-              <Shield className="w-4 h-4 text-white" />
-            </div>
+            <img
+              src="/images/telisik-icon.png"
+              alt="TELISIK Logo"
+              className="w-8 h-8 flex-shrink-0 object-contain"
+            />
             <div className="flex flex-col min-w-0">
               <div className="flex items-center gap-1.5">
                 <span className="font-bold text-slate-900 text-sm tracking-tight truncate">
@@ -128,12 +131,20 @@ export function ClarixSidebar({
                   )}
                 >
                   <div className="flex items-center gap-2.5 min-w-0">
-                    <Icon
-                      className={cn(
-                        "w-4 h-4 flex-shrink-0",
-                        isActive ? "text-blue-600" : "text-slate-400 group-hover:text-slate-600"
-                      )}
-                    />
+                    {item.customIconSrc ? (
+                      <img
+                        src={item.customIconSrc}
+                        alt={item.label}
+                        className="w-4 h-4 flex-shrink-0 object-contain"
+                      />
+                    ) : (
+                      <Icon
+                        className={cn(
+                          "w-4 h-4 flex-shrink-0",
+                          isActive ? "text-blue-600" : "text-slate-400 group-hover:text-slate-600"
+                        )}
+                      />
+                    )}
                     <span className="truncate">{item.label}</span>
                   </div>
 
