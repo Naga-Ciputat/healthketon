@@ -14,12 +14,10 @@ import {
   ArrowRight,
   HelpCircle,
   Download,
-  Copy,
   Check,
-  Table,
   Sparkles,
   RotateCcw,
-  FileType,
+  FileSpreadsheet,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ClaimItem, DocumentSection, INITIAL_CLAIMS } from "@/lib/mockData";
@@ -40,7 +38,7 @@ const PIPELINE_STAGES: PipelineStage[] = [
   {
     id: 1,
     title: "Ekstraksi Berkas & Validasi Skema Data",
-    description: "Memverifikasi struktur berkas rekam medis dan kelengkapan elemen penagihan INA-CBG.",
+    description: "Memverifikasi struktur tabel rekapitulasi klaim Excel dan kelengkapan elemen INA-CBG.",
   },
   {
     id: 2,
@@ -58,9 +56,6 @@ const PIPELINE_STAGES: PipelineStage[] = [
     description: "Mendeteksi keselarasan bukti penunjang medis dengan tarif dan alkes implan.",
   },
 ];
-
-const SAMPLE_FPK_CSV = `No_SEP,No_Klaim,Nama_Faskes,No_Kartu_BPJS,Nama_Pasien,Usia,Jenis_Kelamin,DPJP,Tgl_Masuk,Tgl_Keluar,Kode_ICD10_Utama,Nama_Diagnosa_Utama,Kode_ICD10_Sekunder,Nama_Diagnosa_Sekunder,Kode_ICD9CM_Prosedur,Nama_Prosedur,Kode_INACBG,Deskripsi_INACBG,Tarif_Diajukan_RS,Tarif_Standar_Verifikasi,Potensi_Selisih
-0089R0011026V000944,CLM-2026-944,RSUD Dr. Soetomo Surabaya,0001********890,Tn. B***,56,L,"dr. Hendra Wicaksono, Sp.JP(K)",2026-10-18,2026-10-21,I21.0,"Acute transmural myocardial infarction of anterior wall (STEMI)","I10; A41.9","Essential hypertension; Sepsis, unspecified (Anomali Tanpa Bukti Lab)","00.66; 36.06; 88.57","PTCA Balon; Pemasangan Stent Koroner; Arteriografi Koroner",I-4-10-III,"Prosedur Kardiologis Intervensi Mayor dengan Komplikasi Berat (Severity 3)",45000000,24500000,20500000`;
 
 const SAMPLE_CLAIM_JSON: Partial<ClaimItem> = {
   id: "CLM-2026-944",
@@ -262,8 +257,7 @@ export function ModalUploadClaim({
   const [isDraggingOver, setIsDraggingOver] = useState(false);
   const [selectedFileName, setSelectedFileName] = useState<string | null>(null);
   const [showGuide, setShowGuide] = useState(false);
-  const [guideTab, setGuideTab] = useState<"pdf" | "csv" | "privacy">("pdf");
-  const [isCopied, setIsCopied] = useState(false);
+  const [guideTab, setGuideTab] = useState<"excel" | "pdf" | "privacy">("excel");
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -290,24 +284,52 @@ export function ModalUploadClaim({
     fileInputRef.current?.click();
   };
 
-  const handleCopySampleCsv = () => {
-    navigator.clipboard.writeText(SAMPLE_FPK_CSV);
-    setIsCopied(true);
-    setTimeout(() => setIsCopied(false), 2000);
-  };
-
-  const handleDownloadTemplate = () => {
-    const blob = new Blob([SAMPLE_FPK_CSV], {
-      type: "text/csv;charset=utf-8;",
-    });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "formulir_pengajuan_klaim_fpk.csv";
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+  const handleDownloadTemplate = async () => {
+    try {
+      const XLSX = await import("xlsx");
+      const data = [
+        {
+          No_SEP: "0089R0011026V000944",
+          No_Klaim: "CLM-2026-944",
+          Nama_Faskes: "RSUD Dr. Soetomo Surabaya",
+          No_Kartu_BPJS: "0001********890",
+          Nama_Pasien: "Tn. B***",
+          Usia: 56,
+          Jenis_Kelamin: "L",
+          DPJP: "dr. Hendra Wicaksono, Sp.JP(K)",
+          Tgl_Masuk: "2026-10-18",
+          Tgl_Keluar: "2026-10-21",
+          Kode_ICD10_Utama: "I21.0",
+          Nama_Diagnosa_Utama: "Acute transmural myocardial infarction of anterior wall (STEMI)",
+          Kode_ICD10_Sekunder: "I10; A41.9",
+          Nama_Diagnosa_Sekunder: "Essential hypertension; Sepsis, unspecified (Anomali Tanpa Bukti Lab)",
+          Kode_ICD9CM_Prosedur: "00.66; 36.06; 88.57",
+          Nama_Prosedur: "PTCA Balon; Pemasangan Stent Koroner; Arteriografi Koroner",
+          Kode_INACBG: "I-4-10-III",
+          Deskripsi_INACBG: "Prosedur Kardiologis Intervensi Mayor dengan Komplikasi Berat (Severity 3)",
+          Tarif_Diajukan_RS: 45000000,
+          Tarif_Standar_Verifikasi: 24500000,
+          Potensi_Selisih: 20500000,
+        },
+      ];
+      const ws = XLSX.utils.json_to_sheet(data);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "FPK_Klaim");
+      const wbout = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+      const blob = new Blob([wbout], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "formulir_pengajuan_klaim_fpk.xlsx";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      console.error("Gagal membuat template Excel:", e);
+    }
   };
 
   const processSelectedFile = async (file: File) => {
@@ -317,16 +339,14 @@ export function ModalUploadClaim({
     setCurrentStep(1);
 
     const fileNameLower = file.name.toLowerCase();
+    const isExcel = fileNameLower.endsWith(".xlsx") || fileNameLower.endsWith(".xls");
     const isPdf = fileNameLower.endsWith(".pdf");
-    const isCsv = fileNameLower.endsWith(".csv") || fileNameLower.endsWith(".xlsx");
-    const isJson = fileNameLower.endsWith(".json");
-    const isZip = fileNameLower.endsWith(".zip");
 
-    if (!isPdf && !isCsv && !isJson && !isZip) {
+    if (!isExcel && !isPdf) {
       setIsProcessing(false);
       setCurrentStep(0);
       setErrorDetails(
-        `Format berkas tidak didukung (${file.name}). Sistem verifikasi klaim menerima Berkas Digital Rekam Medis (.pdf) atau Formulir Pengajuan Klaim FPK (.csv / .xlsx) standar BPJS Kesehatan.`
+        `Format berkas tidak didukung (${file.name}). Sistem verifikasi klaim hanya menerima Berkas Excel (.xlsx) atau Berkas Digital PDF (.pdf) standar BPJS Kesehatan.`
       );
       return;
     }
@@ -338,66 +358,68 @@ export function ModalUploadClaim({
       let extractedRawTexts: string[] = [];
       let parsedClaimData: Partial<ClaimItem> | null = null;
 
-      if (isCsv) {
-        const text = await file.text();
-        extractedRawTexts.push(text);
+      if (isExcel) {
+        const XLSX = await import("xlsx");
+        const arrayBuffer = await file.arrayBuffer();
+        const workbook = XLSX.read(arrayBuffer, { type: "array" });
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+        const rows: any[] = XLSX.utils.sheet_to_json(worksheet);
 
-        const lines = text.split(/\r?\n/).filter((l) => l.trim().length > 0);
-        if (lines.length > 1) {
-          const headers = lines[0].split(",").map((h) => h.trim().replace(/^"|"$/g, ""));
-          const values = lines[1].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map((v) => v.trim().replace(/^"|"$/g, ""));
-
-          const getCol = (nameKey: string): string => {
-            const idx = headers.findIndex((h) => h.toLowerCase().includes(nameKey.toLowerCase()));
-            return idx >= 0 && values[idx] ? values[idx] : "";
-          };
-
-          const cid = getCol("No_Klaim") || "CLM-2026-944";
-          const hosp = getCol("Faskes") || "RSUD Dr. Soetomo Surabaya";
-          const age = parseInt(getCol("Usia")) || 56;
-          const gender = getCol("Kelamin") === "P" ? "P" : "L";
-          const dpjp = getCol("DPJP") || "dr. Hendra Wicaksono, Sp.JP(K)";
-          const icd10 = getCol("Kode_ICD10_Utama") || "I21.0";
-          const diagName = getCol("Nama_Diagnosa_Utama") || "Acute transmural myocardial infarction of anterior wall (STEMI)";
-          const inacbg = getCol("Kode_INACBG") || "I-4-10-III";
-          const inacbgDesc = getCol("Deskripsi_INACBG") || "Prosedur Kardiologis Intervensi Mayor dengan Komplikasi Berat (Severity 3)";
-          const claimed = parseInt(getCol("Tarif_Diajukan")) || 45000000;
-          const fair = parseInt(getCol("Tarif_Standar")) || 24500000;
-          const delta = claimed - fair;
-
-          parsedClaimData = {
-            ...SAMPLE_CLAIM_JSON,
-            id: cid,
-            hospitalName: hosp,
-            patientAge: age,
-            patientGender: gender,
-            dpjpName: dpjp,
-            primaryDiagnosis: { code: icd10, name: diagName },
-            inacbgCode: inacbg,
-            inacbgDescription: inacbgDesc,
-            claimedTariff: claimed,
-            fairTariff: fair,
-            deltaTariff: delta,
-          };
+        if (rows.length === 0) {
+          setIsProcessing(false);
+          setErrorStep(1);
+          setErrorDetails("Berkas Excel FPK kosong tanpa baris data pengajuan klaim.");
+          return;
         }
+
+        const row = rows[0];
+        extractedRawTexts.push(JSON.stringify(row));
+
+        const getField = (...keys: string[]): any => {
+          for (const key of keys) {
+            for (const rk of Object.keys(row)) {
+              if (rk.toLowerCase().includes(key.toLowerCase())) {
+                return row[rk];
+              }
+            }
+          }
+          return undefined;
+        };
+
+        const cid = getField("No_Klaim", "Klaim") || "CLM-2026-944";
+        const hosp = getField("Nama_Faskes", "Faskes", "Rumah_Sakit") || "RSUD Dr. Soetomo Surabaya";
+        const age = parseInt(getField("Usia", "Umur")) || 56;
+        const gender = getField("Jenis_Kelamin", "Kelamin") === "P" ? "P" : "L";
+        const dpjp = getField("DPJP", "Dokter") || "dr. Hendra Wicaksono, Sp.JP(K)";
+        const icd10 = getField("Kode_ICD10_Utama", "ICD10") || "I21.0";
+        const diagName = getField("Nama_Diagnosa_Utama", "Diagnosa") || "Acute transmural myocardial infarction of anterior wall (STEMI)";
+        const inacbg = getField("Kode_INACBG", "INACBG") || "I-4-10-III";
+        const inacbgDesc = getField("Deskripsi_INACBG", "Deskripsi") || "Prosedur Kardiologis Intervensi Mayor dengan Komplikasi Berat (Severity 3)";
+        const claimed = parseInt(getField("Tarif_Diajukan", "Tarif_RS", "Diajukan")) || 45000000;
+        const fair = parseInt(getField("Tarif_Standar", "Tarif_Wajar", "Standar")) || 24500000;
+        const delta = claimed - fair;
+
+        parsedClaimData = {
+          ...SAMPLE_CLAIM_JSON,
+          id: cid,
+          hospitalName: hosp,
+          patientAge: age,
+          patientGender: gender,
+          dpjpName: dpjp,
+          primaryDiagnosis: { code: icd10, name: diagName },
+          inacbgCode: inacbg,
+          inacbgDescription: inacbgDesc,
+          claimedTariff: claimed,
+          fairTariff: fair,
+          deltaTariff: delta,
+        };
       } else if (isPdf) {
-        // Read file name and bind to verified STEMI case
         parsedClaimData = {
           ...SAMPLE_CLAIM_JSON,
           id: "CLM-2026-944",
           hospitalName: "RSUD Dr. Soetomo Surabaya",
         };
-      } else if (isJson) {
-        const text = await file.text();
-        extractedRawTexts.push(text);
-        try {
-          parsedClaimData = JSON.parse(text);
-        } catch {
-          setIsProcessing(false);
-          setErrorStep(1);
-          setErrorDetails("Berkas JSON rusak atau memiliki kesalahan sintaksis yang tidak dapat di-parse.");
-          return;
-        }
       }
 
       // Step 2: Privacy Guard (UU PDP)
@@ -412,7 +434,7 @@ export function ModalUploadClaim({
         setIsProcessing(false);
         setErrorStep(2);
         setErrorDetails(
-          `Terdeteksi NIK 16-digit valid (${detectedNiks[0]}) tanpa sanitasi identitas. Berkas ditolak untuk melindungi privasi data pasien (UU PDP No. 27/2022 & Permenkes No. 24/2022).`
+          `Terdeteksi NIK 16-digit valid (${detectedNiks[0]}) tanpa sanitasi identitas pada tabel Excel. Berkas ditolak untuk melindungi privasi data pasien (UU PDP No. 27/2022).`
         );
         return;
       }
@@ -433,10 +455,8 @@ export function ModalUploadClaim({
           typeof parsedClaimData?.patientAge === "number" ? parsedClaimData.patientAge : 56,
         patientGender: parsedClaimData?.patientGender === "P" ? "P" : "L",
         dpjpName: parsedClaimData?.dpjpName || "dr. Hendra Wicaksono, Sp.JP(K)",
-        admissionDate:
-          parsedClaimData?.admissionDate || "2026-10-18",
-        dischargeDate:
-          parsedClaimData?.dischargeDate || "2026-10-21",
+        admissionDate: parsedClaimData?.admissionDate || "2026-10-18",
+        dischargeDate: parsedClaimData?.dischargeDate || "2026-10-21",
         primaryDiagnosis: parsedClaimData?.primaryDiagnosis || {
           code: "I21.0",
           name: "Acute transmural myocardial infarction of anterior wall (STEMI)",
@@ -490,7 +510,7 @@ export function ModalUploadClaim({
       setIsProcessing(false);
       setErrorStep(currentStep || 1);
       setErrorDetails(
-        `Terjadi kendala saat memproses berkas: ${err?.message || "Kesalahan tidak terduga saat ekstraksi berkas."}`
+        `Terjadi kendala saat membaca berkas Excel: ${err?.message || "Kesalahan struktur tabel formulir klaim."}`
       );
     }
   };
@@ -503,13 +523,13 @@ export function ModalUploadClaim({
     e.target.value = "";
   };
 
-  const handleSimulateUpload = (presetType: "PDF_VERIFIED" | "CSV_FPK" | "PII_VIOLATION") => {
+  const handleSimulateUpload = (presetType: "EXCEL_FPK" | "PDF_VERIFIED" | "PII_VIOLATION") => {
     resetState();
     setSelectedFileName(
       presetType === "PII_VIOLATION"
-        ? "berkas_pelanggaran_privasi_nik.pdf"
-        : presetType === "CSV_FPK"
-        ? "formulir_pengajuan_klaim_fpk.csv"
+        ? "formulir_pelanggaran_nik.xlsx"
+        : presetType === "EXCEL_FPK"
+        ? "formulir_pengajuan_klaim_fpk.xlsx"
         : "berkas_klaim_digital_CLM944.pdf"
     );
     setIsProcessing(true);
@@ -524,7 +544,7 @@ export function ModalUploadClaim({
           setIsProcessing(false);
           setErrorStep(2);
           setErrorDetails(
-            "Terdeteksi NIK 16-digit valid (3201021405780001) dan nama lengkap tanpa sanitasi identitas. Berkas ditolak otomatis demi privasi data pasien (UU PDP No. 27/2022)."
+            "Terdeteksi NIK 16-digit valid (3201021405780001) dan nama pasien tanpa sanitasi data pada baris Excel. Berkas ditolak otomatis demi privasi data pasien (UU PDP No. 27/2022)."
           );
           return;
         }
@@ -580,15 +600,15 @@ export function ModalUploadClaim({
           {/* Modal Header */}
           <div className="px-5 py-3.5 border-b border-slate-200 flex items-center justify-between bg-slate-50/70">
             <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-[4px] bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-700">
-                <UploadCloud className="w-4 h-4" />
+              <div className="w-7 h-7 rounded-[4px] bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-700">
+                <FileSpreadsheet className="w-4 h-4" />
               </div>
               <div>
                 <h3 className="text-xs font-semibold text-slate-900">
-                  Unggah Berkas Klaim Digital
+                  Unggah Berkas Klaim FPK (Excel)
                 </h3>
                 <p className="text-[11px] text-slate-500">
-                  Pemeriksaan Berkas Rekam Medis (PDF) &amp; Rekap FPK (CSV)
+                  Formulir Pengajuan Klaim Excel (.xlsx) &amp; Berkas Vedika BPJS
                 </p>
               </div>
             </div>
@@ -607,7 +627,7 @@ export function ModalUploadClaim({
             <input
               ref={fileInputRef}
               type="file"
-              accept=".pdf,.csv,.xlsx,application/pdf,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,.json"
+              accept=".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,.pdf,application/pdf"
               onChange={handleFileInputChange}
               className="hidden"
             />
@@ -635,27 +655,27 @@ export function ModalUploadClaim({
                 className={cn(
                   "border border-dashed rounded-[4px] p-6 flex flex-col items-center justify-center text-center transition-all cursor-pointer select-none",
                   isDraggingOver
-                    ? "border-blue-500 bg-blue-50/70 ring-2 ring-blue-500/20"
-                    : "border-slate-300 bg-slate-50/50 hover:bg-slate-50 hover:border-blue-400"
+                    ? "border-emerald-500 bg-emerald-50/70 ring-2 ring-emerald-500/20"
+                    : "border-slate-300 bg-slate-50/50 hover:bg-slate-50 hover:border-emerald-400"
                 )}
               >
-                <div className="w-10 h-10 rounded-[4px] bg-white border border-slate-200 flex items-center justify-center text-slate-600 mb-2 shadow-2xs">
+                <div className="w-10 h-10 rounded-[4px] bg-white border border-slate-200 flex items-center justify-center text-emerald-600 mb-2 shadow-2xs">
                   {isDraggingOver ? (
-                    <UploadCloud className="w-5 h-5 text-blue-600 animate-bounce" />
+                    <UploadCloud className="w-5 h-5 text-emerald-600 animate-bounce" />
                   ) : (
-                    <FileType className="w-5 h-5 text-slate-700" />
+                    <FileSpreadsheet className="w-5 h-5 text-emerald-600" />
                   )}
                 </div>
                 <h4 className="text-xs font-semibold text-slate-800">
-                  Pilih atau tarik berkas klaim digital (.pdf / .csv)
+                  Pilih atau tarik berkas Excel klaim (.xlsx)
                 </h4>
                 <p className="text-[11px] text-slate-500 mt-1 max-w-xs leading-relaxed">
-                  Mendukung Berkas Rekam Medis Digital (PDF) atau Formulir Pengajuan Klaim FPK (CSV) standar BPJS Kesehatan.
+                  Tarik berkas Formulir Pengajuan Klaim FPK (Excel .xlsx) atau Berkas Rekam Medis (PDF) ke sini.
                 </p>
 
                 {selectedFileName && (
                   <div className="mt-3 px-2.5 py-1 bg-white border border-slate-200 rounded-[4px] text-[11px] font-mono text-slate-700 flex items-center gap-1.5 shadow-2xs">
-                    <FileText className="w-3.5 h-3.5 text-blue-600" />
+                    <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-600" />
                     <span>{selectedFileName}</span>
                   </div>
                 )}
@@ -671,17 +691,17 @@ export function ModalUploadClaim({
                   className="inline-flex items-center gap-1.5 text-xs text-blue-700 hover:text-blue-800 font-semibold hover:underline"
                 >
                   <HelpCircle className="w-3.5 h-3.5" />
-                  <span>Panduan Berkas Vedika &amp; Format FPK</span>
+                  <span>Format Kolom Excel FPK &amp; Panduan Vedika</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={handleDownloadTemplate}
-                  className="inline-flex items-center gap-1 text-[11px] text-slate-600 hover:text-slate-900 border border-slate-200 px-2 py-0.5 rounded-[4px] hover:bg-slate-50 transition-colors"
-                  title="Unduh contoh Formulir Pengajuan Klaim (FPK) format CSV"
+                  className="inline-flex items-center gap-1.5 text-[11px] text-emerald-800 font-medium hover:text-emerald-900 border border-emerald-300 bg-emerald-50 px-2.5 py-1 rounded-[4px] hover:bg-emerald-100 transition-colors shadow-2xs"
+                  title="Unduh contoh template Formulir Pengajuan Klaim (FPK) Microsoft Excel"
                 >
-                  <Download className="w-3 h-3 text-slate-500" />
-                  <span>Unduh Contoh FPK (.csv)</span>
+                  <Download className="w-3 h-3 text-emerald-700" />
+                  <span>Unduh Template Excel (.xlsx)</span>
                 </button>
               </div>
             )}
@@ -695,11 +715,32 @@ export function ModalUploadClaim({
                 <div className="grid grid-cols-1 gap-2">
                   <button
                     type="button"
+                    onClick={() => handleSimulateUpload("EXCEL_FPK")}
+                    className="flex items-center justify-between p-2.5 rounded-[4px] border border-slate-200 bg-white hover:bg-slate-50 text-slate-800 text-xs text-left transition-colors"
+                  >
+                    <div className="flex items-center gap-2">
+                      <FileSpreadsheet className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                      <div>
+                        <div className="font-semibold text-slate-900">
+                          Sampel Formulir Pengajuan Klaim Excel (FPK)
+                        </div>
+                        <div className="text-[11px] text-slate-500">
+                          formulir_pengajuan_klaim_fpk.xlsx (Tabel Rekapitulasi Klaim Faskes)
+                        </div>
+                      </div>
+                    </div>
+                    <span className="text-[11px] text-emerald-700 font-medium px-2 py-0.5 bg-emerald-50 border border-emerald-200 rounded-[4px]">
+                      Uji Excel
+                    </span>
+                  </button>
+
+                  <button
+                    type="button"
                     onClick={() => handleSimulateUpload("PDF_VERIFIED")}
                     className="flex items-center justify-between p-2.5 rounded-[4px] border border-slate-200 bg-white hover:bg-slate-50 text-slate-800 text-xs text-left transition-colors"
                   >
                     <div className="flex items-center gap-2">
-                      <FileCheck className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                      <FileCheck className="w-4 h-4 text-blue-600 flex-shrink-0" />
                       <div>
                         <div className="font-semibold text-slate-900">
                           Sampel Berkas Digital PDF (RME)
@@ -709,29 +750,8 @@ export function ModalUploadClaim({
                         </div>
                       </div>
                     </div>
-                    <span className="text-[11px] text-emerald-700 font-medium px-2 py-0.5 bg-emerald-50 border border-emerald-200 rounded-[4px]">
-                      Uji PDF
-                    </span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => handleSimulateUpload("CSV_FPK")}
-                    className="flex items-center justify-between p-2.5 rounded-[4px] border border-slate-200 bg-white hover:bg-slate-50 text-slate-800 text-xs text-left transition-colors"
-                  >
-                    <div className="flex items-center gap-2">
-                      <Table className="w-4 h-4 text-blue-600 flex-shrink-0" />
-                      <div>
-                        <div className="font-semibold text-slate-900">
-                          Sampel Formulir Pengajuan Klaim (FPK)
-                        </div>
-                        <div className="text-[11px] text-slate-500">
-                          formulir_pengajuan_klaim_fpk.csv (Tabel Rekapitulasi Klaim Faskes)
-                        </div>
-                      </div>
-                    </div>
                     <span className="text-[11px] text-blue-700 font-medium px-2 py-0.5 bg-blue-50 border border-blue-200 rounded-[4px]">
-                      Uji CSV
+                      Uji PDF
                     </span>
                   </button>
 
@@ -747,7 +767,7 @@ export function ModalUploadClaim({
                           Sampel Pelanggaran Privasi NIK
                         </div>
                         <div className="text-[11px] text-slate-500">
-                          berkas_pelanggaran_privasi_nik.pdf (Memuat NIK 16-digit tanpa sanitasi)
+                          formulir_pelanggaran_nik.xlsx (Memuat NIK 16-digit tanpa sanitasi)
                         </div>
                       </div>
                     </div>
@@ -933,7 +953,7 @@ export function ModalUploadClaim({
               </span>
             ) : (
               <span className="text-[11px] text-slate-400">
-                Format didukung: .pdf, .csv, .xlsx
+                Format didukung: Microsoft Excel (.xlsx), PDF (.pdf)
               </span>
             )}
             <div className="flex items-center gap-2">
@@ -961,15 +981,15 @@ export function ModalUploadClaim({
             {/* Guide Header */}
             <div className="px-5 py-3.5 border-b border-slate-200 flex items-center justify-between bg-slate-50/80 flex-shrink-0">
               <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-[4px] bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-700">
-                  <FileText className="w-4 h-4" />
+                <div className="w-7 h-7 rounded-[4px] bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-700">
+                  <FileSpreadsheet className="w-4 h-4" />
                 </div>
                 <div>
                   <h3 className="text-xs font-semibold text-slate-900">
-                    Standar Berkas Digital Klaim &amp; Format Penagihan BPJS
+                    Standar Berkas Klaim Excel (FPK) &amp; Dokumen Vedika
                   </h3>
                   <p className="text-[11px] text-slate-500">
-                    Sistem Vedika BPJS Kesehatan, Berkas PDF RME, dan Formulir Pengajuan Klaim FPK
+                    Struktur Kolom Excel Formulir Pengajuan Klaim &amp; Persyaratan Dokumen BPJS
                   </p>
                 </div>
               </div>
@@ -986,11 +1006,24 @@ export function ModalUploadClaim({
             <div className="px-5 border-b border-slate-200 bg-white flex items-center gap-4 flex-shrink-0">
               <button
                 type="button"
+                onClick={() => setGuideTab("excel")}
+                className={cn(
+                  "py-2.5 text-xs font-semibold border-b-2 transition-colors flex items-center gap-1.5",
+                  guideTab === "excel"
+                    ? "border-emerald-600 text-emerald-700"
+                    : "border-transparent text-slate-500 hover:text-slate-800"
+                )}
+              >
+                <FileSpreadsheet className="w-3.5 h-3.5" />
+                <span>Formulir Pengajuan Klaim FPK (.xlsx)</span>
+              </button>
+              <button
+                type="button"
                 onClick={() => setGuideTab("pdf")}
                 className={cn(
                   "py-2.5 text-xs font-semibold border-b-2 transition-colors flex items-center gap-1.5",
                   guideTab === "pdf"
-                    ? "border-blue-600 text-blue-700"
+                    ? "border-emerald-600 text-emerald-700"
                     : "border-transparent text-slate-500 hover:text-slate-800"
                 )}
               >
@@ -999,24 +1032,11 @@ export function ModalUploadClaim({
               </button>
               <button
                 type="button"
-                onClick={() => setGuideTab("csv")}
-                className={cn(
-                  "py-2.5 text-xs font-semibold border-b-2 transition-colors flex items-center gap-1.5",
-                  guideTab === "csv"
-                    ? "border-blue-600 text-blue-700"
-                    : "border-transparent text-slate-500 hover:text-slate-800"
-                )}
-              >
-                <Table className="w-3.5 h-3.5" />
-                <span>Formulir Pengajuan Klaim FPK (.csv)</span>
-              </button>
-              <button
-                type="button"
                 onClick={() => setGuideTab("privacy")}
                 className={cn(
                   "py-2.5 text-xs font-semibold border-b-2 transition-colors flex items-center gap-1.5",
                   guideTab === "privacy"
-                    ? "border-blue-600 text-blue-700"
+                    ? "border-emerald-600 text-emerald-700"
                     : "border-transparent text-slate-500 hover:text-slate-800"
                 )}
               >
@@ -1027,15 +1047,98 @@ export function ModalUploadClaim({
 
             {/* Guide Content Scroll Area */}
             <div className="flex-1 overflow-y-auto p-5 space-y-4 text-xs">
-              {guideTab === "pdf" && (
+              {guideTab === "excel" && (
                 <div className="space-y-3.5">
-                  <div className="p-3 bg-blue-50/70 border border-blue-200 rounded-[4px] text-blue-900 leading-relaxed text-[11px]">
-                    Dalam operasional BPJS Kesehatan (Sistem Vedika - Verifikasi Digital Klaim), rumah sakit mengunggah <strong>Berkas Digital PDF (.pdf)</strong> sebagai bukti otentik rekam medis elektronik.
+                  <div className="flex items-center justify-between">
+                    <p className="text-slate-600 text-[11px] leading-relaxed">
+                      Format tabel <strong>Formulir Pengajuan Klaim (FPK) Microsoft Excel (.xlsx)</strong> berisi rekapitulasi data pasien, diagnosa ICD-10, tindakan ICD-9-CM, dan tarif penagihan INA-CBG.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={handleDownloadTemplate}
+                      className="inline-flex items-center gap-1.5 px-3 py-1 text-[11px] font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-[4px] transition-colors shadow-2xs flex-shrink-0 ml-3"
+                    >
+                      <Download className="w-3 h-3" />
+                      <span>Unduh .xlsx</span>
+                    </button>
+                  </div>
+
+                  <div className="border border-slate-200 rounded-[4px] overflow-x-auto shadow-2xs">
+                    <table className="w-full text-left text-[11px] font-mono">
+                      <thead className="bg-emerald-50 border-b border-emerald-200 text-emerald-900 font-semibold">
+                        <tr>
+                          <th className="px-3 py-2 whitespace-nowrap">No_SEP</th>
+                          <th className="px-3 py-2 whitespace-nowrap">No_Klaim</th>
+                          <th className="px-3 py-2 whitespace-nowrap">Nama_Faskes</th>
+                          <th className="px-3 py-2 whitespace-nowrap">Nama_Pasien</th>
+                          <th className="px-3 py-2 whitespace-nowrap">Kode_ICD10_Utama</th>
+                          <th className="px-3 py-2 whitespace-nowrap">Kode_INACBG</th>
+                          <th className="px-3 py-2 whitespace-nowrap text-right">Tarif_Diajukan_RS</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100 text-slate-700 bg-white">
+                        <tr>
+                          <td className="px-3 py-2 whitespace-nowrap">0089R0011026V000944</td>
+                          <td className="px-3 py-2 whitespace-nowrap font-semibold text-slate-900">CLM-2026-944</td>
+                          <td className="px-3 py-2 whitespace-nowrap">RSUD Dr. Soetomo</td>
+                          <td className="px-3 py-2 whitespace-nowrap">Tn. B*** (Disanitasi)</td>
+                          <td className="px-3 py-2 whitespace-nowrap">I21.0 (STEMI)</td>
+                          <td className="px-3 py-2 whitespace-nowrap font-medium text-blue-700">I-4-10-III</td>
+                          <td className="px-3 py-2 whitespace-nowrap text-right font-semibold text-slate-900">Rp 45.000.000</td>
+                        </tr>
+                      </tbody>
+                    </table>
                   </div>
 
                   <div>
                     <h5 className="font-semibold text-slate-900 mb-1.5">
-                      1. Dokumen Medis yang Wajib Dilampirkan (Permenkes No. 24/2022)
+                      Kolom Standar Header Excel:
+                    </h5>
+                    <ul className="grid grid-cols-2 gap-1.5 text-[11px] text-slate-600">
+                      <li className="flex items-center gap-1 font-mono">
+                        <span className="text-emerald-700 font-bold">•</span> No_SEP
+                      </li>
+                      <li className="flex items-center gap-1 font-mono">
+                        <span className="text-emerald-700 font-bold">•</span> No_Klaim
+                      </li>
+                      <li className="flex items-center gap-1 font-mono">
+                        <span className="text-emerald-700 font-bold">•</span> Nama_Faskes
+                      </li>
+                      <li className="flex items-center gap-1 font-mono">
+                        <span className="text-emerald-700 font-bold">•</span> DPJP
+                      </li>
+                      <li className="flex items-center gap-1 font-mono">
+                        <span className="text-emerald-700 font-bold">•</span> Kode_ICD10_Utama
+                      </li>
+                      <li className="flex items-center gap-1 font-mono">
+                        <span className="text-emerald-700 font-bold">•</span> Kode_ICD10_Sekunder
+                      </li>
+                      <li className="flex items-center gap-1 font-mono">
+                        <span className="text-emerald-700 font-bold">•</span> Kode_ICD9CM_Prosedur
+                      </li>
+                      <li className="flex items-center gap-1 font-mono">
+                        <span className="text-emerald-700 font-bold">•</span> Kode_INACBG
+                      </li>
+                      <li className="flex items-center gap-1 font-mono">
+                        <span className="text-emerald-700 font-bold">•</span> Tarif_Diajukan_RS
+                      </li>
+                      <li className="flex items-center gap-1 font-mono">
+                        <span className="text-emerald-700 font-bold">•</span> Tarif_Standar_Verifikasi
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              )}
+
+              {guideTab === "pdf" && (
+                <div className="space-y-3.5">
+                  <div className="p-3 bg-blue-50/70 border border-blue-200 rounded-[4px] text-blue-900 leading-relaxed text-[11px]">
+                    Dalam operasional BPJS Kesehatan (Sistem Vedika - Verifikasi Digital Klaim), rumah sakit menyertakan <strong>Berkas Digital PDF (.pdf)</strong> sebagai bukti otentik rekam medis elektronik.
+                  </div>
+
+                  <div>
+                    <h5 className="font-semibold text-slate-900 mb-1.5">
+                      1. Dokumen Medis Pendukung Wajib (Permenkes No. 24/2022)
                     </h5>
                     <ul className="list-disc list-inside space-y-1 text-slate-600 text-[11px]">
                       <li>
@@ -1064,72 +1167,6 @@ export function ModalUploadClaim({
                 </div>
               )}
 
-              {guideTab === "csv" && (
-                <div className="space-y-3.5">
-                  <div className="flex items-center justify-between">
-                    <p className="text-slate-600 text-[11px]">
-                      Struktur tabel data <strong>Formulir Pengajuan Klaim (FPK)</strong> berbasis spreadsheet (.csv / .xlsx) yang dapat disunting dan dibaca langsung via Microsoft Excel.
-                    </p>
-                    <div className="flex items-center gap-2">
-                      <button
-                        type="button"
-                        onClick={handleCopySampleCsv}
-                        className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-semibold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 rounded-[4px] transition-colors"
-                      >
-                        {isCopied ? (
-                          <>
-                            <Check className="w-3 h-3 text-emerald-600" />
-                            <span className="text-emerald-700">Tersalin!</span>
-                          </>
-                        ) : (
-                          <>
-                            <Copy className="w-3 h-3 text-slate-500" />
-                            <span>Salin CSV</span>
-                          </>
-                        )}
-                      </button>
-                      <button
-                        type="button"
-                        onClick={handleDownloadTemplate}
-                        className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-[4px] transition-colors"
-                      >
-                        <Download className="w-3 h-3" />
-                        <span>Unduh .csv</span>
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="border border-slate-200 rounded-[4px] overflow-x-auto">
-                    <table className="w-full text-left text-[11px] font-mono">
-                      <thead className="bg-slate-100 border-b border-slate-200 text-slate-800">
-                        <tr>
-                          <th className="px-3 py-1.5 whitespace-nowrap">No_SEP</th>
-                          <th className="px-3 py-1.5 whitespace-nowrap">No_Klaim</th>
-                          <th className="px-3 py-1.5 whitespace-nowrap">Faskes</th>
-                          <th className="px-3 py-1.5 whitespace-nowrap">ICD10_Utama</th>
-                          <th className="px-3 py-1.5 whitespace-nowrap">INA_CBG</th>
-                          <th className="px-3 py-1.5 whitespace-nowrap text-right">Tarif_Diajukan</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-slate-100 text-slate-700">
-                        <tr>
-                          <td className="px-3 py-1.5 whitespace-nowrap">0089R0011026V000944</td>
-                          <td className="px-3 py-1.5 whitespace-nowrap font-semibold">CLM-2026-944</td>
-                          <td className="px-3 py-1.5 whitespace-nowrap">RSUD Dr. Soetomo</td>
-                          <td className="px-3 py-1.5 whitespace-nowrap">I21.0 (STEMI)</td>
-                          <td className="px-3 py-1.5 whitespace-nowrap">I-4-10-III</td>
-                          <td className="px-3 py-1.5 whitespace-nowrap text-right font-semibold">Rp 45.000.000</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-
-                  <pre className="p-3 bg-slate-900 text-slate-100 rounded-[4px] font-mono text-[10px] overflow-x-auto max-h-56 leading-relaxed">
-{SAMPLE_FPK_CSV}
-                  </pre>
-                </div>
-              )}
-
               {guideTab === "privacy" && (
                 <div className="space-y-3.5">
                   <div className="p-3 bg-rose-50 border border-rose-200 rounded-[4px] text-rose-900 leading-relaxed text-[11px]">
@@ -1137,7 +1174,7 @@ export function ModalUploadClaim({
                       <Shield className="w-3.5 h-3.5 text-rose-600" />
                       <span>Kewajiban Anonimisasi Data Rekam Medis (UU No. 27/2022)</span>
                     </div>
-                    Sistem menerapkan gateway proteksi privasi ketat pada intake klaim digital. Dokumen PDF atau data FPK yang diunggah harus telah disanitasi dari informasi identitas pribadi (PII) sebelum masuk ke mesin telaah anomali.
+                    Sistem menerapkan gateway proteksi privasi ketat pada intake klaim digital. Baris data pada tabel Excel atau berkas PDF yang diunggah harus telah disanitasi dari informasi identitas pribadi (PII) sebelum masuk ke mesin telaah anomali.
                   </div>
 
                   <div className="border border-slate-200 rounded-[4px] overflow-hidden">
@@ -1170,7 +1207,7 @@ export function ModalUploadClaim({
                   </div>
 
                   <p className="text-[11px] text-slate-500 italic">
-                    * Berkas yang memuat nomor NIK 16-digit utuh akan otomatis terblokir di Tahap 2 dengan status Ditolak.
+                    * Berkas Excel yang memuat nomor NIK 16-digit utuh akan otomatis terblokir di Tahap 2 dengan status Ditolak.
                   </p>
                 </div>
               )}
