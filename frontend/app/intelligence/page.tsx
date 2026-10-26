@@ -21,6 +21,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { renderMarkdown } from "@/lib/markdownUtils";
 
 interface StudioMessage {
   id: string;
@@ -268,9 +269,7 @@ export default function IntelligenceStudioPage() {
                         </div>
                       )}
 
-                      <div className="text-xs text-slate-700 leading-relaxed whitespace-pre-line font-normal">
-                        {m.text}
-                      </div>
+                      {renderMarkdown(m.text)}
 
                       {/* Forensic Table Output if Available */}
                       {m.tableData && m.tableData.length > 0 && (

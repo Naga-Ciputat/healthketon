@@ -20,6 +20,7 @@ import {
 import { useCopilot, CopilotMessage } from "@/lib/copilotContext";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { renderMarkdown } from "@/lib/markdownUtils";
 
 export function ClarixCopilot() {
   const {
@@ -300,9 +301,7 @@ function MessageBubble({
         )}
 
         {/* Narrative Text */}
-        <div className="text-slate-800 leading-relaxed space-y-1.5 whitespace-pre-line text-xs font-normal">
-          {message.text}
-        </div>
+        {renderMarkdown(message.text)}
 
         {/* Interactive Verbatim Citations */}
         {message.citations && message.citations.length > 0 && (

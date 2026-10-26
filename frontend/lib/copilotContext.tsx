@@ -51,10 +51,6 @@ export function CopilotProvider({ children }: { children: React.ReactNode }) {
       sender: "copilot",
       text: "Halo dr. Siti Aminah, saya **Clarix AI**—asisten investigasi klinis dan regulasi platform **TELISIK**. Saya sadar konteks terhadap layar yang Anda buka dan siap membantu menelaah bukti rekam medis, regulasi PMK 3/2023, atau memandu penggunaan aplikasi.",
       timestamp: "Baru saja",
-      reasoningSteps: [
-        "Inisialisasi konteks TELISIK Platform",
-        "Menghubungkan data klaim aktif #CLM-2026-089 (RS Sejahtera Medika)",
-      ],
       actions: [
         {
           label: "Kenapa Sepsis dianulir?",
