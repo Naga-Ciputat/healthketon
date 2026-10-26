@@ -119,25 +119,7 @@ export function SmartDocumentViewer({
         )}
       </div>
 
-      {/* Citation Highlight Indicator when an evidence citation is active */}
-      {activeCitation && activeCitation.documentId === activeTabId && (
-        <div className="bg-amber-50 border-b border-amber-200 px-3.5 py-1.5 flex items-center justify-between text-xs text-amber-950 flex-shrink-0">
-          <div className="flex items-center gap-2 min-w-0">
-            <CheckCircle2 className="w-4 h-4 text-amber-700 flex-shrink-0" />
-            <div className="truncate text-[11.5px]">
-              <span className="font-semibold text-amber-950">
-                Kutipan Bukti Terverifikasi (Halaman {activeCitation.pageNumber}):
-              </span>{" "}
-              <span className="italic text-amber-900 font-medium bg-amber-100/80 px-1 py-0.5 rounded-[2px]">
-                &ldquo;{activeCitation.exactSubstring}&rdquo;
-              </span>
-            </div>
-          </div>
-          <span className="text-[10px] font-semibold text-amber-800 bg-amber-100/80 px-1.5 py-0.5 rounded-[3px] border border-amber-300 flex-shrink-0 ml-2">
-            100% Verbatim Match
-          </span>
-        </div>
-      )}
+
 
       {/* Document Surface Area: Direct PDF View */}
       <div className="flex-1 min-h-0 overflow-hidden relative bg-slate-200/50 flex flex-col">
