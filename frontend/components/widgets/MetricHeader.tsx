@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { AlertCircle, TrendingDown, CheckCircle2, ShieldCheck, Layers } from "lucide-react";
+import { AlertCircle, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 import { ClaimItem } from "@/lib/mockData";
@@ -28,8 +28,6 @@ export function MetricHeader({
   const totalPendingCount = claims ? claims.length : propTotalPending ?? 24;
   const highRiskCount = claims ? claims.filter((c) => c.riskLevel === "TINGGI").length : propHighRisk ?? 4;
   const totalInefficiencyRupiah = claims ? claims.reduce((acc, c) => acc + c.deltaTariff, 0) : propTotalInefficiency ?? 142500000;
-  const fastTrackedCount = claims ? claims.filter((c) => c.riskLevel === "RENDAH").length : propFastTracked ?? 12;
-  const fastTrackedPercent = claims && claims.length > 0 ? Math.round((fastTrackedCount / claims.length) * 100) : propFastTrackedPercent ?? 50;
   const formattedRupiah = new Intl.NumberFormat("id-ID", {
     style: "currency",
     currency: "IDR",
@@ -37,18 +35,24 @@ export function MetricHeader({
   }).format(totalInefficiencyRupiah);
 
   return (
-    <div className={cn("grid grid-cols-1 md:grid-cols-3 gap-3.5", className)}>
-      {/* Card 1: Antrean Verifikasi (BPJS Blue) */}
-      <div className="bg-white border border-slate-200 rounded-md p-4 shadow-2xs hover:border-slate-300 transition-all flex flex-col justify-between">
-        <div className="flex items-center justify-between mb-2">
+    <div className={cn("grid grid-cols-1 md:grid-cols-2 gap-3.5", className)}>
+      {/* Card 1: Antrean Telaah Klaim */}
+      <div className="relative overflow-hidden bg-white border border-slate-200 rounded-md p-4 shadow-2xs hover:border-slate-300 transition-all flex flex-col justify-between min-h-[122px]">
+        {/* Decorative corner image: claims.png */}
+        <div className="absolute -top-6 -right-6 w-36 h-36 sm:w-44 sm:h-44 pointer-events-none select-none">
+          <img
+            src="/images/decoratives/claims.png"
+            alt="Antrean Telaah Klaim"
+            className="w-full h-full object-contain transform rotate-[14deg] opacity-75"
+          />
+        </div>
+
+        <div className="relative z-10 flex items-center justify-between mb-2">
           <span className="text-xs font-semibold text-slate-600">
             Antrean Telaah Klaim
           </span>
-          <div className="w-7 h-7 rounded bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-700">
-            <Layers className="w-4 h-4" />
-          </div>
         </div>
-        <div>
+        <div className="relative z-10">
           <div className="flex items-baseline gap-2">
             <h3 className="text-2xl font-bold text-slate-900 tracking-tight tabular-nums">
               {totalPendingCount}
@@ -64,17 +68,23 @@ export function MetricHeader({
         </div>
       </div>
 
-      {/* Card 2: Potensi Koreksi Tarif (BPJS Green) */}
-      <div className="bg-white border border-slate-200 rounded-md p-4 shadow-2xs hover:border-slate-300 transition-all flex flex-col justify-between">
-        <div className="flex items-center justify-between mb-2">
+      {/* Card 2: Potensi Koreksi Tagihan */}
+      <div className="relative overflow-hidden bg-white border border-slate-200 rounded-md p-4 shadow-2xs hover:border-slate-300 transition-all flex flex-col justify-between min-h-[122px]">
+        {/* Decorative corner image: audit.png */}
+        <div className="absolute -top-6 -right-6 w-36 h-36 sm:w-44 sm:h-44 pointer-events-none select-none">
+          <img
+            src="/images/decoratives/audit.png"
+            alt="Potensi Koreksi Tagihan"
+            className="w-full h-full object-contain transform rotate-[14deg] opacity-75"
+          />
+        </div>
+
+        <div className="relative z-10 flex items-center justify-between mb-2">
           <span className="text-xs font-semibold text-slate-600">
             Potensi Koreksi Tagihan
           </span>
-          <div className="w-7 h-7 rounded bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-700">
-            <TrendingDown className="w-4 h-4" />
-          </div>
         </div>
-        <div>
+        <div className="relative z-10">
           <div className="flex items-baseline gap-2">
             <h3 className="text-2xl font-bold text-emerald-700 tracking-tight tabular-nums">
               {formattedRupiah}
@@ -84,31 +94,6 @@ export function MetricHeader({
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
             <span className="text-[11.5px]">Dari ketidaksesuaian alkes &amp; upcoding</span>
           </div>
-        </div>
-      </div>
-
-      {/* Card 3: Klaim Bersih / Fast-Track (BPJS Green/Slate) */}
-      <div className="bg-white border border-slate-200 rounded-md p-4 shadow-2xs hover:border-slate-300 transition-all flex flex-col justify-between">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-xs font-semibold text-slate-600">
-            Klaim Siap Proses (Sesuai Aturan)
-          </span>
-          <div className="w-7 h-7 rounded bg-slate-50 border border-slate-200 flex items-center justify-center text-slate-700">
-            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-          </div>
-        </div>
-        <div>
-          <div className="flex items-baseline gap-2">
-            <h3 className="text-2xl font-bold text-slate-900 tracking-tight tabular-nums">
-              {fastTrackedCount}
-            </h3>
-            <span className="text-xs text-slate-500 font-medium">
-              Klaim ({fastTrackedPercent}%)
-            </span>
-          </div>
-          <p className="mt-2 text-[11.5px] text-slate-500">
-            Lolos verifikasi otomatis tanpa anomali
-          </p>
         </div>
       </div>
     </div>

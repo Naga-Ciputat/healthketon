@@ -167,10 +167,11 @@ export function ClarixCopilot() {
 
           {/* Chat Messages Stream */}
           <div className="flex-1 overflow-y-auto p-4 space-y-3.5 bg-slate-50/40 text-xs">
-            {messages.map((msg) => (
+            {messages.map((msg, idx) => (
               <MessageBubble
                 key={msg.id}
                 message={msg}
+                isFirst={idx === 0}
                 onExecuteAction={executeAction}
               />
             ))}
@@ -242,9 +243,11 @@ export function ClarixCopilot() {
 function MessageBubble({
   message,
   onExecuteAction,
+  isFirst,
 }: {
   message: CopilotMessage;
   onExecuteAction: (action: any) => void;
+  isFirst?: boolean;
 }) {
   const [showReasoning, setShowReasoning] = useState(false);
   const isUser = message.sender === "user";
@@ -268,8 +271,8 @@ function MessageBubble({
       />
 
       <div className="flex-1 bg-white border border-slate-200 rounded-[6px] p-3 shadow-2xs space-y-2.5">
-        {/* Accordion Reasoning Steps */}
-        {message.reasoningSteps && message.reasoningSteps.length > 0 && (
+        {/* Accordion Reasoning Steps - explicitly hidden for first bubble */}
+        {!isFirst && message.id !== "msg-welcome" && message.reasoningSteps && message.reasoningSteps.length > 0 && (
           <div className="border border-slate-100 rounded-[4px] bg-slate-50/70 overflow-hidden">
             <button
               type="button"
