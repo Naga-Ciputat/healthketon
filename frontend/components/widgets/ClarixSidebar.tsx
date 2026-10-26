@@ -124,28 +124,29 @@ export function ClarixSidebar({
                 <Link
                   href={item.href}
                   className={cn(
-                    "flex items-center justify-between px-3 rounded-[4px] transition-colors text-xs group",
-                    item.customIconSrc ? "py-1.5" : "py-2",
+                    "flex items-center justify-between px-3 py-2 rounded-[4px] transition-colors text-xs group",
                     isActive
                       ? "bg-blue-50/80 text-blue-800 font-semibold"
                       : "text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium"
                   )}
                 >
                   <div className="flex items-center gap-2.5 min-w-0">
-                    {item.customIconSrc ? (
-                      <img
-                        src={item.customIconSrc}
-                        alt={item.label}
-                        className="w-7 h-7 -my-1.5 flex-shrink-0 object-contain drop-shadow-2xs"
-                      />
-                    ) : (
-                      <Icon
-                        className={cn(
-                          "w-4 h-4 flex-shrink-0",
-                          isActive ? "text-blue-600" : "text-slate-400 group-hover:text-slate-600"
-                        )}
-                      />
-                    )}
+                    <div className="w-4 h-4 flex items-center justify-center flex-shrink-0">
+                      {item.customIconSrc ? (
+                        <img
+                          src={item.customIconSrc}
+                          alt={item.label}
+                          className="w-6 h-6 max-w-none flex-shrink-0 object-contain drop-shadow-2xs"
+                        />
+                      ) : (
+                        <Icon
+                          className={cn(
+                            "w-4 h-4 flex-shrink-0",
+                            isActive ? "text-blue-600" : "text-slate-400 group-hover:text-slate-600"
+                          )}
+                        />
+                      )}
+                    </div>
                     <span className="truncate">{item.label}</span>
                   </div>
 
