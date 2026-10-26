@@ -73,7 +73,7 @@ export const UI_LAYOUT_KNOWLEDGE = {
   },
   intelligence: {
     path: "/intelligence",
-    title: "Telisik AI Studio (Pure AI)",
+    title: "Clarix AI Studio (Pure AI)",
     layout: "Studio komando investigasi makro bertenaga Clarix AI untuk analisis lintas-faskes, perbandingan tren fraud, simulasi efisiensi tarif, dan pencarian regulasi hukum JKN.",
   },
 };

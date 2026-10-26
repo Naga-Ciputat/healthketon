@@ -163,7 +163,7 @@ export async function generateCopilotAnswer(
    * Integritas Rekam Medis Elektronik: melarang fabrikasi atau penjiplakan catatan medis (*note cloning*).`,
       actions: [
         {
-          label: "Buka Telisik AI Studio (Eksplorasi Regulasi)",
+          label: "Buka Clarix AI Studio (Eksplorasi Regulasi)",
           actionType: "NAVIGATE",
           payload: { path: "/intelligence" },
         },

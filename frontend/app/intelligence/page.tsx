@@ -43,8 +43,8 @@ export default function IntelligenceStudioPage() {
     {
       id: "initial-1",
       sender: "copilot",
-      title: "Telisik AI Studio Diaktifkan — Mode Investigasi Makro",
-      text: "Selamat datang di **Telisik AI Studio**. Di sini Anda dapat melakukan analisis forensik lintas-faskes, membedah korelasi klaim antar-pasien, melakukan uji komparasi regulasi Permenkes No. 3/2023, serta mensimulasikan dampak efisiensi beban dana JKN secara makro.",
+      title: "Clarix AI Studio Diaktifkan — Mode Investigasi Makro",
+      text: "Selamat datang di **Clarix AI Studio**. Di sini Anda dapat melakukan analisis forensik lintas-faskes, membedah korelasi klaim antar-pasien, melakukan uji komparasi regulasi Permenkes No. 3/2023, serta mensimulasikan dampak efisiensi beban dana JKN secara makro.",
       timestamp: "10:30 WIB",
       legalClause: "Permenkes No. 3/2023 Lampiran II (Pedoman INA-CBG & Standar Tarif JKN)",
       recommendation: "Pilih skenario investigasi cepat di bilah kiri atau masukkan pertanyaan kustom untuk memulai analisis.",
@@ -155,7 +155,7 @@ export default function IntelligenceStudioPage() {
   return (
     <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden bg-slate-100">
       <TopHeader
-        title="Telisik AI Studio"
+        title="Clarix AI Studio"
         subtitle="Pusat Investigasi Makro & Analisis Regulasi JKN"
           badge={
             <span className="px-2 py-0.5 rounded-[4px] text-[10.5px] font-semibold bg-blue-50 text-blue-700 border border-blue-200">

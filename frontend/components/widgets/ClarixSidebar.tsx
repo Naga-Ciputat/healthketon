@@ -45,7 +45,7 @@ export function ClarixSidebar({
       match: (path: string) => path.startsWith("/benchmark"),
     },
     {
-      label: "Telisik AI Studio",
+      label: "Clarix AI Studio",
       href: "/intelligence",
       icon: Sparkles,
       badge: "Pure AI",
