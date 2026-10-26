@@ -100,18 +100,17 @@ export function ClarixCopilot() {
         <button
           type="button"
           onClick={toggleOpen}
-          className="fixed bottom-5 right-5 z-40 flex items-center gap-2 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-[6px] shadow-lg hover:shadow-xl transition-all border border-blue-500 font-medium text-xs group cursor-pointer"
-          title="Buka Asisten Clarix AI (Ctrl + K)"
+          className="fixed bottom-5 right-5 z-40 flex items-center gap-2.5 px-3.5 py-2 bg-white hover:bg-slate-50/90 text-slate-800 hover:text-blue-700 rounded-[8px] shadow-lg shadow-blue-500/15 hover:shadow-xl hover:shadow-blue-500/25 transition-all border border-blue-200 hover:border-blue-300 font-medium text-xs group cursor-pointer"
+          title="Buka Asisten Clarix AI"
           aria-label="Buka Asisten Clarix AI"
         >
           <img
             src="/images/clarix-ai-icon.png"
             alt="Clarix AI"
-            className="w-5 h-5 flex-shrink-0 object-contain"
+            className="w-6 h-6 flex-shrink-0 object-contain drop-shadow-2xs group-hover:scale-105 transition-transform"
           />
-          <span className="font-semibold tracking-tight">Tanya Clarix AI</span>
-          <span className="text-[10px] bg-blue-700/80 px-1.5 py-0.5 rounded text-blue-100 font-mono border border-blue-500/40">
-            Ctrl K
+          <span className="font-semibold tracking-tight text-slate-800 group-hover:text-blue-700 transition-colors">
+            Tanya Clarix AI
           </span>
         </button>
       )}
