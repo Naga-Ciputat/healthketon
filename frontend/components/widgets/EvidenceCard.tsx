@@ -97,11 +97,11 @@ export function EvidenceCard({
               </span>
             )}
 
-            {finding.deltaRupiah && (
+            {typeof finding.deltaRupiah === "number" && finding.deltaRupiah > 0 ? (
               <span className="text-[11px] font-semibold text-rose-700 bg-rose-50 px-1.5 py-0.5 rounded-[4px] border border-rose-200 tabular-nums">
                 Selisih: {formatRupiah(finding.deltaRupiah)}
               </span>
-            )}
+            ) : null}
           </div>
 
           <h4 className="text-xs font-bold text-slate-900 leading-snug">
