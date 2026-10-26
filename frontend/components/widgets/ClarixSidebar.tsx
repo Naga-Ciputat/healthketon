@@ -124,7 +124,8 @@ export function ClarixSidebar({
                 <Link
                   href={item.href}
                   className={cn(
-                    "flex items-center justify-between px-3 py-2 rounded-[4px] transition-colors text-xs group",
+                    "flex items-center justify-between px-3 rounded-[4px] transition-colors text-xs group",
+                    item.customIconSrc ? "py-1.5" : "py-2",
                     isActive
                       ? "bg-blue-50/80 text-blue-800 font-semibold"
                       : "text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium"
@@ -135,7 +136,7 @@ export function ClarixSidebar({
                       <img
                         src={item.customIconSrc}
                         alt={item.label}
-                        className="w-4 h-4 flex-shrink-0 object-contain"
+                        className="w-7 h-7 -my-1.5 flex-shrink-0 object-contain drop-shadow-2xs"
                       />
                     ) : (
                       <Icon
