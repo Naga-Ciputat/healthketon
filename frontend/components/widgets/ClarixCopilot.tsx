@@ -102,7 +102,10 @@ export function ClarixCopilot() {
         <button
           type="button"
           onClick={toggleOpen}
-          className="fixed bottom-5 right-5 z-40 flex items-center gap-2.5 px-3.5 py-2 bg-white hover:bg-slate-50/90 text-slate-800 hover:text-blue-700 rounded-[8px] shadow-lg shadow-blue-500/15 hover:shadow-xl hover:shadow-blue-500/25 transition-all border border-blue-200 hover:border-blue-300 font-medium text-xs group cursor-pointer"
+          className={cn(
+            "fixed z-40 flex items-center gap-2.5 px-3.5 py-2 bg-white hover:bg-slate-50/90 text-slate-800 hover:text-blue-700 rounded-[8px] shadow-lg shadow-blue-500/15 hover:shadow-xl hover:shadow-blue-500/25 transition-all border border-blue-200 hover:border-blue-300 font-medium text-xs group cursor-pointer",
+            pathname === "/benchmark" ? "bottom-2.5 right-6" : "bottom-5 right-5"
+          )}
           title="Buka Asisten Clarix AI"
           aria-label="Buka Asisten Clarix AI"
         >

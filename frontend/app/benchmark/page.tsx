@@ -90,7 +90,7 @@ export default function BenchmarkLauncherPage() {
       </div>
 
       {/* Floating Anchored Bottom Action Bar */}
-      <div className="sticky bottom-0 z-30 bg-white/95 backdrop-blur-xs border-t border-slate-200 px-6 py-3 shadow-md">
+      <div className="sticky bottom-0 z-30 bg-white/95 backdrop-blur-xs border-t border-slate-200 px-6 sm:pr-48 py-3 shadow-md">
         {!isEditingThresholds ? (
           // Mode 1: Standard Review & Execute
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
