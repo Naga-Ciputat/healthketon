@@ -228,28 +228,55 @@ Catatan: ${l.notes}
 
       {/* Main Content Area */}
       <div className="flex-1 overflow-y-auto p-5 max-w-7xl w-full mx-auto space-y-4">
-        {/* Compliance Notice Banner */}
-        <div className="bg-white border border-slate-200 rounded-[4px] p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs shadow-2xs">
-          <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-[4px] bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0 border border-blue-100">
-              <ShieldCheck className="w-4 h-4" />
-            </div>
-            <div>
-              <span className="font-semibold text-slate-900 block">
-                Jejak Audit Permanen Berbasis Hukum
-              </span>
-              <span className="text-slate-500">
-                Seluruh putusan penyesuaian tarif dicatat secara append-only untuk mendukung akuntabilitas mediko-legal dan rekonsiliasi pembayaran faskes.
-              </span>
+        {/* Top Metric Header Row: 1 Card on Left + Hero Video on Right (matching /claims/triage layout) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-3 items-center">
+          {/* Card: Total Efisiensi Rekonsiliasi (Col 4, Height 160px with py-3.5) */}
+          <div className="h-[160px] flex items-center py-3.5 lg:col-span-4">
+            <div className="relative overflow-hidden bg-white border border-slate-200 rounded-md p-3.5 shadow-2xs hover:border-slate-300 transition-all flex flex-col justify-between w-full h-full">
+              {/* Decorative corner image: money.png */}
+              <div className="absolute -top-2.5 -right-2.5 w-20 h-20 pointer-events-none select-none">
+                <img
+                  src="/images/decoratives/money.png"
+                  alt="Total Efisiensi Rekonsiliasi"
+                  className="w-full h-full object-contain transform rotate-[14deg] opacity-75"
+                />
+              </div>
+
+              <div className="relative z-10 flex items-center justify-between">
+                <span className="text-[12.5px] font-semibold text-slate-600">
+                  Total Efisiensi Rekonsiliasi
+                </span>
+              </div>
+              <div className="relative z-10 flex items-baseline gap-2">
+                <h3 className="text-2xl font-bold text-emerald-700 tracking-tight tabular-nums">
+                  {formatRupiah(totalEfficiency)}
+                </h3>
+                <span className="text-xs text-slate-500 font-medium">
+                  {logs.length} Putusan Terekam
+                </span>
+              </div>
             </div>
           </div>
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1.5 text-emerald-700 font-semibold bg-emerald-50 px-2.5 py-1 rounded-[4px] border border-emerald-200 tabular-nums">
-              <Banknote className="w-3.5 h-3.5" />
-              <span>Total Efisiensi: {formatRupiah(totalEfficiency)}</span>
-            </div>
-            <div className="text-[11px] text-slate-500 tabular-nums font-medium bg-slate-50 px-2.5 py-1 rounded-[4px] border border-slate-200">
-              {logs.length} Putusan Terekam
+
+          {/* Right Column: Hero Video (Col 8, Frameless, Aligned Far Right with edge feathering) */}
+          <div className="relative overflow-hidden flex items-center justify-end h-[160px] md:col-span-1 lg:col-span-8 pointer-events-none select-none">
+            <div className="relative h-full flex items-center justify-end">
+              <video
+                src="/videos/hero-audit-trail.webm"
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="h-full w-auto max-w-full object-contain pointer-events-none select-none"
+                style={{
+                  maskImage:
+                    "linear-gradient(to right, transparent 0%, black 18%, black 82%, transparent 100%), linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%)",
+                  WebkitMaskImage:
+                    "linear-gradient(to right, transparent 0%, black 18%, black 82%, transparent 100%), linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%)",
+                  maskComposite: "intersect",
+                  WebkitMaskComposite: "source-in",
+                }}
+              />
             </div>
           </div>
         </div>
