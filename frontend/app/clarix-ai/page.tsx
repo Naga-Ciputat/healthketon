@@ -63,15 +63,6 @@ function getInitialSeedSessions(user: UserProfile): ChatSession[] {
         previewText: "Penelaahan frekuensi tindakan hemodialisa 2x per minggu sesuai PPK Nefrologi Kemenkes...",
         messages: [
           {
-            id: "budi-msg-1",
-            sender: "copilot",
-            title: "Sesi Telaah Khusus: dr. Budi Santoso, Sp.A",
-            text: "Halo dr. Budi Santoso, sistem siap membantu investigasi klaim rawat jalan dan verifikasi kesesuaian tindakan mediko-legal di wilayah KC Jakarta Selatan.",
-            timestamp: "11:20 WIB",
-            legalClause: "PMK No. 3/2023 Bab VII (Pelayanan Hemodialisis Rawat Jalan)",
-            recommendation: "Gunakan data presensi hemodialisa finger-print faskes untuk mencocokkan tanggal tindakan.",
-          },
-          {
             id: "budi-msg-2",
             sender: "user",
             text: "Evaluasi kepatuhan jadwal hemodialisa rawat jalan di RS Mitra Sehat bulan ini.",
@@ -150,21 +141,6 @@ function getInitialSeedSessions(user: UserProfile): ChatSession[] {
       updatedAt: "2026-10-27T09:15:00.000Z",
       previewText: "Ditemukan 18 dari 22 klaim sepsis (81,8%) tidak memiliki bukti biomarker prokalsitonin...",
       messages: [
-        {
-          id: "siti-init-1",
-          sender: "copilot",
-          title: "Clarix AI Studio Aktif — Mode Investigasi Makro",
-          text: "Selamat datang di **Clarix AI Studio**. Di sini Anda dapat menelusuri anomali penagihan faskes, membedah korelasi klaim lintas-pasien, melakukan uji komparasi regulasi **Permenkes No. 3/2023**, serta mensimulasikan dampak efisiensi beban dana JKN secara makro.\n\nPilih salah satu topik investigasi cepat di bawah atau ajukan pertanyaan spesifik terkait klaim dan kaidah koding.",
-          timestamp: "09:00 WIB",
-          legalClause: "Permenkes No. 3/2023 Lampiran II (Pedoman INA-CBG & Standar Tarif Pelayanan JKN)",
-          recommendation: "Gunakan modul ini untuk audit makro lintas-faskes sebelum melakukan audit petik uji lapangan.",
-          followUps: [
-            "Kenapa Sepsis dianulir di RS Sejahtera Medika?",
-            "Cek Regulasi PMK 3/2023 tentang Unbundling Stent",
-            "Analisis pola readmisi ≤ 30 hari",
-            "Deteksi kloning rekam medis CPPT",
-          ],
-        },
         {
           id: "siti-user-1",
           sender: "user",
@@ -339,23 +315,8 @@ export default function ClarixAiStudioPage() {
       category: "Konsultasi Umum",
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      previewText: "Sesi percakapan baru dimulai...",
-      messages: [
-        {
-          id: `init-${Date.now()}`,
-          sender: "copilot",
-          title: `Clarix AI Studio — ${currentUser.name}`,
-          text: `Halo **${currentUser.name}** (${currentUser.role}). Sistem siap membantu analisis komparasi klaim faskes, regulasi PMK No. 3/2023, atau investigasi anomali klinis.\n\nSilakan ajukan pertanyaan baru atau pilih skenario cepat di bawah.`,
-          timestamp: new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }) + " WIB",
-          legalClause: "Permenkes No. 3/2023 Lampiran II (Standar Verifikasi Klaim FKRTL)",
-          recommendation: "Pilih saran pertanyaan lanjutan atau ketik kueri investigasi spesifik pada bilah di bawah.",
-          followUps: [
-            "Kenapa Sepsis dianulir?",
-            "Cek Regulasi PMK 3/2023 tentang Unbundling Stent",
-            "Analisis pola readmisi ≤ 30 hari",
-          ],
-        },
-      ],
+      previewText: "Mulai percakapan baru...",
+      messages: [],
     };
 
     const updated = [newSession, ...sessions];
@@ -793,7 +754,26 @@ export default function ClarixAiStudioPage() {
           {/* Main Single-Pane Chat Stream */}
           <div className="flex-1 overflow-y-auto px-4 py-6">
             <div className="max-w-4xl mx-auto w-full space-y-6">
-              {messages.map((m) => {
+              {messages.length === 0 ? (
+                <div className="h-full min-h-[350px] flex flex-col items-center justify-center text-center px-4 py-20 space-y-3 select-none">
+                  <div className="w-10 h-10 rounded-xl bg-white border border-slate-200 shadow-2xs flex items-center justify-center p-2">
+                    <img
+                      src="/images/clarix-ai-icon.png"
+                      alt="Clarix AI"
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <h3 className="text-sm font-semibold text-slate-800">
+                      Konsol Investigasi Clarix AI
+                    </h3>
+                    <p className="text-xs text-slate-400 max-w-sm mx-auto">
+                      Mulai sesi baru dengan mengajukan pertanyaan atau kueri investigasi klaim di bawah.
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                messages.map((m) => {
                 const isUser = m.sender === "user";
 
                 if (isUser) {
@@ -948,7 +928,7 @@ export default function ClarixAiStudioPage() {
                     </div>
                   </div>
                 );
-              })}
+              }))}
 
               {/* AI Thinking Animation */}
               {isProcessing && (
