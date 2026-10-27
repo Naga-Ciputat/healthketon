@@ -404,12 +404,66 @@ export default function ClarixAiStudioPage() {
     setInputQuery("");
     setIsProcessing(true);
 
-    // AI simulation delay
-    await new Promise((resolve) => setTimeout(resolve, 800));
+    let responseMsg: StudioMessage | null = null;
 
-    let responseMsg: StudioMessage;
+    // 1. Try Live Inference via Backend API (Gemini Flash)
+    try {
+      const res = await fetch("http://localhost:8000/api/v1/copilot/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          query,
+          pathname: "/clarix-ai",
+          screenContext: {
+            pathname: "/clarix-ai",
+            activeUser: currentUser,
+            visibleMetrics: {
+              potentialSavings: "Rp 142.500.000",
+              examinedClaims: "24 Klaim Diperiksa Bulan Ini",
+            },
+            topic: derivedCategory,
+            modelName: "Gemini 2.5 Flash",
+          },
+        }),
+      });
 
-    if (lowerQ.includes("sepsis") || lowerQ.includes("a41.9")) {
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.answerMarkdown) {
+          responseMsg = {
+            id: `cop-${Date.now()}`,
+            sender: "copilot",
+            title: `Hasil Analisis Forensik — ${derivedCategory}`,
+            text: data.answerMarkdown,
+            timestamp: new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }) + " WIB",
+            legalClause: "Permenkes No. 3 Tahun 2023 & Regulasi BPJS Kesehatan",
+            recommendation: "Gunakan data ini sebagai acuan mediko-legal saat menerbitkan berita acara rekonsiliasi.",
+            followUps: [
+              "Cek rincian regulasi PMK 3/2023",
+              "Bandingkan tren klaim faskes mitra bulan berjalan",
+            ],
+          };
+        }
+      }
+    } catch (err) {
+      console.warn("[ClarixStudio] Backend API unreachable, falling back to local scenario handler:", err);
+    }
+
+    // 2. Local Fallback with Context Grounding
+    if (!responseMsg) {
+      await new Promise((resolve) => setTimeout(resolve, 300));
+
+      if (lowerQ.includes("siapa") && (lowerQ.includes("akun") || lowerQ.includes("verifikator") || lowerQ.includes("login") || lowerQ.includes("saya"))) {
+        responseMsg = {
+          id: `cop-${Date.now()}`,
+          sender: "copilot",
+          title: "Informasi Akun Verifikator Aktif",
+          text: `Akun verifikator yang sedang aktif di sesi layar studio Anda saat ini adalah **${currentUser.name}** (${currentUser.role}).`,
+          timestamp: new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }) + " WIB",
+          legalClause: "UU PDP No. 27/2022 & Akses Terotentikasi BPJS Kesehatan",
+          recommendation: "Sesi percakapan dan riwayat investigasi Anda tersimpan secara privat khusus untuk akun ini.",
+        };
+      } else if (lowerQ.includes("sepsis") || lowerQ.includes("a41.9")) {
       responseMsg = {
         id: `cop-${Date.now()}`,
         sender: "copilot",
@@ -500,10 +554,19 @@ export default function ClarixAiStudioPage() {
         ],
       };
     }
+  }
+
+    const finalResponseMsg: StudioMessage = responseMsg || {
+      id: `cop-${Date.now()}`,
+      sender: "copilot",
+      title: "Hasil Sintesis Penelusuran",
+      text: "Sistem telah menganalisis pertanyaan Anda berpedoman pada regulasi JKN.",
+      timestamp: new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }) + " WIB",
+    };
 
     const finalSession: ChatSession = {
       ...updatedSessionUser,
-      messages: [...withUser, responseMsg],
+      messages: [...withUser, finalResponseMsg],
       updatedAt: new Date().toISOString(),
     };
 

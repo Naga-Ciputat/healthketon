@@ -6,6 +6,83 @@ import { ClaimItem, INITIAL_CLAIMS } from "./mockData";
 import { CopilotAction, CopilotCitation, CopilotResponse } from "./copilotKnowledge";
 import { generateCopilotAnswer } from "./copilotEngine";
 
+function getLiveScreenContext(pathname: string, activeClaim: ClaimItem | null) {
+  if (typeof window === "undefined") {
+    return { pathname, activeClaim };
+  }
+
+  // Scrape visible metrics from live DOM
+  const visibleMetrics: Record<string, string> = {};
+  const bodyText = document.body.innerText;
+
+  if (bodyText.includes("142,5 Jt") || bodyText.includes("142.500.000") || pathname.includes("/triage")) {
+    visibleMetrics["potentialSavings"] = "Rp 142.500.000";
+    visibleMetrics["potentialSavingsShort"] = "+Rp 142,5 Jt";
+  }
+  if (bodyText.includes("48.800.000")) {
+    visibleMetrics["pendingReconciliation"] = "Rp 48.800.000";
+  }
+  if (bodyText.includes("24.900.000")) {
+    visibleMetrics["claimDeltaTariff"] = "Rp 24.900.000";
+  }
+  if (bodyText.includes("91.4%") || pathname.includes("/benchmark")) {
+    visibleMetrics["recall"] = "91.4%";
+    visibleMetrics["falsePositiveRate"] = "4.2%";
+    visibleMetrics["minRecallTarget"] = "85%";
+    visibleMetrics["maxFprTolerance"] = "15%";
+  }
+
+  // Active user resolution
+  let activeUser = { id: "usr-siti", name: "dr. Siti Aminah", role: "Verifikator Utama BPJS" };
+  try {
+    const savedUser = localStorage.getItem("telisik_active_user");
+    if (savedUser) {
+      activeUser = JSON.parse(savedUser);
+    }
+  } catch {
+    // Default fallback
+  }
+
+  // Active document tab resolution in PDF Viewer
+  const activeTabEl = document.querySelector(
+    "[role='tab'][data-state='active'], [role='tab'][aria-selected='true'], button.border-blue-600, button.bg-blue-50"
+  );
+  const activeDocumentTab = activeTabEl?.textContent?.trim() || "Resume Medis";
+
+  // Dynamic active claim resolution (match URL)
+  let resolvedClaim = activeClaim;
+  const matchClaim = pathname.match(/\/claims\/(CLM-[^/]+)/);
+  if (matchClaim) {
+    const claimIdFromUrl = matchClaim[1];
+    if (!resolvedClaim || resolvedClaim.id !== claimIdFromUrl) {
+      const is092 = claimIdFromUrl.includes("092");
+      resolvedClaim = {
+        id: claimIdFromUrl,
+        hospitalName: is092 ? "RS Medika Nusantara" : "RS Sejahtera Medika",
+        patientAge: is092 ? 52 : 48,
+        deltaTariff: is092 ? 10000000 : 24900000,
+        primaryDiagnosis: {
+          code: is092 ? "I20.0" : "I21.0",
+          name: is092 ? "Unstable Angina Pectoris (Non-Sepsis)" : "STEMI Anterior",
+        },
+      } as any;
+    }
+  }
+
+  // Count visible table rows
+  const visibleTableRowsCount = document.querySelectorAll("tbody tr").length;
+
+  return {
+    pathname,
+    activeUser,
+    activeClaim: resolvedClaim,
+    activeDocumentTab,
+    visibleMetrics,
+    visibleTableRowsCount,
+    modelName: "Gemini 2.5 Flash",
+  };
+}
+
 export interface CopilotMessage {
   id: string;
   sender: "user" | "copilot";
@@ -100,7 +177,8 @@ export function CopilotProvider({ children }: { children: React.ReactNode }) {
       setIsThinking(true);
 
       try {
-        const response: CopilotResponse = await generateCopilotAnswer(text, pathname, activeClaim);
+        const screenContext = getLiveScreenContext(pathname, activeClaim);
+        const response: CopilotResponse = await generateCopilotAnswer(text, pathname, screenContext.activeClaim, screenContext);
 
         const copilotMsg: CopilotMessage = {
           id: `copilot-${Date.now()}`,
