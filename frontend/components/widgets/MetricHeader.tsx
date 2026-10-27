@@ -36,56 +36,60 @@ export function MetricHeader({
   const videoRef = React.useRef<HTMLVideoElement>(null);
 
   return (
-    <div className={cn("grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-3 items-center", className)}>
-      {/* Card 1: Antrean Telaah Klaim (Vertical padding in exchange for fixed height, Col 4) */}
-      <div className="relative overflow-hidden bg-white border border-slate-200 rounded-md py-7 px-5 shadow-2xs hover:border-slate-300 transition-all flex flex-col justify-center gap-2.5 lg:col-span-4">
-        {/* Decorative corner image: claims.png */}
-        <div className="absolute -top-2 -right-2 w-20 h-20 pointer-events-none select-none">
-          <img
-            src="/images/decoratives/claims.png"
-            alt="Antrean Telaah Klaim"
-            className="w-full h-full object-contain transform rotate-[14deg] opacity-75"
-          />
-        </div>
+    <div className={cn("grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-3", className)}>
+      {/* Card 1: Antrean Telaah Klaim (Vertical padding py-3.5, Row height preserved at 160px, Col 4) */}
+      <div className="h-[160px] flex items-center py-3.5 lg:col-span-4">
+        <div className="relative overflow-hidden bg-white border border-slate-200 rounded-md p-3.5 shadow-2xs hover:border-slate-300 transition-all flex flex-col justify-between w-full h-full">
+          {/* Decorative corner image: claims.png */}
+          <div className="absolute -top-2.5 -right-2.5 w-20 h-20 pointer-events-none select-none">
+            <img
+              src="/images/decoratives/claims.png"
+              alt="Antrean Telaah Klaim"
+              className="w-full h-full object-contain transform rotate-[14deg] opacity-75"
+            />
+          </div>
 
-        <div className="relative z-10 flex items-center justify-between">
-          <span className="text-[13px] font-semibold text-slate-600">
-            Antrean Telaah Klaim
-          </span>
-        </div>
-        <div className="relative z-10 flex items-baseline gap-2">
-          <h3 className="text-2xl font-bold text-slate-900 tracking-tight tabular-nums">
-            {totalPendingCount}
-          </h3>
-          <span className="text-xs text-slate-500 font-medium">Berkas Masuk</span>
+          <div className="relative z-10 flex items-center justify-between">
+            <span className="text-[12.5px] font-semibold text-slate-600">
+              Antrean Telaah Klaim
+            </span>
+          </div>
+          <div className="relative z-10 flex items-baseline gap-2">
+            <h3 className="text-2xl font-bold text-slate-900 tracking-tight tabular-nums">
+              {totalPendingCount}
+            </h3>
+            <span className="text-xs text-slate-500 font-medium">Berkas Masuk</span>
+          </div>
         </div>
       </div>
 
-      {/* Card 2: Potensi Koreksi Tagihan (Vertical padding in exchange for fixed height, Col 4) */}
-      <div className="relative overflow-hidden bg-white border border-slate-200 rounded-md py-7 px-5 shadow-2xs hover:border-slate-300 transition-all flex flex-col justify-center gap-2.5 lg:col-span-4">
-        {/* Decorative corner image: audit.png */}
-        <div className="absolute -top-2 -right-2 w-20 h-20 pointer-events-none select-none">
-          <img
-            src="/images/decoratives/audit.png"
-            alt="Potensi Koreksi Tagihan"
-            className="w-full h-full object-contain transform rotate-[14deg] opacity-75"
-          />
-        </div>
+      {/* Card 2: Potensi Koreksi Tagihan (Vertical padding py-3.5, Row height preserved at 160px, Col 4) */}
+      <div className="h-[160px] flex items-center py-3.5 lg:col-span-4">
+        <div className="relative overflow-hidden bg-white border border-slate-200 rounded-md p-3.5 shadow-2xs hover:border-slate-300 transition-all flex flex-col justify-between w-full h-full">
+          {/* Decorative corner image: audit.png */}
+          <div className="absolute -top-2.5 -right-2.5 w-20 h-20 pointer-events-none select-none">
+            <img
+              src="/images/decoratives/audit.png"
+              alt="Potensi Koreksi Tagihan"
+              className="w-full h-full object-contain transform rotate-[14deg] opacity-75"
+            />
+          </div>
 
-        <div className="relative z-10 flex items-center justify-between">
-          <span className="text-[13px] font-semibold text-slate-600">
-            Potensi Koreksi Tagihan
-          </span>
-        </div>
-        <div className="relative z-10 flex items-baseline gap-2">
-          <h3 className="text-2xl font-bold text-emerald-700 tracking-tight tabular-nums">
-            {formattedRupiah}
-          </h3>
+          <div className="relative z-10 flex items-center justify-between">
+            <span className="text-[12.5px] font-semibold text-slate-600">
+              Potensi Koreksi Tagihan
+            </span>
+          </div>
+          <div className="relative z-10 flex items-baseline gap-2">
+            <h3 className="text-2xl font-bold text-emerald-700 tracking-tight tabular-nums">
+              {formattedRupiah}
+            </h3>
+          </div>
         </div>
       </div>
 
-      {/* Right Column: Hero Video (Col 4, Aligned Right, Height matching card row) */}
-      <div className="relative overflow-hidden flex items-center justify-end h-[128px] md:col-span-2 lg:col-span-4 pointer-events-none select-none">
+      {/* Right Column: Hero Video (Horizontal, Full Height h-[160px], Col 4, Aligned Right) */}
+      <div className="relative overflow-hidden flex items-center justify-end h-[160px] md:col-span-2 lg:col-span-4 pointer-events-none select-none">
         {/* Right-aligned video container tightly sized to video height with visible feathered sides */}
         <div className="relative h-full flex items-center justify-end">
           <video
