@@ -174,11 +174,12 @@ Halaman ini berfungsi sebagai buku besar audit (*immutable audit ledger*) yang m
 | HEADER: AUDIT TRAIL & ARSIP PUTUSAN KLAIM | dr. Siti Aminah | Status Verifikasi: Terkoneksi            |
 +--------------------------------------------------------------------------------------------------------+
 | METRIC HEADER:                                                                                         |
-| [ Card 1: Total Efisiensi: Rp 157.100.000 | 9 Putusan Terekam ] [ Video Hero: hero-audit-trail.webm ] |
+| [ Card 1: Total Efisiensi ] [ Card 2: Heatmap Efisiensi 28 Hari ] [ Card 3: Hero Video Audit Trail ]   |
+| [ Rp 157.100.000 (9 Putusan) ] [ 7 Hari x 4 Pekan (Hover Detail) ] [ hero-audit-trail.webm ]           |
 +--------------------------------------------------------------------------------------------------------+
 | AUDIT LOG STREAM:                                                                                      |
 | [Pencarian ID Klaim / RS / Verifikator] [Filter: Semua | Disetujui | Klarifikasi | Penyesuaian | Eskalasi] |
-| Tombol Aksi Kanan: [Ekspor Laporan Rekonsiliasi (.pdf)]                                                |
+| Tombol Aksi Kanan: [Ekspor Berita Acara (PDF / CSV / TXT)]                                             |
 +--------------------------------------------------------------------------------------------------------+
 | DAFTAR ENTRI LOG PERMANEN:                                                                             |
 | [Putusan #AUD-2026-089] 27 Okt 2026, 11:45 WIB | Verifikator: dr. Siti Aminah                         |
@@ -190,9 +191,10 @@ Halaman ini berfungsi sebagai buku besar audit (*immutable audit ledger*) yang m
 ```
 
 #### Fitur & Komponen Kunci:
-1. **Header Metrik Audit Trail:**
-   - Menampilkan total akumulasi efisiensi dana JKN yang berhasil diselamatkan (misal Rp 157.100.000) dan jumlah putusan resmi yang terekam.
-   - Sisi kanan menampilkan video animasi spesifik jejak audit mediko-legal (`hero-audit-trail.webm`) dengan border halus dan layout simetris dengan halaman triase.
+1. **Header Metrik & Heatmap Audit Trail (3 Kolom Simetris):**
+   - **Card 1 (Kiri):** Total Efisiensi Rekonsiliasi yang berhasil diselamatkan (misal Rp 157.100.000) dan akumulasi putusan terekam, diperkuat dekorasi `money.png`.
+   - **Card 2 (Tengah — `ReconciliationHeatmapCard.tsx`):** Heatmap visual efisiensi harian 28 hari terakhir ($7\text{ baris hari Senin--Minggu} \times 4\text{ kolom pekan}$). Menggunakan palet hijau emerald khas BPJS bertingkat (Level 0 Rp 0 hingga Level 4 Puncak $>Rp 40\text{ Jt}$). Setiap sel dapat di-hover untuk memunculkan tooltip cerdas interaktif yang memuat tanggal lengkap, nama hari, pekan, total efisiensi rupiah, dan jumlah putusan koreksi.
+   - **Card 3 (Kanan):** Video animasi jejak audit mediko-legal permanen (`hero-audit-trail.webm`) dengan tepian lembut (*feathered mask*), sejajar dan konsisten dengan tata letak halaman triase.
 2. **Pencarian & Pemfilteran Entri Log (`AuditLogStream.tsx`):**
    - Pencarian teks instan berdasarkan nomor berkas klaim, nama rumah sakit, nomor surat dinas, nama verifikator, atau kata kunci dalam pertimbangan medis.
    - Filter cepat jenis putusan: `Semua Putusan`, `Disetujui Penuh`, `Klarifikasi RS`, `Penyesuaian Tarif`, dan `Eskalasi Khusus PK-JKN`.
@@ -543,3 +545,4 @@ Bagi dewan juri atau pengguna yang ingin menguji seluruh alur kerja sistem dari 
 5. **Langkah 5 (Buku Besar Audit):** Buka `/claims/audit-trail`. Verifikasi bahwa putusan baru saja dicatat secara permanen di baris teratas lengkap dengan jam WIB dan nomor surat resmi.
 6. **Langkah 6 (Uji Validitas Ilmiah):** Buka `/benchmark`. Pilih faskes di peta dan klik *"Jalankan Benchmark Suite"*. Amati Confusion Matrix di `/benchmark/evaluation-suite` yang membuktikan *Recall $\ge 90\%$* dan *Verbatim Grounding Rate 100%*.
 7. **Langkah 7 (Konsultasi Copilot):** Tekan **`Ctrl + K`** kapan saja untuk berdialog langsung dengan Clarix AI mengenai dasar hukum PMK 3/2023 atau analisis klaim yang sedang aktif.
+

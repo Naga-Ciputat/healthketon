@@ -8,6 +8,7 @@ import { getStoredAuditLogs } from "@/lib/claimStore";
 import { fetchAuditLogsFromBackend } from "@/lib/api";
 import { ShieldCheck, Download, Check, Banknote, ChevronDown, FileText, FileSpreadsheet } from "lucide-react";
 import { ModalReconciliationReport } from "@/components/widgets/ModalReconciliationReport";
+import { ReconciliationHeatmapCard } from "@/components/widgets/ReconciliationHeatmapCard";
 import { formatWIBDate } from "@/lib/utils";
 
 function AuditTrailContent() {
@@ -259,7 +260,13 @@ Catatan: ${l.notes}
           </div>
 
           {/* Right Column: Hero Video (Col 8, Frameless, Aligned Far Right with edge feathering) */}
-          <div className="relative overflow-hidden flex items-center justify-end h-[160px] md:col-span-1 lg:col-span-8 pointer-events-none select-none">
+                    {/* Card 2: Heatmap Efisiensi Rekonsiliasi 28 Hari (lg:col-span-4, Height 160px with py-3.5) */}
+          <div className="h-[160px] flex items-center py-3.5 lg:col-span-4">
+            <ReconciliationHeatmapCard logs={logs} />
+          </div>
+
+          {/* Right Column: Hero Video (lg:col-span-4, Frameless, Aligned Far Right with edge feathering) */}
+          <div className="relative overflow-hidden flex items-center justify-end h-[160px] md:col-span-2 lg:col-span-4 pointer-events-none select-none">
             <div className="relative h-full flex items-center justify-end">
               <video
                 src="/videos/hero-audit-trail.webm"
