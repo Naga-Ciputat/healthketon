@@ -87,10 +87,10 @@ export function MetricHeader({
         </div>
       </div>
 
-      {/* Right Column: Hero Video (Col 8, Frameless, Smooth Side Edge Feathering) */}
-      <div className="relative overflow-hidden flex items-center justify-center h-[160px] lg:col-span-8 pointer-events-none select-none">
-        {/* Centered video container tightly sized to video height with visible feathered sides */}
-        <div className="relative h-full flex items-center justify-center">
+      {/* Right Column: Hero Video (Col 8, Frameless, Aligned Far Right) */}
+      <div className="relative overflow-hidden flex items-center justify-end h-[160px] lg:col-span-8 pointer-events-none select-none">
+        {/* Right-aligned video container tightly sized to video height with visible feathered sides */}
+        <div className="relative h-full flex items-center justify-end">
           <video
             ref={videoRef}
             src="/videos/hero.webm"
