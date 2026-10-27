@@ -4,11 +4,8 @@ import React, { useState, useRef, useEffect } from "react";
 import { TopHeader } from "@/components/widgets/TopHeader";
 import {
   Sparkles,
-  Send,
   CornerDownLeft,
-  CornerDownRight,
   Scale,
-  Building2,
   FileText,
   TrendingUp,
   Copy,
@@ -16,10 +13,6 @@ import {
   Check,
   ShieldCheck,
   RotateCcw,
-  Sliders,
-  ShieldAlert,
-  Bot,
-  User,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { renderMarkdown } from "@/lib/markdownUtils";
@@ -36,7 +29,6 @@ interface StudioMessage {
 }
 
 export default function ClarixAiStudioPage() {
-  const [selectedModel, setSelectedModel] = useState("gemini-2.0-flash");
   const [inputQuery, setInputQuery] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -181,7 +173,7 @@ export default function ClarixAiStudioPage() {
         id: `cop-${Date.now()}`,
         sender: "copilot",
         title: "Audit Integritas RME: Deteksi Duplikasi Catatan Medis (Note Cloning)",
-        text: `Melalui analisis embedding semantik teks CPPT (*NVIDIA NIM nv-embedqa-e5-v5*), ditemukan indikasi plagiarisme rekam medis antar-pasien:\n\n• **Tingkat Kemiripan:** 94% – 98% kesamaan teks narasi SOAP harfiah tanpa penyesuaian tanda vital objektif.\n• **Temuan Kritis:** Jam visite tercatat berurutan dalam selang 2 menit untuk 8 pasien rawat inap intensif.`,
+        text: `Melalui analisis embedding semantik teks CPPT (*representasi vektor semantik TELISIK*), ditemukan indikasi plagiarisme rekam medis antar-pasien:\n\n• **Tingkat Kemiripan:** 94% – 98% kesamaan teks narasi SOAP harfiah tanpa penyesuaian tanda vital objektif.\n• **Temuan Kritis:** Jam visite tercatat berurutan dalam selang 2 menit untuk 8 pasien rawat inap intensif.`,
         timestamp: new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }) + " WIB",
         tableData: [
           { "Nomor RME Pasien": "RM-2026-9041", "Berkas Sumber (Donor)": "RM-2026-8812", "Skor Kemiripan": "97.4%", "Status Temuan": "Duplikasi Total" },
@@ -215,30 +207,15 @@ export default function ClarixAiStudioPage() {
         subtitle="Investigasi Forensik & Regulasi JKN"
         rightActions={
           <div className="flex items-center gap-2">
-            {/* Model Selector Dropdown */}
-            <div className="flex items-center gap-1.5 bg-white border border-slate-200 rounded-[4px] px-2.5 py-1 text-xs shadow-2xs">
-              <span className="text-[11px] text-slate-500 font-medium">Model:</span>
-              <select
-                value={selectedModel}
-                onChange={(e) => setSelectedModel(e.target.value)}
-                className="bg-transparent font-semibold text-slate-800 focus:outline-none cursor-pointer text-xs"
-              >
-                <option value="gemini-2.0-flash">Gemini 2.0 Flash (Multimodal & Grounding)</option>
-                <option value="gemini-1.5-pro">Gemini 1.5 Pro (Deep Clinical Reasoning)</option>
-                <option value="groq-llama-3.3-70b">Groq LLaMA 3.3 70B (High-Throughput LPU)</option>
-                <option value="nvidia-nim-embed">NVIDIA NIM (nv-embedqa-e5-v5)</option>
-              </select>
-            </div>
-
             {/* Reset Chat Button */}
             <button
               type="button"
               onClick={handleClearChat}
-              className="flex items-center gap-1 px-2.5 py-1 text-xs font-semibold text-slate-600 hover:text-slate-900 bg-white border border-slate-200 hover:bg-slate-50 rounded-[4px] transition-colors shadow-2xs cursor-pointer"
+              className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold text-slate-600 hover:text-slate-900 bg-white border border-slate-200 hover:bg-slate-50 rounded-[4px] transition-colors shadow-2xs cursor-pointer"
               title="Bersihkan riwayat percakapan"
             >
               <RotateCcw className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Reset Sesi</span>
+              <span>Reset Sesi</span>
             </button>
           </div>
         }
@@ -289,9 +266,6 @@ export default function ClarixAiStudioPage() {
                     <div className="flex items-center gap-2 min-w-0">
                       <span className="font-bold text-xs text-slate-900 tracking-tight truncate">
                         {m.title || "Clarix AI Studio"}
-                      </span>
-                      <span className="text-[10px] bg-blue-50 text-blue-700 font-semibold px-1.5 py-0.2 rounded-[3px] border border-blue-200 flex-shrink-0">
-                        {selectedModel.includes("groq") ? "Groq LPU" : "Gemini AI"}
                       </span>
                     </div>
 

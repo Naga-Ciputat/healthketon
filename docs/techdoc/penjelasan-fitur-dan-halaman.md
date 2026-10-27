@@ -270,24 +270,29 @@ Clarix AI Studio adalah konsol penalaran makro (*macro-regulatory intelligence*)
 
 ```
 +--------------------------------------------------------------------------------------------------------+
-| TOP HEADER: CLARIX AI STUDIO | Mode Investigasi Makro-Regulasi | Model: Gemini 2.0 Flash / Pro         |
-+--------------------------------------+-----------------------------------------------------------------+
-| BILAH SKENARIO INVESTIGASI CEPAT:    | CHAT & INTERACTION WORKSPACE:                                   |
-| [1] Audit Upcoding Sepsis Lintas-RS  | Clarix AI: Selamat datang di Studio Investigasi Makro...        |
-| [2] Investigasi Alkes Stent & Angio  |                                                                 |
-| [3] Pola Readmisi Terencana <=30 Hr  | User: Bandingkan rasio klaim sepsis (A41.9) di RS Sejahtera vs  |
-| [4] Deteksi Kloning Rekam Medis      |       RS Medika Nusantara.                                      |
-|                                      |                                                                 |
-| MODEL SELECTOR:                      | Clarix AI: Berdasarkan penelusuran terhadap 1.420 berkas klaim: |
-| [x] Gemini 2.0 Flash (Multimodal)    | +----------------------+---------------+---------------------+   |
-| [ ] LLaMA 3.3 70B (Groq LPU)         | | Fasilitas Kesehatan  | Rasio Sepsis  | Tanpa Lab Objektif  |   |
-| [ ] NVIDIA NIM (nv-embedqa-e5-v5)    | +----------------------+---------------+---------------------+   |
-|                                      | | RS Sejahtera Medika  | 14.8%         | 68.4% (Anomali)     |   |
-|                                      | | RS Medika Nusantara  | 3.2%          | 4.1% (Wajar)        |   |
-|                                      | +----------------------+---------------+---------------------+   |
-|                                      | Klausul Regulasi: Permenkes 3/2023 Lampiran II                  |
-|                                      | Rekomendasi: Lakukan audit petik uji pada 42 berkas kardiologi. |
-+--------------------------------------+-----------------------------------------------------------------+
+| TOP HEADER: CLARIX AI STUDIO / Investigasi Forensik & Regulasi JKN      [Reset Sesi] [Panduan] [KCU]   |
++--------------------------------------------------------------------------------------------------------+
+| CHAT STREAM (SINGLE-PANE FOCUSED):                                                                     |
+|                                                                                                        |
+| [Logo] Clarix AI Studio Aktif — Mode Investigasi Makro                     09:00 WIB [Copy]           |
+|        Selamat datang di Clarix AI Studio. Di sini Anda dapat menelusuri anomali penagihan faskes...   |
+|        [Landasan Hukum: Permenkes 3/2023 Lampiran II]                                                 |
+|        [Rekomendasi Tindakan BPJS: Gunakan modul ini untuk audit makro...]                            |
+|                                                                                                        |
+|        Bandingkan rasio klaim sepsis (A41.9) di RS Sejahtera vs RS Medika Nusantara.    14:58 WIB [S] |
+|                                                                                                        |
+| [Logo] Hasil Investigasi Makro: Anomali Diagnosis Sepsis (A41.9)           14:58 WIB [Copy]           |
+|        Berdasarkan sintesis data 120 klaim kardiovaskular pada faskes mitra cabang:                    |
+|        +----------------------+---------------+---------------------+-------------------+              |
+|        | Faskes               | Klaim Sepsis  | Tanpa Bukti Lab     | Potensi Koreksi   |              |
+|        +----------------------+---------------+---------------------+-------------------+              |
+|        | RS Sejahtera Medika  | 22 Kasus      | 18 Kasus (81.8%)    | Rp 324.000.000    |              |
+|        | RS Medika Nusantara  | 15 Kasus      | 2 Kasus (13.3%)     | Rp 36.000.000     |              |
+|        +----------------------+---------------+---------------------+-------------------+              |
+|        [Landasan Hukum: PMK No. 3/2023 Bab VII & PNPK Sepsis Kemenkes]                                |
+|        [Rekomendasi: Terbitkan Surat Peringatan Resmi No 440/BPJS-KCU/X/2026]                          |
++--------------------------------------------------------------------------------------------------------+
+| SARAN CEPAT: [Audit Upcoding Sepsis] [Alkes Stent & Angio] [Readmisi <= 30 Hari] [Kloning RME]         |
 | INPUT OMNIBOX: [Tanyakan analisis makro faskes, perbandingan tarif, atau regulasi PMK 3/2023...] [Kirim]|
 +--------------------------------------------------------------------------------------------------------+
 ```
@@ -297,7 +302,7 @@ Clarix AI Studio adalah konsol penalaran makro (*macro-regulatory intelligence*)
 2. **Investigasi Alkes Stent & Angiografi:** Mengidentifikasi rumah sakit dengan frekuensi diskrepansi tagihan stent tertinggi dan analisis potensi pelanggaran unbundling sesuai Permenkes No. 3 Tahun 2023 Pasal 24.
 3. **Pola Readmisi Terencana $\le 30$ Hari:** Memindai pola fragmentasi perawatan terencana pada pasien kardiologi dan bedah umum yang sengaja dipulangkan sebelum hari perawatan optimal tercapai.
 4. **Deteksi Kloning Rekam Medis ($>90\%$):** Mengelompokkan catatan medis berdasarkan DPJP untuk mendeteksi dokter spesialis dengan indeks *copy-paste* rekam medis tertinggi.
-5. **Pemilih Model AI (*Multi-Engine Toggle*):** Pengguna dapat memilih mesin inferensi yang digunakan: Google Gemini 2.0 Flash / Pro, Groq LPU (LLaMA 3.3 70B), atau NVIDIA NIM Embedding Engine.
+5. **Antarmuka Percakapan Terfokus (*Single-Pane Chat Interface*):** Tata letak percakapan tunggal dengan bubble chat standar BPJS, tabel forensik klaim, kotak rujukan regulasi hukum, dan deretan tombol skenario investigasi cepat (*prompt suggestion pills*).
 
 ---
 
