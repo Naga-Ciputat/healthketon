@@ -175,7 +175,7 @@ Halaman ini berfungsi sebagai buku besar audit (*immutable audit ledger*) yang m
 +--------------------------------------------------------------------------------------------------------+
 | METRIC HEADER:                                                                                         |
 | [ Card 1: Total Efisiensi ] [ Card 2: Heatmap Efisiensi 28 Hari ] [ Card 3: Hero Video Audit Trail ]   |
-| [ Rp 157.100.000 (9 Putusan) ] [ 7 Hari x 4 Pekan (Hover Detail) ] [ hero-audit-trail.webm ]           |
+| [ Rp 157.100.000 (9 Putusan) ] [ 7 Kolom x 4 Pekan (Hover Detail) ] [ hero-audit-trail.webm ]           |
 +--------------------------------------------------------------------------------------------------------+
 | AUDIT LOG STREAM:                                                                                      |
 | [Pencarian ID Klaim / RS / Verifikator] [Filter: Semua | Disetujui | Klarifikasi | Penyesuaian | Eskalasi] |
@@ -193,7 +193,7 @@ Halaman ini berfungsi sebagai buku besar audit (*immutable audit ledger*) yang m
 #### Fitur & Komponen Kunci:
 1. **Header Metrik & Heatmap Audit Trail (3 Kolom Simetris):**
    - **Card 1 (Kiri):** Total Efisiensi Rekonsiliasi yang berhasil diselamatkan (misal Rp 157.100.000) dan akumulasi putusan terekam, diperkuat dekorasi `money.png`.
-   - **Card 2 (Tengah — `ReconciliationHeatmapCard.tsx`):** Heatmap visual efisiensi harian 28 hari terakhir ($7\text{ baris hari Senin--Minggu} \times 4\text{ kolom pekan}$). Menggunakan palet hijau emerald khas BPJS bertingkat (Level 0 Rp 0 hingga Level 4 Puncak $>Rp 40\text{ Jt}$). Setiap sel dapat di-hover untuk memunculkan tooltip cerdas interaktif yang memuat tanggal lengkap, nama hari, pekan, total efisiensi rupiah, dan jumlah putusan koreksi.
+   - **Card 2 (Tengah — `ReconciliationHeatmapCard.tsx`):** Heatmap visual efisiensi harian 28 hari terakhir ($7\text{ kolom hari Senin--Minggu} \times 4\text{ baris pekan}$). Menggunakan palet hijau emerald khas BPJS bertingkat (Level 0 Rp 0 hingga Level 4 Puncak $>Rp 40\text{ Jt}$). Setiap sel dapat di-hover untuk memunculkan tooltip cerdas interaktif yang memuat tanggal lengkap, nama hari, pekan, total efisiensi rupiah, dan jumlah putusan koreksi.
    - **Card 3 (Kanan):** Video animasi jejak audit mediko-legal permanen (`hero-audit-trail.webm`) dengan tepian lembut (*feathered mask*), sejajar dan konsisten dengan tata letak halaman triase.
 2. **Pencarian & Pemfilteran Entri Log (`AuditLogStream.tsx`):**
    - Pencarian teks instan berdasarkan nomor berkas klaim, nama rumah sakit, nomor surat dinas, nama verifikator, atau kata kunci dalam pertimbangan medis.

@@ -14,16 +14,16 @@ export interface DayHeatData {
   dayLabel: string; // "Sen", "Sel", "Rab", etc.
   dateFormatted: string; // "23 Okt 2026"
   dayNameFull: string; // "Kamis"
-  weekLabel: string; // "3 Pekan Lalu", "Pekan Ini", dll.
-  weekIndex: number; // 0 to 3
-  dayOfWeekIndex: number; // 0 (Sen) to 6 (Min)
+  weekLabel: string; // "Pekan 1", "Pekan 2", etc.
+  weekIndex: number; // 0 to 3 (Row)
+  dayOfWeekIndex: number; // 0 to 6 (Column)
   amountRupiah: number;
   decisionCount: number;
   level: 0 | 1 | 2 | 3 | 4;
 }
 
-// 7 Hari dalam sepekan (Senin s/d Minggu)
-const DAY_LABELS = [
+// 7 Kolom Hari (Senin s/d Minggu)
+const DAY_COLUMNS = [
   { short: "Sen", full: "Senin" },
   { short: "Sel", full: "Selasa" },
   { short: "Rab", full: "Rabu" },
@@ -33,7 +33,13 @@ const DAY_LABELS = [
   { short: "Min", full: "Minggu" },
 ];
 
-const WEEK_NAMES = ["3 Pekan Lalu", "2 Pekan Lalu", "Pekan Lalu", "Pekan Ini"];
+// 4 Baris Pekan (Minggu ke-1 s/d Minggu ke-4)
+const ROW_WEEKS = [
+  { label: "M-3", full: "3 Pekan Lalu" },
+  { label: "M-2", full: "2 Pekan Lalu" },
+  { label: "M-1", full: "Pekan Lalu" },
+  { label: "Mgg", full: "Pekan Ini" },
+];
 
 export function ReconciliationHeatmapCard({
   logs = [],
@@ -48,7 +54,7 @@ export function ReconciliationHeatmapCard({
       maximumFractionDigits: 0,
     }).format(val);
 
-  // Bangun 28 hari terakhir (4 pekan x 7 hari)
+  // Bangun matriks 4 Baris (Pekan) x 7 Kolom (Hari)
   const heatmapData = useMemo(() => {
     // Parsing nilai efisiensi per tanggal dari logs aktif
     const logEfficiencyMap = new Map<string, { amount: number; count: number }>();
@@ -77,7 +83,7 @@ export function ReconciliationHeatmapCard({
 
     // Distribusi baseline efisiensi harian 28 hari terakhir (30 Sep - 27 Okt 2026)
     const baselineDailyAmounts: Record<string, { amount: number; count: number }> = {
-      // Pekan 3 (Terkini)
+      // Baris 3 (Pekan Ini)
       "2026-10-27": { amount: 24900000, count: 2 }, // Hari ini (Selasa)
       "2026-10-26": { amount: 0, count: 0 },
       "2026-10-25": { amount: 0, count: 0 }, // Minggu
@@ -86,34 +92,41 @@ export function ReconciliationHeatmapCard({
       "2026-10-22": { amount: 12400000, count: 1 }, // Rabu
       "2026-10-20": { amount: 48800000, count: 4 }, // Senin (Audit Triase Masif)
 
-      // Pekan 2
+      // Baris 2 (Pekan Lalu)
+      "2026-10-19": { amount: 0, count: 0 },
+      "2026-10-18": { amount: 0, count: 0 },
       "2026-10-17": { amount: 5300000, count: 1 },
       "2026-10-16": { amount: 8200000, count: 1 },
       "2026-10-15": { amount: 16500000, count: 2 },
       "2026-10-14": { amount: 0, count: 0 },
       "2026-10-13": { amount: 14200000, count: 2 },
 
-      // Pekan 1
-      "2026-10-10": { amount: 0, count: 1 }, // Disetujui valid (0 rupiah koreksi)
+      // Baris 1 (2 Pekan Lalu)
+      "2026-10-12": { amount: 0, count: 0 },
+      "2026-10-11": { amount: 0, count: 0 },
+      "2026-10-10": { amount: 0, count: 1 },
       "2026-10-09": { amount: 7400000, count: 1 },
-      "2026-10-08": { amount: 34000000, count: 2 }, // Puncak Note Cloning
+      "2026-10-08": { amount: 34000000, count: 2 },
       "2026-10-07": { amount: 6200000, count: 1 },
       "2026-10-06": { amount: 0, count: 0 },
 
-      // Pekan 0
+      // Baris 0 (3 Pekan Lalu)
+      "2026-10-05": { amount: 0, count: 0 },
+      "2026-10-04": { amount: 0, count: 0 },
       "2026-10-03": { amount: 0, count: 0 },
       "2026-10-02": { amount: 9800000, count: 1 },
       "2026-10-01": { amount: 12000000, count: 2 },
       "2026-09-30": { amount: 4500000, count: 1 },
+      "2026-09-29": { amount: 0, count: 0 },
     };
 
-    // Matriks 7 baris (Senin-Minggu) x 4 kolom (pekan)
+    // 4 Baris (Pekan 0 s/d 3) x 7 Kolom (Hari 0 s/d 6)
     const grid: DayHeatData[][] = [];
     const startDate = new Date(2026, 8, 29); // 29 Sep 2026 (Senin)
 
-    for (let dayIdx = 0; dayIdx < 7; dayIdx++) {
+    for (let weekIdx = 0; weekIdx < 4; weekIdx++) {
       const row: DayHeatData[] = [];
-      for (let weekIdx = 0; weekIdx < 4; weekIdx++) {
+      for (let dayIdx = 0; dayIdx < 7; dayIdx++) {
         const cellDate = new Date(startDate);
         cellDate.setDate(startDate.getDate() + weekIdx * 7 + dayIdx);
 
@@ -148,10 +161,10 @@ export function ReconciliationHeatmapCard({
 
         row.push({
           dateKey,
-          dayLabel: DAY_LABELS[dayIdx].short,
+          dayLabel: DAY_COLUMNS[dayIdx].short,
           dateFormatted,
-          dayNameFull: DAY_LABELS[dayIdx].full,
-          weekLabel: WEEK_NAMES[weekIdx],
+          dayNameFull: DAY_COLUMNS[dayIdx].full,
+          weekLabel: ROW_WEEKS[weekIdx].full,
           weekIndex: weekIdx,
           dayOfWeekIndex: dayIdx,
           amountRupiah,
@@ -197,7 +210,7 @@ export function ReconciliationHeatmapCard({
             Efisiensi Harian (28 Hari Terakhir)
           </span>
           <span className="text-[10px] text-slate-500 truncate leading-tight">
-            Distribusi rekonsiliasi klaim
+            Distribusi rekonsiliasi klaim • 4 pekan
           </span>
         </div>
 
@@ -213,103 +226,126 @@ export function ReconciliationHeatmapCard({
         </div>
       </div>
 
-      {/* Heatmap Grid Area: 7 Baris x 4 Kolom (Senin s/d Minggu) */}
-      <div className="flex flex-col gap-[2px] my-auto">
-        {heatmapData.map((row, rowIdx) => (
-          <div key={rowIdx} className="flex items-center gap-2">
-            {/* Label Hari di Sisi Kiri */}
-            <span className="w-5 text-[9.5px] font-medium text-slate-500 flex-shrink-0 text-left leading-none">
-              {DAY_LABELS[rowIdx].short}
-            </span>
+      {/* Heatmap Grid Area: 4 Baris (Pekan) x 7 Kolom (Hari) */}
+      <div className="flex flex-col gap-1.5 my-auto">
+        {/* Baris Header 7 Kolom Hari (Sen s/d Min) */}
+        <div className="flex items-center gap-2">
+          {/* Spacer selebar label pekan di kiri */}
+          <span className="w-6 text-[9.5px] font-medium text-transparent select-none leading-none">
+            Mgg
+          </span>
 
-            {/* 4 Kolom Baris Ini */}
-            <div className="flex-1 grid grid-cols-4 gap-1.5">
-              {row.map((day, colIdx) => {
-                const isHovered = hoveredDay?.dateKey === day.dateKey;
-                return (
-                  <div
-                    key={day.dateKey}
-                    onMouseEnter={() => setHoveredDay(day)}
-                    onMouseLeave={() => setHoveredDay(null)}
-                    className={cn(
-                      "relative h-[8.5px] rounded-[2.5px] border cursor-pointer transition-all duration-100",
-                      getCellColorClass(day.level),
-                      isHovered && "ring-1.5 ring-slate-800 scale-[1.04] z-30"
-                    )}
-                  >
-                    {/* Tooltip Mengambang Saat Di-hover */}
-                    {isHovered && (
-                      <div
-                        className={cn(
-                          "absolute px-2.5 py-1.5 rounded-[4px] bg-slate-900/95 text-white shadow-xl border border-slate-700/80 pointer-events-none z-50 whitespace-nowrap backdrop-blur-xs transition-opacity duration-150 animate-in fade-in-50 min-w-[155px]",
-                          // Penempatan vertikal: Baris 0, 1, 2 (Sen, Sel, Rab) render ke bawah
-                          rowIdx <= 2 ? "top-full mt-2" : "bottom-full mb-2",
-                          // Penempatan horizontal: Kolom paling kanan render ke kiri agar tidak terpotong
-                          colIdx === 3
-                            ? "right-0 left-auto translate-x-0"
-                            : colIdx === 0
-                            ? "left-0 translate-x-0"
-                            : "left-1/2 -translate-x-1/2"
-                        )}
-                      >
-                        <div className="flex flex-col gap-0.5 text-left">
-                          <div className="flex items-center justify-between text-[10px] text-slate-300 border-b border-slate-700/80 pb-0.5 gap-2">
-                            <span className="font-semibold text-slate-100">
-                              {day.dayNameFull}, {day.dateFormatted}
-                            </span>
-                            <span className="text-[9px] text-slate-400">
-                              {day.weekLabel}
-                            </span>
-                          </div>
-                          <div className="flex items-baseline justify-between gap-3 pt-0.5">
-                            <span className="text-[10px] text-slate-400">
-                              Efisiensi:
-                            </span>
-                            <span
-                              className={cn(
-                                "text-[11.5px] font-bold tabular-nums",
-                                day.amountRupiah > 0
-                                  ? "text-emerald-400"
-                                  : "text-slate-400"
-                              )}
-                            >
-                              {day.amountRupiah > 0
-                                ? formatRupiah(day.amountRupiah)
-                                : "Rp 0"}
-                            </span>
-                          </div>
-                          <div className="flex items-center justify-between text-[10px] text-slate-400 gap-3">
-                            <span>Putusan Klaim:</span>
-                            <span className="text-slate-200 font-medium">
-                              {day.decisionCount > 0
-                                ? `${day.decisionCount} berkas koreksi`
-                                : "Nihil koreksi"}
-                            </span>
-                          </div>
-                        </div>
+          {/* 7 Header Kolom Hari */}
+          <div className="flex-1 grid grid-cols-7 gap-1.5 text-center">
+            {DAY_COLUMNS.map((d, colIdx) => (
+              <span
+                key={colIdx}
+                className="text-[9.5px] font-semibold text-slate-500 leading-none truncate"
+              >
+                {d.short}
+              </span>
+            ))}
+          </div>
+        </div>
 
-                        {/* Tooltip Caret / Pointer */}
+        {/* 4 Baris Pekan */}
+        <div className="flex flex-col gap-1">
+          {heatmapData.map((row, rowIdx) => (
+            <div key={rowIdx} className="flex items-center gap-2">
+              {/* Label Pekan di Sisi Kiri */}
+              <span className="w-6 text-[9.5px] font-medium text-slate-400 flex-shrink-0 text-left leading-none">
+                {ROW_WEEKS[rowIdx].label}
+              </span>
+
+              {/* 7 Kolom Hari dalam Baris Pekan Ini */}
+              <div className="flex-1 grid grid-cols-7 gap-1.5">
+                {row.map((day, colIdx) => {
+                  const isHovered = hoveredDay?.dateKey === day.dateKey;
+                  return (
+                    <div
+                      key={day.dateKey}
+                      onMouseEnter={() => setHoveredDay(day)}
+                      onMouseLeave={() => setHoveredDay(null)}
+                      className={cn(
+                        "relative h-[13px] rounded-[3px] border cursor-pointer transition-all duration-100",
+                        getCellColorClass(day.level),
+                        isHovered && "ring-1.5 ring-slate-800 scale-[1.06] z-30"
+                      )}
+                    >
+                      {/* Tooltip Mengambang Saat Di-hover */}
+                      {isHovered && (
                         <div
                           className={cn(
-                            "absolute w-1.5 h-1.5 bg-slate-900 border-slate-700/80 transform rotate-45",
-                            rowIdx <= 2
-                              ? "-top-1 -rotate-135 border-t border-l"
-                              : "-bottom-1 border-r border-b",
-                            colIdx === 3
-                              ? "right-5 left-auto"
-                              : colIdx === 0
-                              ? "left-5"
+                            "absolute px-2.5 py-1.5 rounded-[4px] bg-slate-900/95 text-white shadow-xl border border-slate-700/80 pointer-events-none z-50 whitespace-nowrap backdrop-blur-xs transition-opacity duration-150 animate-in fade-in-50 min-w-[155px]",
+                            // Baris 0 dan 1 muncul ke bawah, Baris 2 dan 3 muncul ke atas
+                            rowIdx <= 1 ? "top-full mt-2" : "bottom-full mb-2",
+                            // Kolom 5, 6 align ke kanan; Kolom 0, 1 align ke kiri; Tengah centered
+                            colIdx >= 5
+                              ? "right-0 left-auto translate-x-0"
+                              : colIdx <= 1
+                              ? "left-0 translate-x-0"
                               : "left-1/2 -translate-x-1/2"
                           )}
-                        />
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
+                        >
+                          <div className="flex flex-col gap-0.5 text-left">
+                            <div className="flex items-center justify-between text-[10px] text-slate-300 border-b border-slate-700/80 pb-0.5 gap-2">
+                              <span className="font-semibold text-slate-100">
+                                {day.dayNameFull}, {day.dateFormatted}
+                              </span>
+                              <span className="text-[9px] text-slate-400">
+                                {day.weekLabel}
+                              </span>
+                            </div>
+                            <div className="flex items-baseline justify-between gap-3 pt-0.5">
+                              <span className="text-[10px] text-slate-400">
+                                Efisiensi:
+                              </span>
+                              <span
+                                className={cn(
+                                  "text-[11.5px] font-bold tabular-nums",
+                                  day.amountRupiah > 0
+                                    ? "text-emerald-400"
+                                    : "text-slate-400"
+                                )}
+                              >
+                                {day.amountRupiah > 0
+                                  ? formatRupiah(day.amountRupiah)
+                                  : "Rp 0"}
+                              </span>
+                            </div>
+                            <div className="flex items-center justify-between text-[10px] text-slate-400 gap-3">
+                              <span>Putusan Klaim:</span>
+                              <span className="text-slate-200 font-medium">
+                                {day.decisionCount > 0
+                                  ? `${day.decisionCount} berkas koreksi`
+                                  : "Nihil koreksi"}
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Tooltip Pointer */}
+                          <div
+                            className={cn(
+                              "absolute w-1.5 h-1.5 bg-slate-900 border-slate-700/80 transform rotate-45",
+                              rowIdx <= 1
+                                ? "-top-1 -rotate-135 border-t border-l"
+                                : "-bottom-1 border-r border-b",
+                              colIdx >= 5
+                                ? "right-4 left-auto"
+                                : colIdx <= 1
+                                ? "left-4"
+                                : "left-1/2 -translate-x-1/2"
+                            )}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );
