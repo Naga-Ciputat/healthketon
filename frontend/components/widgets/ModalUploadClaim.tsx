@@ -595,10 +595,10 @@ export function ModalUploadClaim({
 
   return (
     <>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40">
-        <div className="bg-white border border-slate-200 rounded-[4px] w-full max-w-lg shadow-xl overflow-hidden text-slate-800">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 overflow-y-auto backdrop-blur-[1px]">
+        <div className="bg-white border border-slate-200 rounded-[6px] w-full max-w-lg shadow-2xl flex flex-col max-h-[min(90vh,760px)] overflow-hidden text-slate-800 my-auto">
           {/* Modal Header */}
-          <div className="px-5 py-3.5 border-b border-slate-200 flex items-center justify-between bg-slate-50/70">
+          <div className="px-5 py-3.5 border-b border-slate-200 flex items-center justify-between bg-slate-50/70 flex-shrink-0">
             <div className="flex items-center gap-2">
               <div className="w-7 h-7 rounded-[4px] bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-700">
                 <FileSpreadsheet className="w-4 h-4" />
@@ -621,8 +621,8 @@ export function ModalUploadClaim({
             </button>
           </div>
 
-          {/* Modal Body */}
-          <div className="p-5 space-y-4">
+          {/* Modal Body (Scrollable) */}
+          <div className="flex-1 overflow-y-auto p-5 space-y-4 min-h-0">
             {/* Hidden File Input */}
             <input
               ref={fileInputRef}
@@ -878,19 +878,6 @@ export function ModalUploadClaim({
               </div>
             )}
 
-            {/* Error Actions (When upload/validation fails) */}
-            {errorDetails && (
-              <div className="pt-1 flex items-center justify-end gap-2">
-                <button
-                  type="button"
-                  onClick={resetState}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 rounded-[4px] transition-colors"
-                >
-                  <RotateCcw className="w-3.5 h-3.5 text-slate-500" />
-                  <span>Coba Berkas Lain</span>
-                </button>
-              </div>
-            )}
 
             {/* Result Summary Card (When pipeline passes) */}
             {uploadedClaim && (
@@ -946,10 +933,14 @@ export function ModalUploadClaim({
           </div>
 
           {/* Modal Footer */}
-          <div className="px-5 py-3 border-t border-slate-200 flex items-center justify-between gap-2 bg-slate-50/70">
+          <div className="px-5 py-3 border-t border-slate-200 flex items-center justify-between gap-2 bg-slate-50/70 flex-shrink-0">
             {uploadedClaim ? (
               <span className="text-[11px] text-slate-500">
                 Berkas siap ditelaah oleh verifikator BPJS.
+              </span>
+            ) : errorDetails ? (
+              <span className="text-[11px] text-rose-600 font-medium">
+                Pemeriksaan dihentikan (Pelanggaran Terdeteksi).
               </span>
             ) : (
               <span className="text-[11px] text-slate-400">
@@ -957,6 +948,16 @@ export function ModalUploadClaim({
               </span>
             )}
             <div className="flex items-center gap-2">
+              {errorDetails && (
+                <button
+                  type="button"
+                  onClick={resetState}
+                  className="px-3 py-1.5 border border-slate-200 rounded-[4px] text-xs font-medium text-slate-700 bg-white hover:bg-slate-50 shadow-2xs transition-colors inline-flex items-center gap-1.5"
+                >
+                  <RotateCcw className="w-3.5 h-3.5 text-slate-500" />
+                  <span>Coba Berkas Lain</span>
+                </button>
+              )}
               <button
                 type="button"
                 onClick={() => {
