@@ -458,12 +458,6 @@ export default function ClarixAiStudioPage() {
               <CornerDownLeft className="w-3.5 h-3.5" />
             </button>
           </form>
-
-          {/* Subtle Disclaimer Footer */}
-          <div className="flex items-center justify-between text-[11px] text-slate-400 px-1">
-            <span>Clarix AI Studio — Ditenagai Gemini 2.0 & Groq LPU</span>
-            <span>Kepatuhan PMK No. 3 Tahun 2023 & UU PDP No. 27/2022</span>
-          </div>
         </div>
       </div>
     </div>
