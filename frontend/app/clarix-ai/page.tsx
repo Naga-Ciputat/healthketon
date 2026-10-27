@@ -3,13 +3,9 @@
 import React, { useState, useRef, useEffect, useMemo, useCallback } from "react";
 import { TopHeader } from "@/components/widgets/TopHeader";
 import {
-  Sparkles,
   CornerDownLeft,
   Scale,
-  FileText,
-  TrendingUp,
   Copy,
-  Clock,
   Check,
   ShieldCheck,
   RotateCcw,
@@ -287,33 +283,6 @@ export default function ClarixAiStudioPage() {
   const messages = useMemo(() => {
     return activeSession?.messages || [];
   }, [activeSession]);
-
-  const quickScenarios = [
-    {
-      id: "sepsis-upcoding",
-      label: "Audit Upcoding Sepsis A41.9",
-      prompt: "Bandingkan rasio klaim sepsis (A41.9) di RS Sejahtera Medika vs RS Medika Nusantara. Berapa persen yang tidak didukung bukti lab objektif?",
-      icon: TrendingUp,
-    },
-    {
-      id: "stent-unbundling",
-      label: "Investigasi Alkes Stent & Angiografi",
-      prompt: "Tampilkan faskes dengan frekuensi diskrepansi alkes stent tertinggi dan analisis potensi pelanggaran unbundling sesuai Permenkes 3/2023 Pasal 24.",
-      icon: FileText,
-    },
-    {
-      id: "readmission-audit",
-      label: "Pola Readmisi Terencana ≤ 30 Hari",
-      prompt: "Analisis potensi fragmentasi episode rawat inap pada pasien kardiologi yang kembali dirawat dalam kurun waktu 15–20 hari pasca pulang.",
-      icon: Clock,
-    },
-    {
-      id: "note-cloning",
-      label: "Deteksi Kloning Rekam Medis (94%+)",
-      prompt: "Tampilkan dokter spesialis dengan indeks kemiripan catatan medis tertinggi (>90%) dan daftar nomor rekam medis yang terindikasi diduplikasi.",
-      icon: Copy,
-    },
-  ];
 
   // Auto-scroll to bottom of chat
   useEffect(() => {
@@ -939,30 +908,7 @@ export default function ClarixAiStudioPage() {
 
           {/* Bottom Input Console */}
           <div className="border-t border-slate-200 bg-white/95 backdrop-blur-xs p-4 flex-shrink-0">
-            <div className="max-w-4xl mx-auto w-full space-y-3">
-              {/* Quick Prompt Suggestions Chips */}
-              <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
-                <span className="text-[11px] font-semibold text-slate-400 flex items-center gap-1 flex-shrink-0">
-                  <Sparkles className="w-3 h-3 text-blue-600" />
-                  Saran Cepat:
-                </span>
-                {quickScenarios.map((sc) => {
-                  const Icon = sc.icon;
-                  return (
-                    <button
-                      key={sc.id}
-                      type="button"
-                      onClick={() => handleSend(sc.prompt)}
-                      disabled={isProcessing}
-                      className="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-50 hover:bg-blue-50 text-slate-700 hover:text-blue-800 border border-slate-200 hover:border-blue-300 rounded-full text-xs font-medium transition-all whitespace-nowrap shadow-2xs cursor-pointer flex-shrink-0 disabled:opacity-50"
-                    >
-                      <Icon className="w-3 h-3 text-slate-500" />
-                      <span>{sc.label}</span>
-                    </button>
-                  );
-                })}
-              </div>
-
+            <div className="max-w-4xl mx-auto w-full">
               {/* Chat Input Omnibox */}
               <form
                 onSubmit={(e) => {
