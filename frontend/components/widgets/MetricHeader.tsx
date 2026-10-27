@@ -36,11 +36,11 @@ export function MetricHeader({
   const videoRef = React.useRef<HTMLVideoElement>(null);
 
   return (
-    <div className={cn("grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-3", className)}>
-      {/* Card 1: Antrean Telaah Klaim (Horizontal, Full Height h-[160px], Col 4) */}
-      <div className="relative overflow-hidden bg-white border border-slate-200 rounded-md p-4 shadow-2xs hover:border-slate-300 transition-all flex flex-col justify-between h-[160px] lg:col-span-4">
+    <div className={cn("grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-3 items-center", className)}>
+      {/* Card 1: Antrean Telaah Klaim (Vertical padding in exchange for fixed height, Col 4) */}
+      <div className="relative overflow-hidden bg-white border border-slate-200 rounded-md py-7 px-5 shadow-2xs hover:border-slate-300 transition-all flex flex-col justify-center gap-2.5 lg:col-span-4">
         {/* Decorative corner image: claims.png */}
-        <div className="absolute -top-3 -right-3 w-24 h-24 pointer-events-none select-none">
+        <div className="absolute -top-2 -right-2 w-20 h-20 pointer-events-none select-none">
           <img
             src="/images/decoratives/claims.png"
             alt="Antrean Telaah Klaim"
@@ -61,10 +61,10 @@ export function MetricHeader({
         </div>
       </div>
 
-      {/* Card 2: Potensi Koreksi Tagihan (Horizontal, Full Height h-[160px], Col 4) */}
-      <div className="relative overflow-hidden bg-white border border-slate-200 rounded-md p-4 shadow-2xs hover:border-slate-300 transition-all flex flex-col justify-between h-[160px] lg:col-span-4">
+      {/* Card 2: Potensi Koreksi Tagihan (Vertical padding in exchange for fixed height, Col 4) */}
+      <div className="relative overflow-hidden bg-white border border-slate-200 rounded-md py-7 px-5 shadow-2xs hover:border-slate-300 transition-all flex flex-col justify-center gap-2.5 lg:col-span-4">
         {/* Decorative corner image: audit.png */}
-        <div className="absolute -top-3 -right-3 w-24 h-24 pointer-events-none select-none">
+        <div className="absolute -top-2 -right-2 w-20 h-20 pointer-events-none select-none">
           <img
             src="/images/decoratives/audit.png"
             alt="Potensi Koreksi Tagihan"
@@ -84,8 +84,8 @@ export function MetricHeader({
         </div>
       </div>
 
-      {/* Right Column: Hero Video (Horizontal, Full Height h-[160px], Col 4, Aligned Right) */}
-      <div className="relative overflow-hidden flex items-center justify-end h-[160px] md:col-span-2 lg:col-span-4 pointer-events-none select-none">
+      {/* Right Column: Hero Video (Col 4, Aligned Right, Height matching card row) */}
+      <div className="relative overflow-hidden flex items-center justify-end h-[128px] md:col-span-2 lg:col-span-4 pointer-events-none select-none">
         {/* Right-aligned video container tightly sized to video height with visible feathered sides */}
         <div className="relative h-full flex items-center justify-end">
           <video
