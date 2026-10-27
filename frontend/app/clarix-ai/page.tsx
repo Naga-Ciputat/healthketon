@@ -433,12 +433,13 @@ export default function ClarixAiStudioPage() {
           responseMsg = {
             id: `cop-${Date.now()}`,
             sender: "copilot",
-            title: `Hasil Analisis Forensik — ${derivedCategory}`,
+            title: data.title || `Hasil Analisis Forensik — ${derivedCategory}`,
             text: data.answerMarkdown,
             timestamp: new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }) + " WIB",
-            legalClause: "Permenkes No. 3 Tahun 2023 & Regulasi BPJS Kesehatan",
-            recommendation: "Gunakan data ini sebagai acuan mediko-legal saat menerbitkan berita acara rekonsiliasi.",
-            followUps: [
+            tableData: data.tableData,
+            legalClause: data.legalClause || "Permenkes No. 3 Tahun 2023 & Regulasi BPJS Kesehatan",
+            recommendation: data.recommendation || "Gunakan data ini sebagai acuan mediko-legal saat menerbitkan berita acara rekonsiliasi.",
+            followUps: data.followUps && data.followUps.length > 0 ? data.followUps : [
               "Cek rincian regulasi PMK 3/2023",
               "Bandingkan tren klaim faskes mitra bulan berjalan",
             ],

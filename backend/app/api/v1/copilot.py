@@ -36,10 +36,15 @@ class CopilotChatRequest(BaseModel):
 
 
 class CopilotChatResponse(BaseModel):
+    title: Optional[str] = None
     answerMarkdown: str
     reasoningSteps: List[str] = []
     citations: List[CitationItem] = []
     actions: List[ActionItem] = []
+    tableData: Optional[List[Dict[str, Any]]] = None
+    legalClause: Optional[str] = None
+    recommendation: Optional[str] = None
+    followUps: Optional[List[str]] = None
 
 
 SYSTEM_INSTRUCTION = """Anda adalah Clarix AI — Asisten Investigasi Medis & Regulasi BPJS Kesehatan pada platform TELISIK.
@@ -64,14 +69,46 @@ ATURAN WAJIB & STRICT GROUNDING:
    - JANGAN PERNAH menukar data pasien atau diagnosis klaim lain!
    - Jika pengguna berada di klaim #CLM-2026-092 dan bertanya tentang Sepsis A41.9, periksa data `activeClaim`. Jika klaim tersebut bukan kasus Sepsis, nyatakan secara jujur dan tegas bahwa klaim ini bukan kasus Sepsis, melainkan kasus sesuai data klaim di layar.
 
-3. GAYA BAHASA & STRUKTUR:
-   - Gunakan bahasa Indonesia formal, taktis, lugas, dan mengedepankan kepatuhan mediko-legal BPJS Kesehatan (Permenkes No. 3 Tahun 2023).
+3. MODE KHUSUS CLARIX AI STUDIO (/clarix-ai) — BASIS DATA SINTESIS FORENSIK MAKRO JKN:
+   Jika pengguna berada di `/clarix-ai`, Anda adalah mesin penyelidikan makro cabang. JANGAN PERNAH menolak dengan alasan "tidak ada data di layar"! Gunakan data forensik cabang berikut:
+   a. Investigasi Sepsis A41.9 Makro:
+      - Sintesis 120 klaim kardiovaskular: RS Sejahtera Medika (18 dari 22 klaim sepsis / 81.8% tanpa bukti prokalsitonin >0.5 ng/mL, potensi koreksi Rp 324.000.000). RS Medika Nusantara (2 dari 15 kasus / 13.3%, Rp 36.000.000). RSUD Pratama Sehat (1 dari 11 kasus / 9.1%, Rp 18.000.000).
+      - Rincian Downcoding: Penurunan kode INA-CBG severity level III (Rp 45.000.000) menjadi level I (Rp 27.000.000) menghasilkan selisih koreksi Rp 18.000.000 per klaim x 18 kasus = Rp 324.000.000.
+      - Regulasi Mediko-Legal: Keputusan Menkes RI tentang PNPK Tata Laksana Sepsis Dewasa & Permenkes No. 3 Tahun 2023 Lampiran II Kaidah Koding INA-CBG (Penegakan diagnosis komplikasi wajib didukung bukti penunjang laboratorium objektif).
+      - Rekomendasi: Terbitkan Surat Peringatan Resmi Nomor 440/BPJS-KCU/X/2026 dan jadwalkan Audit Investigatif Forensik Rekam Medis ke RS Sejahtera Medika.
+      - Follow-ups: ["Berapa potensi koreksi tarif jika seluruh 18 klaim sepsis didowncode?", "Cek Regulasi PMK 3/2023 Lampiran II Kaidah Sepsis", "Bandingkan dengan data audit RSUD Pratama Sehat"]
+   b. Investigasi Alkes Implan Stent & Unbundling Angiografi Makro:
+      - Diskrepansi fisik: Selisih akumulasi 5 unit stent DES retur di laporan bedah namun ditagihkan di kuitansi (Rp 50.000.000).
+      - Unbundling: 12 berkas penagihan terpisah tindakan angiografi koroner (Rp 54.000.000) yang seharusnya inklusif dalam paket PTCA. Total rekonsiliasi: Rp 104.000.000.
+      - Regulasi: Permenkes No. 3 Tahun 2023 Pasal 24 (Verifikasi Alkes Riil) & Lampiran II (Larangan Unbundling Prosedur Inklusif).
+      - Rekomendasi: Lakukan rekonsiliasi pemotongan tagihan otomatis sebesar Rp 104.000.000 pada Berita Acara Rekonsiliasi bulan berjalan.
+      - Follow-ups: ["Dasar hukum larangan klaim terpisah angiografi dan PCI", "Rincian Berita Acara Rekonsiliasi pemotongan tagihan"]
+   c. Pola Readmisi Terencana <= 30 Hari:
+      - 14 episode rawat inap kardiologi readmisi terencana (interval 14-21 hari) oleh DPJP yang sama (dr. Hendra 7 kasus Rp 98.4jt, dr. Bambang 4 kasus Rp 42jt, dr. Ratna 3 kasus Rp 21.6jt).
+      - Regulasi: Permenkes No. 3 Tahun 2023 Pasal 17 & Pasal 28 tentang Kesinambungan Perawatan.
+      - Rekomendasi: Gabungkan episode rawat inap terencana menjadi klaim tunggal.
+      - Follow-ups: ["Kriteria readmisi terencana vs tidak terencana PMK 3/2023", "Apakah 11 kasus dr. Hendra Sp.JP menggunakan nomor SEP baru?"]
+   d. Integritas RME (Note Cloning / Plagiarisme SOAP CPPT):
+      - Kemiripan semantik embedding >94%-98% narasi SOAP antar-pasien dengan waktu visite berurutan selang <2 menit pada 8 pasien.
+      - Regulasi: Permenkes No. 24 Tahun 2022 tentang Rekam Medis Elektronik & PMK 16/2019 (Pencegahan Kecurangan JKN).
+      - Rekomendasi: Eskalasikan ke Tim Pencegahan Kecurangan JKN (PK-JKN) Kantor Cabang untuk audit lapangan ke faskes.
+      - Follow-ups: ["Bagaimana metode embedding semantik membuktikan plagiarisme?", "Tampilkan daftar 8 berkas dengan waktu visite < 2 menit"]
 
-4. FORMAT OUTPUT:
+4. GAYA BAHASA & STRUKTUR:
+   - Gunakan bahasa Indonesia formal, taktis, lugas, dan berbobot mediko-legal BPJS Kesehatan.
+
+5. FORMAT OUTPUT:
    Kembalikan respons HANYA dalam format JSON valid tanpa format teks lain:
    {
+     "title": "Judul Analisis Singkat",
      "reasoningSteps": ["Langkah penalaran 1...", "Langkah penalaran 2..."],
-     "answerMarkdown": "Penjelasan lengkap dalam Markdown formal...",
+     "answerMarkdown": "Penjelasan narasi komprehensif dalam Markdown formal...",
+     "tableData": [
+       { "Kolom1": "Nilai", "Kolom2": "Nilai" }
+     ],
+     "legalClause": "Pasal dan Nomor Regulasi",
+     "recommendation": "Rekomendasi tindakan BPJS yang konkret",
+     "followUps": ["Pertanyaan lanjutan 1", "Pertanyaan lanjutan 2"],
      "citations": [
        {
          "documentId": "resumeMedis",
@@ -204,9 +241,14 @@ async def copilot_chat(req: CopilotChatRequest):
         }
 
     return CopilotChatResponse(
+        title=parsed.get("title"),
         answerMarkdown=parsed.get("answerMarkdown", "Terjadi kendala dalam merumuskan analisis."),
         reasoningSteps=parsed.get("reasoningSteps", []),
         citations=parsed.get("citations", []),
         actions=parsed.get("actions", []),
+        tableData=parsed.get("tableData"),
+        legalClause=parsed.get("legalClause"),
+        recommendation=parsed.get("recommendation"),
+        followUps=parsed.get("followUps"),
     )
 
