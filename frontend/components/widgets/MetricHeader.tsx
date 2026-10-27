@@ -34,22 +34,6 @@ export function MetricHeader({
   }).format(totalInefficiencyRupiah);
 
   const videoRef = React.useRef<HTMLVideoElement>(null);
-  const [videoOpacity, setVideoOpacity] = React.useState(1);
-
-  const handleTimeUpdate = () => {
-    const v = videoRef.current;
-    if (!v || !v.duration) return;
-    const t = v.currentTime;
-    const d = v.duration;
-    const fadeDuration = 0.6; // smooth 0.6s fade at start & end of loop
-    if (t < fadeDuration) {
-      setVideoOpacity(Math.max(0, Math.min(1, t / fadeDuration)));
-    } else if (t > d - fadeDuration) {
-      setVideoOpacity(Math.max(0, Math.min(1, (d - t) / fadeDuration)));
-    } else {
-      setVideoOpacity(1);
-    }
-  };
 
   return (
     <div className={cn("grid grid-cols-1 lg:grid-cols-12 gap-3", className)}>
@@ -103,18 +87,10 @@ export function MetricHeader({
         </div>
       </div>
 
-      {/* Right Column: Hero Video (Col 8, Frameless, Subtle Perimeter Feathering) */}
+      {/* Right Column: Hero Video (Col 8, Frameless, Smooth Side Edge Feathering) */}
       <div className="relative overflow-hidden flex items-center justify-center h-[160px] lg:col-span-8 pointer-events-none select-none">
-        {/* Centered wide video wrapper with delicate feathering on all edges (sedikit aja) */}
-        <div
-          className="relative w-full h-full flex items-center justify-center"
-          style={{
-            maskImage:
-              "radial-gradient(ellipse 94% 88% at 50% 50%, black 82%, transparent 100%)",
-            WebkitMaskImage:
-              "radial-gradient(ellipse 94% 88% at 50% 50%, black 82%, transparent 100%)",
-          }}
-        >
+        {/* Centered video container tightly sized to video height with visible feathered sides */}
+        <div className="relative h-full flex items-center justify-center">
           <video
             ref={videoRef}
             src="/videos/hero.webm"
@@ -122,10 +98,14 @@ export function MetricHeader({
             loop
             muted
             playsInline
-            onTimeUpdate={handleTimeUpdate}
-            className="h-full w-auto max-w-full object-contain pointer-events-none select-none transition-opacity duration-150"
+            className="h-full w-auto max-w-full object-contain pointer-events-none select-none"
             style={{
-              opacity: videoOpacity,
+              maskImage:
+                "linear-gradient(to right, transparent 0%, black 18%, black 82%, transparent 100%), linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%)",
+              WebkitMaskImage:
+                "linear-gradient(to right, transparent 0%, black 18%, black 82%, transparent 100%), linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%)",
+              maskComposite: "intersect",
+              WebkitMaskComposite: "source-in",
             }}
           />
         </div>
