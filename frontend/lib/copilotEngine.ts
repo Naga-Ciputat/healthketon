@@ -165,7 +165,7 @@ export async function generateCopilotAnswer(
         {
           label: "Buka Clarix AI Studio (Eksplorasi Regulasi)",
           actionType: "NAVIGATE",
-          payload: { path: "/intelligence" },
+          payload: { path: "/clarix-ai" },
         },
       ],
     };

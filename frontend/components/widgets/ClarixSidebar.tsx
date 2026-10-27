@@ -46,10 +46,10 @@ export function ClarixSidebar({
     },
     {
       label: "Clarix AI Studio",
-      href: "/intelligence",
+      href: "/clarix-ai",
       icon: Sparkles,
       customIconSrc: "/images/clarix-ai-icon.png",
-      match: (path: string) => path.startsWith("/intelligence"),
+      match: (path: string) => path.startsWith("/clarix-ai"),
     },
   ];
 

@@ -60,7 +60,7 @@ export function CopilotProvider({ children }: { children: React.ReactNode }) {
         {
           label: "Cek Regulasi PMK 3/2023",
           actionType: "NAVIGATE",
-          payload: { path: "/intelligence" },
+          payload: { path: "/clarix-ai" },
         },
       ],
     },

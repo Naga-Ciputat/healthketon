@@ -50,7 +50,7 @@ Aplikasi dibangun menggunakan **Next.js 14+ App Router** dengan rute-rute utama 
 | `/claims/audit-trail` | **Audit Trail & Arsip Putusan** | Buku besar riwayat putusan permanen (*append-only*), pencetakan naskah dinas, dan ekspor berita acara rekonsiliasi klaim. | `app/claims/audit-trail/page.tsx` |
 | `/benchmark` | **Scientific Benchmark Launcher** | Peta interaktif faskes Jabodetabek, penentuan ambang batas evaluasi (*recall* & *FPR*), dan peluncur batch uji validasi model. | `app/benchmark/page.tsx` |
 | `/benchmark/evaluation-suite` | **Benchmark Evaluation Suite** | Eksekusi batch uji akurasi AI, Confusion Matrix interaktif, verifikasi verbatim rate, dan analisis *false positive/negative*. | `app/benchmark/evaluation-suite/page.tsx` |
-| `/intelligence` | **Clarix AI Studio** | Ruang analisis penalaran makro-regulasi, audit komparasi antar-faskes, perbandingan tren alkes, dan konsultasi interaktif regulasi. | `app/intelligence/page.tsx` |
+| `/clarix-ai` | **Clarix AI Studio** | Ruang analisis penalaran makro-regulasi, audit komparasi antar-faskes, perbandingan tren alkes, dan konsultasi interaktif regulasi. | `app/clarix-ai/page.tsx` |
 
 ---
 
@@ -264,7 +264,7 @@ Halaman benchmark dirancang khusus untuk dewan juri, saintis data, dan auditor t
 
 ---
 
-### 3.5 Halaman 5: Clarix AI Studio (`/intelligence`)
+### 3.5 Halaman 5: Clarix AI Studio (`/clarix-ai`)
 
 Clarix AI Studio adalah konsol penalaran makro (*macro-regulatory intelligence*) yang memungkinkan analis risiko BPJS menginvestigasi pola fraud lintas-faskes, membandingkan variasi biaya, dan menguji skenario regulasi.
 

@@ -95,6 +95,11 @@ export function ClarixCopilot() {
     ];
   };
 
+    // Jangan render copilot button jika berada di halaman /clarix-ai (Clarix AI Studio sudah merupakan workspace chat mandiri)
+  if (pathname.startsWith("/clarix-ai") || pathname.startsWith("/intelligence")) {
+    return null;
+  }
+
   return (
     <>
       {/* Floating Action Trigger Button (Bottom-Right) */}

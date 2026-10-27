@@ -72,7 +72,7 @@ export const UI_LAYOUT_KNOWLEDGE = {
     layout: "Suite evaluasi ilmiah terhadap 45 berkas klaim sintetis. Menampilkan Confusion Matrix, Precision (94.1%), Recall (91.4%), False Positive Rate (4.2%), dan uji grounding keaslian kutipan (100% verbatim).",
   },
   intelligence: {
-    path: "/intelligence",
+    path: "/clarix-ai",
     title: "Clarix AI Studio",
     layout: "Studio komando investigasi makro bertenaga Clarix AI untuk analisis lintas-faskes, perbandingan tren fraud, simulasi efisiensi tarif, dan pencarian regulasi hukum JKN.",
   },
