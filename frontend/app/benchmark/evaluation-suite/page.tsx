@@ -227,7 +227,7 @@ function BenchmarkSuiteContent() {
       />
 
       {/* Main Content Area */}
-      <div className="flex-1 overflow-y-auto p-5 max-w-7xl w-full mx-auto space-y-4">
+      <div className="flex-1 overflow-y-auto p-5 pb-24 max-w-7xl w-full mx-auto space-y-4">
         {/* Cohort Info Banner */}
         <div className="bg-white border border-slate-200 rounded-[4px] p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs shadow-2xs">
           <div className="flex items-center gap-2.5">

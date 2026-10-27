@@ -228,7 +228,7 @@ Catatan: ${l.notes}
       />
 
       {/* Main Content Area */}
-      <div className="flex-1 overflow-y-auto p-5 max-w-7xl w-full mx-auto space-y-4">
+      <div className="flex-1 overflow-y-auto p-5 pb-24 max-w-7xl w-full mx-auto space-y-4">
         {/* Top Metric Header Row: 1 Card on Left + Hero Video on Right (matching /claims/triage layout) */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-3 items-center">
           {/* Card: Total Efisiensi Rekonsiliasi (Col 4, Height 160px with py-3.5) */}
