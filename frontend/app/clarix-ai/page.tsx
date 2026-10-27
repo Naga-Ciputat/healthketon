@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect, useMemo, useCallback } from "react"
 import { TopHeader } from "@/components/widgets/TopHeader";
 import {
   CornerDownLeft,
+  CornerDownRight,
   Scale,
   Copy,
   Check,
@@ -32,6 +33,7 @@ export interface StudioMessage {
   tableData?: Array<Record<string, string>>;
   legalClause?: string;
   recommendation?: string;
+  followUps?: string[];
 }
 
 export interface ChatSession {
@@ -88,6 +90,10 @@ function getInitialSeedSessions(user: UserProfile): ChatSession[] {
             ],
             legalClause: "Keputusan Menkes RI No. HK.01.07/MENKES/1128/2022 tentang Panduan Tata Laksana Gagal Ginjal Tahap Akhir",
             recommendation: "Konfirmasi lampiran hasil laboratorium hematologi rutin sebelum menyetujui klaim tambahan EPO.",
+            followUps: [
+              "Cek aturan PMK 3/2023 untuk klaim tambahan EPO",
+              "Bandingkan rasio klaim HD RS Mitra Sehat vs RSUD",
+            ],
           },
         ],
       },
@@ -123,6 +129,10 @@ function getInitialSeedSessions(user: UserProfile): ChatSession[] {
             ],
             legalClause: "Permenkes No. 24 Tahun 2022 tentang Rekam Medis Elektronik",
             recommendation: "Jadwalkan klarifikasi langsung dengan DPJP terkait pada agenda telaah tim pencegahan kecurangan.",
+            followUps: [
+              "Lihat rincian 8 rekam medis dengan jam visite bersamaan",
+              "Klausul sanksi PMK 16/2019 terkait plagiarisme CPPT",
+            ],
           },
         ],
       },
@@ -148,6 +158,12 @@ function getInitialSeedSessions(user: UserProfile): ChatSession[] {
           timestamp: "09:00 WIB",
           legalClause: "Permenkes No. 3/2023 Lampiran II (Pedoman INA-CBG & Standar Tarif Pelayanan JKN)",
           recommendation: "Gunakan modul ini untuk audit makro lintas-faskes sebelum melakukan audit petik uji lapangan.",
+          followUps: [
+            "Kenapa Sepsis dianulir di RS Sejahtera Medika?",
+            "Cek Regulasi PMK 3/2023 tentang Unbundling Stent",
+            "Analisis pola readmisi ≤ 30 hari",
+            "Deteksi kloning rekam medis CPPT",
+          ],
         },
         {
           id: "siti-user-1",
@@ -168,6 +184,11 @@ function getInitialSeedSessions(user: UserProfile): ChatSession[] {
           ],
           legalClause: "PMK No. 3/2023 Bab VII Pedoman Tarif INA-CBG & PNPK Tata Laksana Sepsis Dewasa Kemenkes RI No. HK.01.07/MENKES/2020",
           recommendation: "Terbitkan Surat Peringatan Resmi Nomor 440/BPJS-KCU/X/2026 dan jadwalkan Audit Investigatif Forensik Rekam Medis ke RS Sejahtera Medika.",
+          followUps: [
+            "Berapa potensi koreksi tarif jika seluruh 18 klaim sepsis didowncode?",
+            "Cek Regulasi PMK 3/2023 Bab VII Pedoman Sepsis",
+            "Bandingkan dengan data audit RSUD Pratama Sehat",
+          ],
         },
       ],
     },
@@ -198,6 +219,10 @@ function getInitialSeedSessions(user: UserProfile): ChatSession[] {
           ],
           legalClause: "Permenkes No. 3 Tahun 2023 Pasal 24 (Verifikasi Alkes Riil) & Lampiran II (Larangan Unbundling Prosedur Inklusif)",
           recommendation: "Lakukan rekonsiliasi pemotongan tagihan otomatis sebesar Rp 104.000.000 pada Berita Acara Rekonsiliasi bulan berjalan.",
+          followUps: [
+            "Dasar hukum larangan klaim terpisah angiografi dan PCI",
+            "Rincian Berita Acara Rekonsiliasi pemotongan tagihan",
+          ],
         },
       ],
     },
@@ -323,7 +348,12 @@ export default function ClarixAiStudioPage() {
           text: `Halo **${currentUser.name}** (${currentUser.role}). Sistem siap membantu analisis komparasi klaim faskes, regulasi PMK No. 3/2023, atau investigasi anomali klinis.\n\nSilakan ajukan pertanyaan baru atau pilih skenario cepat di bawah.`,
           timestamp: new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }) + " WIB",
           legalClause: "Permenkes No. 3/2023 Lampiran II (Standar Verifikasi Klaim FKRTL)",
-          recommendation: "Pilih skenario investigasi cepat untuk memulai analisis makro instan.",
+          recommendation: "Pilih saran pertanyaan lanjutan atau ketik kueri investigasi spesifik pada bilah di bawah.",
+          followUps: [
+            "Kenapa Sepsis dianulir?",
+            "Cek Regulasi PMK 3/2023 tentang Unbundling Stent",
+            "Analisis pola readmisi ≤ 30 hari",
+          ],
         },
       ],
     };
@@ -432,6 +462,11 @@ export default function ClarixAiStudioPage() {
         ],
         legalClause: "PMK No. 3/2023 Bab VII Pedoman Tarif INA-CBG & PNPK Tata Laksana Sepsis Dewasa Kemenkes RI No. HK.01.07/MENKES/2020",
         recommendation: "Terbitkan Surat Peringatan Resmi Nomor 440/BPJS-KCU/X/2026 dan jadwalkan Audit Investigatif Forensik Rekam Medis ke RS Sejahtera Medika.",
+        followUps: [
+          "Berapa potensi koreksi tarif jika seluruh 18 klaim sepsis didowncode?",
+          "Cek Regulasi PMK 3/2023 Bab VII Pedoman Sepsis",
+          "Bandingkan dengan data audit RSUD Pratama Sehat",
+        ],
       };
     } else if (lowerQ.includes("stent") || lowerQ.includes("alkes") || lowerQ.includes("unbundling")) {
       responseMsg = {
@@ -446,6 +481,10 @@ export default function ClarixAiStudioPage() {
         ],
         legalClause: "Permenkes No. 3 Tahun 2023 Pasal 24 (Verifikasi Alkes Riil) & Lampiran II (Larangan Unbundling Prosedur Inklusif)",
         recommendation: "Lakukan rekonsiliasi pemotongan tagihan otomatis sebesar Rp 104.000.000 pada Berita Acara Rekonsiliasi bulan berjalan.",
+        followUps: [
+          "Dasar hukum larangan klaim terpisah angiografi dan PCI",
+          "Rincian Berita Acara Rekonsiliasi pemotongan tagihan",
+        ],
       };
     } else if (lowerQ.includes("readmisi") || lowerQ.includes("30 hari") || lowerQ.includes("fragmentasi")) {
       responseMsg = {
@@ -461,6 +500,10 @@ export default function ClarixAiStudioPage() {
         ],
         legalClause: "Permenkes No. 3 Tahun 2023 Pasal 17 tentang Ketentuan Readmisi Rawat Inap Berkelanjutan",
         recommendation: "Kombinasikan episode rawat yang terbukti terkait menjadi 1 klaim tunggal dan minta klarifikasi DPJP.",
+        followUps: [
+          "Kriteria readmisi terencana vs tidak terencana PMK 3/2023",
+          "Apakah 11 kasus dr. Hendra Sp.JP menggunakan nomor SEP baru?",
+        ],
       };
     } else if (lowerQ.includes("kloning") || lowerQ.includes("cloning") || lowerQ.includes("cppt") || lowerQ.includes("soap")) {
       responseMsg = {
@@ -476,6 +519,10 @@ export default function ClarixAiStudioPage() {
         ],
         legalClause: "Permenkes No. 24 Tahun 2022 tentang Rekam Medis & Permenkes No. 16 Tahun 2019 (Pencegahan Kecurangan JKN)",
         recommendation: "Eskalasikan ke Tim Pencegahan Kecurangan JKN (PK-JKN) Kantor Cabang untuk verifikasi faktual tanda tangan dokter.",
+        followUps: [
+          "Bagaimana metode embedding semantik membuktikan plagiarisme?",
+          "Tampilkan daftar 8 berkas dengan waktu visite < 2 menit",
+        ],
       };
     } else {
       responseMsg = {
@@ -486,6 +533,10 @@ export default function ClarixAiStudioPage() {
         timestamp: new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }) + " WIB",
         legalClause: "UU No. 24 Tahun 2011 tentang Badan Penyelenggara Jaminan Sosial & Permenkes No. 3 Tahun 2023",
         recommendation: "Gunakan menu Triage dan Ruang Telaah untuk meninjau berkas individual yang terkait dengan temuan ini.",
+        followUps: [
+          "Kenapa Sepsis dianulir?",
+          "Cek Regulasi PMK 3/2023",
+        ],
       };
     }
 
@@ -874,6 +925,24 @@ export default function ClarixAiStudioPage() {
                               {m.recommendation}
                             </span>
                           </div>
+                        </div>
+                      )}
+
+                      {/* Follow-up Action Suggestions (Matching Clarix AI Copilot in Corner) */}
+                      {m.followUps && m.followUps.length > 0 && (
+                        <div className="pt-2 border-t border-slate-100 flex flex-col items-start gap-1">
+                          {m.followUps.map((fu, idx) => (
+                            <button
+                              key={idx}
+                              type="button"
+                              onClick={() => handleSend(fu)}
+                              disabled={isProcessing}
+                              className="inline-flex items-center gap-1.5 py-1 px-1.5 -ml-1 text-xs font-medium text-blue-700 hover:text-blue-800 hover:bg-slate-100/80 rounded transition-colors text-left cursor-pointer group disabled:opacity-50"
+                            >
+                              <CornerDownRight className="w-3.5 h-3.5 text-blue-600 group-hover:text-blue-800 transition-colors flex-shrink-0" />
+                              <span>{fu}</span>
+                            </button>
+                          ))}
                         </div>
                       )}
                     </div>
