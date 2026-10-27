@@ -6,6 +6,7 @@ import {
   X,
   Send,
   CornerDownLeft,
+  CornerDownRight,
   ChevronDown,
   ChevronUp,
   FileText,
@@ -342,18 +343,18 @@ function MessageBubble({
           </div>
         )}
 
-        {/* Action Buttons */}
+        {/* Action Suggestions (Frameless with left bent arrow) */}
         {message.actions && message.actions.length > 0 && (
-          <div className="pt-2 border-t border-slate-100 flex items-center gap-1.5 flex-wrap">
+          <div className="pt-2 border-t border-slate-100 flex flex-col items-start gap-1">
             {message.actions.map((act, idx) => (
               <button
                 key={idx}
                 type="button"
                 onClick={() => onExecuteAction(act)}
-                className="px-2.5 py-1 text-[11px] font-semibold text-blue-700 bg-blue-50 hover:bg-blue-100/80 border border-blue-200 rounded-[4px] transition-colors flex items-center gap-1 shadow-2xs cursor-pointer"
+                className="inline-flex items-center gap-1.5 py-1 px-1.5 -ml-1 text-xs font-medium text-blue-700 hover:text-blue-800 hover:bg-slate-100/80 rounded transition-colors text-left cursor-pointer group"
               >
+                <CornerDownRight className="w-3.5 h-3.5 text-blue-600 group-hover:text-blue-800 transition-colors flex-shrink-0" />
                 <span>{act.label}</span>
-                <ExternalLink className="w-2.5 h-2.5" />
               </button>
             ))}
           </div>
