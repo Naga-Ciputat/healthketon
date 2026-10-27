@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { ClarixSidebar } from "@/components/widgets/ClarixSidebar";
+import { UserProvider } from "@/lib/userContext";
 import { CopilotProvider } from "@/lib/copilotContext";
 import { ClarixCopilot } from "@/components/widgets/ClarixCopilot";
 
@@ -28,13 +29,15 @@ export default function RootLayout({
       <body
         className={`${plusJakartaSans.className} h-full overflow-hidden flex bg-white text-slate-900 antialiased`}
       >
-        <CopilotProvider>
-          <ClarixSidebar />
-          <main className="flex-1 flex flex-col min-w-0 h-full overflow-hidden bg-white">
-            {children}
-          </main>
-          <ClarixCopilot />
-        </CopilotProvider>
+        <UserProvider>
+          <CopilotProvider>
+            <ClarixSidebar />
+            <main className="flex-1 flex flex-col min-w-0 h-full overflow-hidden bg-white">
+              {children}
+            </main>
+            <ClarixCopilot />
+          </CopilotProvider>
+        </UserProvider>
       </body>
     </html>
   );

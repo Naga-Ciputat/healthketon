@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -10,8 +10,12 @@ import {
   Activity,
   FileText,
   Sparkles,
+  ChevronsUpDown,
+  Check,
+  UserCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useUser } from "@/lib/userContext";
 
 export interface ClarixSidebarProps {
   className?: string;
@@ -23,6 +27,20 @@ export function ClarixSidebar({
   pendingClaimsCount = 2,
 }: ClarixSidebarProps) {
   const pathname = usePathname();
+  const { currentUser, switchUser, availableUsers } = useUser();
+  const [showUserDropdown, setShowUserDropdown] = useState(false);
+  const userMenuRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+        setShowUserDropdown(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const navItems = [
     {
@@ -86,21 +104,86 @@ export function ClarixSidebar({
           </div>
         </div>
 
-        {/* Verifier Profile Strip */}
-        <div className="px-4 py-2.5 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
-          <div className="flex items-center gap-2 min-w-0">
-            <div className="w-6 h-6 rounded-[4px] bg-blue-100 text-blue-800 border border-blue-200 flex items-center justify-center text-xs font-semibold flex-shrink-0">
-              S
+        {/* Verifier Profile Strip with Account Switcher */}
+        <div className="relative" ref={userMenuRef}>
+          <button
+            type="button"
+            onClick={() => setShowUserDropdown((prev) => !prev)}
+            className="w-full px-4 py-2.5 border-b border-slate-100 bg-slate-50/60 hover:bg-slate-100/70 transition-colors flex items-center justify-between text-left cursor-pointer group"
+            title="Klik untuk beralih akun verifikator"
+          >
+            <div className="flex items-center gap-2 min-w-0">
+              <div
+                className={cn(
+                  "w-6 h-6 rounded-[4px] flex items-center justify-center text-xs font-semibold flex-shrink-0 border",
+                  currentUser.avatarBg,
+                  currentUser.avatarText,
+                  currentUser.avatarBorder
+                )}
+              >
+                {currentUser.initial}
+              </div>
+              <div className="flex flex-col min-w-0">
+                <span className="text-xs font-semibold text-slate-900 truncate">
+                  {currentUser.name}
+                </span>
+                <span className="text-[10.5px] text-slate-500 truncate">
+                  {currentUser.role}
+                </span>
+              </div>
             </div>
-            <div className="flex flex-col min-w-0">
-              <span className="text-xs font-semibold text-slate-900 truncate">
-                dr. Siti Aminah
-              </span>
-              <span className="text-[10.5px] text-slate-500 truncate">
-                Verifikator Utama BPJS
-              </span>
+            <ChevronsUpDown className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-600 flex-shrink-0 ml-1" />
+          </button>
+
+          {/* Account Switcher Dropdown */}
+          {showUserDropdown && (
+            <div className="absolute top-full left-2 right-2 mt-1 bg-white border border-slate-200 rounded-lg shadow-lg z-50 p-1.5 space-y-1 animate-in fade-in slide-in-from-top-1 duration-150">
+              <div className="px-2 py-1 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
+                Ganti Akun Verifikator
+              </div>
+              {availableUsers.map((u) => {
+                const isSelected = u.id === currentUser.id;
+                return (
+                  <button
+                    key={u.id}
+                    type="button"
+                    onClick={() => {
+                      switchUser(u.id);
+                      setShowUserDropdown(false);
+                    }}
+                    className={cn(
+                      "w-full flex items-center justify-between px-2.5 py-1.5 rounded-md text-left text-xs transition-colors cursor-pointer",
+                      isSelected
+                        ? "bg-blue-50 text-blue-900 font-semibold"
+                        : "hover:bg-slate-50 text-slate-700"
+                    )}
+                  >
+                    <div className="flex items-center gap-2 min-w-0">
+                      <div
+                        className={cn(
+                          "w-5 h-5 rounded-[3px] flex items-center justify-center text-[10px] font-bold flex-shrink-0 border",
+                          u.avatarBg,
+                          u.avatarText,
+                          u.avatarBorder
+                        )}
+                      >
+                        {u.initial}
+                      </div>
+                      <div className="flex flex-col min-w-0">
+                        <span className="truncate">{u.name}</span>
+                        <span className="text-[10px] text-slate-400 font-normal truncate">
+                          {u.role}
+                        </span>
+                      </div>
+                    </div>
+                    {isSelected && (
+                      <Check className="w-3.5 h-3.5 text-blue-600 flex-shrink-0 ml-1" />
+                    )}
+                  </button>
+                );
+              })}
             </div>
-          </div>
+          )}
         </div>
 
         {/* Section Label */}
