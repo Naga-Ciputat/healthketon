@@ -194,10 +194,10 @@ flowchart LR
     TOOLS_COL <--> DB1
     AGT <--> DB2
 ```
-* **3 Poin Penjelasan (Bullets dengan Bold Highlights):**
-  * **Shows the high-level system for handling verification workflows:** Memisahkan *Floating Copilot* untuk telaah mikro berkas per berkas (`Ctrl + K`) dan *Clarix AI Studio* (`/clarix-ai`) untuk investigasi makro komparatif tren anomali lintas 3.221 FKRTL.
-  * **Screen Context Ingestion:** Agen menyerap *real-time DOM snapshot* layar aktif verifikator (`pathname`, `activeClaim`, metrik efisiensi, dan tab rekam medis terbuka) sehingga verifikator tidak perlu menyalin data secara manual.
-  * **Dynamic Multi-Model Router:** Mengarahkan komputasi penalaran klinis multi-halaman ke *Google Gemini 2.0 Flash*, serta memicu *Groq LPU (LLaMA 3.3 70B)* untuk penyusunan draf respon dan surat dinas berlatensi ultra-rendah (<400ms).
+* **3 Poin Penjelasan (Ringkas & Padat Sesuai Template):**
+  * Shows the high-level system for **handling clinical verification workflows**
+  * **Context-Aware Agent:** Menyerap *live screen state* verifikator dan memanggil *deterministic tools* (Tarif, Regulasi, Plagiarisme).
+  * **Multi-Model Router:** Menghubungkan *Gemini 2.0 Flash* (telaah dokumen) dan *Groq LPU* untuk **respons cepat (<400ms)**.
 
 ---
 
@@ -221,10 +221,10 @@ flowchart TD
         ACT --> DEC["Draf Putusan & Berita Acara Rekonsiliasi"]
     end
 ```
-* **3 Poin Penjelasan (Bullets dengan Bold Highlights):**
-  * **The core agentic process that ensures decisions are fact-based:** Menggantikan tebakan generatif LLM dengan penelaahan hipotesis klinis bertahap (*multi-step reasoning*) yang berorientasi pada pembuktian objektif medis.
-  * **Deterministic Tool Calling:** Agen secara mandiri menguji klaim terhadap *Rule Engine PMK 3/2023*, menghitung selisih nominal pada *Kalkulator Tarif INA-CBG*, dan mengukur vektor kemiripan kosinus (*Cosine Similarity*) catatan CPPT dokter.
-  * **Bounded Medico-Legal Formulation:** Menghasilkan 4 rekomendasi putusan definitif (*Setujui*, *Klarifikasi RS 3x24 Jam*, *Penyesuaian Tarif/Downcoding*, atau *Eskalasi PK-JKN*) lengkap dengan dasar pasal hukum tanpa halusinasi.
+* **3 Poin Penjelasan (Ringkas & Padat Sesuai Template):**
+  * The core agentic process that ensures **decisions are fact-based and non-hallucinated**
+  * **Clinical Reasoning:** Membedah klaim menjadi hipotesis medis dan memvalidasi selisih tarif via kalkulator deterministik.
+  * **Decision Synthesis:** Mengikat temuan ke pasal PMK 3/2023 untuk **merumuskan draf putusan resmi**.
 
 ---
 
@@ -248,10 +248,10 @@ flowchart TD
         LOC --> OUT3["Evaluated Dossier + Highlighted PDF<br/>& Draf Berita Acara Rekonsiliasi"]
     end
 ```
-* **3 Poin Penjelasan (Bullets dengan Bold Highlights):**
-  * **An automated workflow for analyzing clinical documents against regulations:** Memproses multi-dokumen (Resume Medis, Laporan Operasi, Hasil Lab, Billing) sekaligus menyamarkan NIK 16-digit demi kepatuhan mutlak UU PDP No. 27/2022.
-  * **100% Verbatim Substring Grounding:** Mengunci kebenaran fakta 1:1 pada lembar dokumen (`documentId`, `pageNumber`, `exactSubstring`) sehingga bukti klinis dapat dibuktikan seketika dan bebas risiko halusinasi generatif.
-  * **Interactive Highlighting & Dispute Prevention:** Memberikan penyorotan teks otomatis pada Smart Document Viewer dan menerbitkan draf Berita Acara Rekonsiliasi resmi sebelum dana ditransfer (pra-bayar).
+* **3 Poin Penjelasan (Ringkas & Padat Sesuai Template):**
+  * An automated workflow for **analyzing clinical documents against regulations**
+  * **Document Extraction:** Membaca berkas FPK & PDF dengan penyamaran NIK otomatis sesuai **UU PDP No. 27/2022**.
+  * **Document Evaluation:** Mengaudit kepatuhan lewat **100% Verbatim Grounding** dengan penyorotan interaktif di PDF.
 
 ---
 
