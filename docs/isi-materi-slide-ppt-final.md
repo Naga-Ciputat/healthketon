@@ -165,39 +165,29 @@
 * **Badge Header Kolom:** `[Icon Robot / Sparkles] Copilot & Studio Architecture`
 * **Diagram Alir Arsitektur (Mermaid):**
 ```mermaid
-flowchart LR
-    subgraph USER_COL["Verifikator Medis"]
-        direction TB
-        U["Kueri / Interaksi Layar"] --> AGT["Context-Aware Agent<br/>(Copilot Ctrl+K / Studio)"]
-        AGT --> RTR["Multi-Model Router<br/>(Gemini 2.0 Flash / Groq LPU)"]
-        RTR --> OUT["Rekomendasi Putusan<br/>& Naskah Dinas Resmi"]
+flowchart TD
+    subgraph USER_INTERACTION["1. Verifier Workspace & Ingestion"]
+        U["Verifikator Medis"] --> SC["Live Screen Context Ingestion<br/>(Pathname, Active Claim, Tab RME, Metrik)"]
+        SC --> AGT["Dual-Agent Interface<br/>• Micro Copilot (Ctrl+K Viewport)<br/>• Macro Forensic Studio (/clarix-ai)"]
     end
 
-    subgraph TOOLS_COL["Deterministic Tools"]
-        direction TB
-        T1["Kalkulator Tarif INA-CBG"]
-        T2["Rule Engine PMK 3/2023"]
-        T3["Readmisi Tracker (≤30 Hari)"]
-        T4["Cosine Similarity Engine (CPPT)"]
+    subgraph ROUTING["2. Intelligent Hybrid Routing"]
+        AGT --> RTR{"Multi-Model Router"}
+        RTR -->|"Deep Clinical Reasoning"| GMI["Google Gemini 2.0 Flash<br/>(Multimodal Long Context)"]
+        RTR -->|"Fast Drafting (<400ms)"| GRQ["Groq LPU LLaMA 3.3 70B<br/>(Conversational & Letter Gen)"]
     end
 
-    subgraph DATA_COL["Data & State"]
-        direction TB
-        DB1[("PostgreSQL<br/>Append-Only Audit Log")]
-        DB2[("Zustand Screen State<br/>(Active DOM Context)")]
+    subgraph EXECUTION["3. Deterministic Tools & Storage"]
+        GMI & GRQ <--> TREG["Deterministic Tool Suite<br/>(INA-CBG, Rule PMK 3/2023, Embeddings)"]
+        TREG <--> DB[("PostgreSQL asyncpg<br/>Append-Only Audit Trail")]
     end
 
-    AGT <--> T1
-    AGT <--> T2
-    AGT <--> T3
-    AGT <--> T4
-    TOOLS_COL <--> DB1
-    AGT <--> DB2
+    EXECUTION --> OUT["Interactive Action Bar & Chat Output"]
 ```
 * **3 Poin Penjelasan (Ringkas & Padat Sesuai Template):**
-  * Menampilkan sistem utama dalam **menangani alur verifikasi klaim klinis**
-  * **Context-Aware Agent:** Menyerap *live screen state* verifikator dan mengeksekusi *deterministic tools* (Tarif, Regulasi, Plagiarisme).
-  * **Multi-Model Router:** Mengarahkan *query* ke Gemini Flash dan Groq LPU untuk **meracik respons cepat & akurat (<400ms)**.
+  * Menampilkan sistem utama dalam **mengorkestrasi alur verifikasi klaim klinis**
+  * **Dual-Agent Interface:** Memadukan *Floating Copilot* di meja telaah dan *Forensic Studio* untuk audit makro cabang.
+  * **Hybrid Multi-Model Router:** Mengarahkan komputasi ke *Gemini 2.0 Flash* (penalaran) dan *Groq LPU* **(<400ms latency)**.
 
 ---
 
@@ -206,25 +196,32 @@ flowchart LR
 * **Diagram Alir Penalaran (Mermaid):**
 ```mermaid
 flowchart TD
-    subgraph REASONING["Clinical Reasoning Agent"]
-        direction LR
-        INP["Berkas Klaim &<br/>Kueri Layar"] --> HYP["Hypothesis Formulation<br/>(Sepsis/Stent/Unbundling)"]
-        HYP --> TOOL["Dynamic Tool Call<br/>(Kalkulator & Rule Engine)"]
-        TOOL --> FACT["Disparity Fact Output<br/>(Selisih Rp & Bukti Lab)"]
-        FACT --> OUT1["Validated Anomaly Facts"]
+    INP["Berkas Klaim FPK & RME PDF"] --> HYP["Hypothesis Decomposition<br/>(Sepsis? Stent? Unbundling? Readmisi?)"]
+    
+    subgraph TOOLS["Parallel Deterministic Tool Calling"]
+        T1["Kalkulator Tarif INA-CBG<br/>(Delta Downcode Rp)"]
+        T2["PNPK Sepsis & PMK 3/2023<br/>(Biomarker & Kaidah Koding)"]
+        T3["Readmisi Tracker<br/>(Interval rawat ≤ 30 hari)"]
+        T4["Cosine Similarity Engine<br/>(Deteksi Kloning CPPT ≥ 90%)"]
     end
-
-    subgraph SYNTHESIS["Decision Synthesis & Action Agent"]
-        direction LR
-        OUT1 --> CTX["Context Building & Legal Grounding<br/>(Pasal PMK 3/2023 & PNPK)"]
-        CTX --> ACT["Bounded Action Formulation<br/>(Setujui/Klarifikasi/Downcode/Eskalasi)"]
-        ACT --> DEC["Draf Putusan & Berita Acara Rekonsiliasi"]
+    
+    HYP --> T1 & T2 & T3 & T4
+    T1 & T2 & T3 & T4 --> SYN["Evidence & Disparity Reconciliation<br/>(Validasi Temuan vs Regulasi)"]
+    
+    subgraph ACTIONS["Bounded Decision Formulation"]
+        A1["Setujui Klaim"]
+        A2["Klarifikasi RS (3x24j)"]
+        A3["Penyesuaian Tarif"]
+        A4["Eskalasi PK-JKN"]
     end
+    
+    SYN --> ACTIONS
+    ACTIONS --> OUT2["Draf Naskah Dinas & Barcode TTE"]
 ```
 * **3 Poin Penjelasan (Ringkas & Padat Sesuai Template):**
-  * Proses inti Agentic AI yang menjamin **putusan berbasis bukti dan bebas halusinasi**
-  * **Clinical Reasoning:** Membedah klaim menjadi hipotesis medis dan memvalidasi selisih tarif via kalkulator deterministik.
-  * **Decision Synthesis:** Mengikat temuan ke pasal PMK 3/2023 untuk **merumuskan rekomendasi putusan resmi**.
+  * Proses penalaran Agentic AI yang menjamin **putusan berbasis bukti dan bebas halusinasi**
+  * **Hypothesis & Tool Calling:** Mengurai klaim menjadi 4 hipotesis dan mengeksekusi kalkulator tarif INA-CBG & rule engine.
+  * **Bounded Decision Formulation:** Mengunci temuan ke regulasi PMK 3/2023 untuk **merumuskan 4 opsi putusan resmi**.
 
 ---
 
@@ -233,25 +230,29 @@ flowchart TD
 * **Diagram Alir Kepatuhan Dokumen (Mermaid):**
 ```mermaid
 flowchart TD
-    subgraph EXTRACTION["Document Extraction & Privacy Ingestion"]
-        direction LR
-        DOC["Berkas FPK (.xlsx)<br/>& RME PDF Asli"] --> PRE["Preprocessing & PII Masking<br/>(UU PDP No. 27/2022)"]
-        PRE --> OCR["Multimodal Context Ingestion<br/>(Gemini 2.0 Flash)"]
-        OCR --> STRUCT["Clinical Entity Structuring<br/>(Lab, Alkes, Prosedur)"]
-        STRUCT --> SDATA["Structured Clinical Data"]
+    subgraph INTAKE["1. Privacy Guard & Ingestion"]
+        D1["Berkas FPK (.xlsx)"] & D2["RME PDF (4 Tab Dokumen)"] --> MASK["Regex PII Masking<br/>(Sanitasi NIK & Nama per UU PDP)"]
     end
 
-    subgraph EVALUATION["Compliance Evaluation & Verbatim Grounding"]
-        direction LR
-        SDATA --> COMP["Compliance Checking<br/>(Kaidah Koding & PNPK)"]
-        COMP --> LOC["100% Verbatim Grounding<br/>(docId, pageNumber, exactText)"]
-        LOC --> OUT3["Evaluated Dossier + Highlighted PDF<br/>& Draf Berita Acara Rekonsiliasi"]
+    subgraph MULTIMODAL["2. Multimodal Cross-Alignment"]
+        MASK --> EXT["Gemini 2.0 Flash Large Context<br/>(Ekstraksi Lab, Bedah & Billing)"]
+        EXT --> XCHK["Cross-Document Verification<br/>(Bandingkan Billing vs Lap. Bedah)"]
+    end
+
+    subgraph GROUNDING["3. 100% Verbatim Substring Grounding"]
+        XCHK --> VLOC["Exact Substring Matcher<br/>(docId, pageNumber, exactText)"]
+        VLOC --> NO_HAL["Zero Hallucination Filter<br/>(Anulir temuan tanpa bukti fisik)"]
+    end
+
+    subgraph OUTPUT_PREVENTION["4. Interactive Dispute Prevention"]
+        NO_HAL --> OUT_UI["Smart PDF Viewer<br/>(Penyorotan Kuning Interaktif)"]
+        NO_HAL --> OUT_DOC["Generator Berita Acara<br/>(Rekonsiliasi Pra-Bayar Instan)"]
     end
 ```
 * **3 Poin Penjelasan (Ringkas & Padat Sesuai Template):**
-  * Alur kerja otomatis untuk **menganalisis dokumen rekam medis** terhadap regulasi JKN
-  * **Document Extraction:** Mengekstrak berkas FPK & RME PDF dengan *masking* NIK otomatis sesuai **UU PDP No. 27/2022**.
-  * **Document Evaluation:** Mengaudit kepatuhan via **100% Verbatim Grounding** dengan penyorotan interaktif di PDF.
+  * Alur kerja otomatis untuk **memvalidasi dokumen rekam medis** terhadap regulasi pembiayaan JKN
+  * **Privacy Guard & Cross-Alignment:** Menyamarkan NIK per **UU PDP No. 27/2022** dan mencocokkan billing vs laporan operasi.
+  * **100% Verbatim Substring Grounding:** Menautkan bukti fisik ke PDF viewer dan **menerbitkan Berita Acara pra-bayar**.
 
 ---
 
