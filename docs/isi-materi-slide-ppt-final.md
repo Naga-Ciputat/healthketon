@@ -77,12 +77,16 @@
 * **Headline:** *"Mengapa Harus Agentic AI?"*
 * **Satu Kalimat Nilai Utama (Value Proposition):**
   > **"TELISIK mentransformasi verifikasi klaim BPJS Kesehatan melalui arsitektur Agentic AI: agen klinis otonom berpenalaran multi-tahap (multi-step reasoning) yang menginvestigasi bukti rekam medis, memvalidasi kaidah koding, dan mengkalkulasi selisih tarif secara mandiri tanpa menghilangkan kendali mutlak verifikator manusia."**
-* **Deskripsi Singkat Sistem:**
-  * Bukan sekadar LLM pasif atau chatbot tanya-jawab teks. TELISIK adalah **Sistem Multi-Agent Klinis** yang secara mandiri memanggil serangkaian *deterministic tools*:
-    * *Tool 1:* Kalkulator Tarif INA-CBG & Downcoding Severity Delta.
-    * *Tool 2:* Rule Knowledge Engine Regulasi Kemenkes (Permenkes 3/2023 Ps. 24, Permenkes 24/2022).
-    * *Tool 3:* Clinical Document Grounding Engine (Verbatim Page & Quote Retriever).
-    * *Tool 4:* 30-Day Readmission & Note Cloning Similarity Detector.
+* **Deskripsi Singkat Sistem (Arsitektur As-Is Aplikasi TELISIK):**
+  * Platform *Agentic Decision Support System* berbasis **Tri-Engine AI Specialization** yang secara mandiri mengorkestrasi 3 model AI terspesialisasi dan 4 tools deterministik:
+    * **Engine 1 — Google Gemini 2.0 Flash:** Multimodal Large Context Window untuk penelaahan berkas PDF multi-halaman (Resume, Laporan Operasi, Lab, Kuitansi Billing) dan ekstraksi bukti sitasi verbatim 1:1 beserta nomor halaman rujukan.
+    * **Engine 2 — Groq LPU (LLaMA 3.3 70B):** Mesin penalaran cepat (< 400ms) untuk *Live Screen-Context Ingestion* pada Clarix Copilot dan penyusunan instan 4 draf naskah dinas resmi (Surat Klarifikasi RS, Rekonsiliasi, Penyesuaian Tarif, Eskalasi PK-JKN).
+    * **Engine 3 — NVIDIA NIM (nv-embedqa-e5-v5):** Vektor embeddings semantik untuk pembuktian matematis kesamaan teks CPPT (*cosine similarity* $\ge 90\%$) guna mendeteksi plagiarisme *note cloning*.
+    * **4 Fast-Filter & Tools Deterministik As-Is:**
+      1. *Kalkulator Tarif INA-CBG:* Menghitung otomatis selisih penurunan tingkat keparahan (*severity downcoding* III $\rightarrow$ I) dengan formula matematis pasti.
+      2. *Detektor Unbundling Alkes Implan:* Menguji kepatuhan Pasal 24 & Lampiran II Permenkes 3/2023 (larangan klaim stent jantung terpisah).
+      3. *Detektor Readmisi $\le 30$ Hari:* Formula $\Delta\text{Hari} \le 30$ untuk mendeteksi kesengajaan fragmentasi episode rawat berulang.
+      4. *Privacy Guard Heuristik (UU PDP No. 27/2022):* Regex penyamaran NIK 16 digit & PII otomatis sebelum berkas diproses ke model bahasa.
 * **3 Tujuan Spesifik & Terukur (SMART Goals):**
   1. **Memangkas Durasi Telaah:** Dari rata-rata **25 menit menjadi < 3 menit** per berkas (Efisiensi 88%) karena agen mengumpulkan bukti dan mengkalkulasi selisih secara otomatis.
   2. **Presisi Deteksi Anomali $\ge 85\%$ (Toleransi FPR $\le 15\%$):** Agen mengeliminasi lolosnya upcoding terselubung tanpa mengorbankan faskes yang patuh.
@@ -154,17 +158,20 @@
 * **Headline:** *"Arsitektur Agentic AI: Siklus Otonom Persepsi, Penalaran, dan Eksekusi"*
 * **5 Tahapan Siklus Agentic AI TELISIK:**
   1. **Perception (Multimodal Ingestion & Masking):**
-     * Agen menerima berkas FPK (`.xlsx`) dan rekam medis digital (PDF resume medis, laporan operasi, lab kultur darah, billing).
+     * Input berkas FPK (`.xlsx`) dan rekam medis digital (PDF resume medis, laporan operasi, lab kultur darah, billing).
      * Modul penyamaran PII otomatis menyamarkan identitas pasien (UU PDP No. 27/2022).
-  2. **Multi-Step Reasoning (Penalaran Klinis Berjenjang):**
-     * Agen membedah klaim menjadi hipotesis audit: *Apakah kriteria sepsis terpenuhi? Apakah stent ditagihkan ganda? Apakah ada readmisi < 30 hari?*
+  2. **Multi-Step Reasoning (Tri-Engine AI Specialization):**
+     * **Gemini 2.0 Flash:** Membaca dokumen panjang multimodal dan mengekstrak bukti verbatim 1:1 beserta nomor halaman.
+     * **NVIDIA NIM (nv-embedqa-e5-v5):** Menghitung *cosine similarity* catatan CPPT untuk membuktikan plagiarisme *note cloning*.
+     * **Groq LPU (LLaMA 3.3 70B):** Menjalankan *live screen-context ingestion* (< 400ms) pada Clarix Copilot.
   3. **Deterministic Tool Invocation (Pemanggilan Alat Bantu):**
-     * Agen memanggil *Tariff Calculator Tool* untuk menghitung selisih rupiah penyesuaian tarif INA-CBG.
-     * Agen memanggil *Regulation Knowledge Tool* untuk mengonfirmasi pasal Permenkes 3/2023 & Permenkes 24/2022.
+     * Agen memanggil *Tariff Calculator Tool* untuk menghitung selisih rupiah penyesuaian tarif INA-CBG (Severity III $\rightarrow$ I).
+     * Agen memanggil *Regulation Knowledge Engine* untuk mengonfirmasi pasal Permenkes 3/2023 & PNPK Sepsis Kemenkes.
+     * Agen memanggil *Readmission Filter* ($\Delta\text{Hari} \le 30$) untuk mendeteksi unbundling episode klaim.
   4. **Self-Reflection & Verbatim Grounding:**
-     * Agen memeriksa silang hasil temuan dengan kutipan dokumen asli (mengunci nomor halaman dan teks verbatim bukti).
+     * Agen memeriksa silang hasil temuan dengan kutipan dokumen asli (mengunci 100% kutipan teks rekam medis asli).
   5. **Bounded Agency & Action Formulation:**
-     * Agen memformulasikan 4 opsi rekomendasi putusan dan menyusun draf Berita Acara Rekonsiliasi untuk dieksekusi oleh verifikator (*Human-in-the-Loop*).
+     * Agen menyusun 4 rekomendasi putusan (Setujui, Klarifikasi RS, Penyesuaian Tarif, Eskalasi PK-JKN) serta draf Berita Acara Rekonsiliasi resmi untuk divalidasi oleh verifikator (*Human-in-the-Loop*).
 * **Titik Integrasi Modul Business Enterprise Architecture (BEA) BPJS Kesehatan:**
   * **Modul BEA C03.04 (Klaim FKRTL):** Bertindak sebagai *agentic gateway* yang menyinkronkan data VClaim, VIDI, dan RME rumah sakit.
   * **Modul BEA S06 (Keuangan & Akuntansi):** Meneruskan klaim berstatus lolos/bersih langsung ke modul pembayaran *In-Monica*.
