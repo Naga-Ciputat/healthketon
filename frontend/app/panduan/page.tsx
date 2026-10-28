@@ -525,11 +525,11 @@ export default function PanduanPage() {
                 <div className="space-y-3">
                   {/* Anomaly 1 */}
                   <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-[4px] space-y-1.5">
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between gap-2">
                       <span className="text-xs font-bold text-rose-800">
                         1. Upcoding Komplikasi Sepsis (ICD-10: A41.9)
                       </span>
-                      <span className="text-[10.5px] font-mono px-2 py-0.5 bg-rose-50 text-rose-700 border border-rose-200 rounded-[4px]">
+                      <span className="inline-flex items-center whitespace-nowrap flex-shrink-0 text-[10.5px] font-mono px-2 py-0.5 bg-rose-50 text-rose-700 border border-rose-200 rounded-[4px]">
                         Severity Inflated: III -&gt; I
                       </span>
                     </div>
@@ -546,11 +546,11 @@ export default function PanduanPage() {
 
                   {/* Anomaly 2 */}
                   <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-[4px] space-y-1.5">
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between gap-2">
                       <span className="text-xs font-bold text-amber-800">
                         2. Unbundling Alkes Stent Jantung DES
                       </span>
-                      <span className="text-[10.5px] font-mono px-2 py-0.5 bg-amber-50 text-amber-700 border border-amber-200 rounded-[4px]">
+                      <span className="inline-flex items-center whitespace-nowrap flex-shrink-0 text-[10.5px] font-mono px-2 py-0.5 bg-amber-50 text-amber-700 border border-amber-200 rounded-[4px]">
                         Tagihan Ganda Alkes
                       </span>
                     </div>
@@ -566,11 +566,11 @@ export default function PanduanPage() {
 
                   {/* Anomaly 3 */}
                   <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-[4px] space-y-1.5">
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between gap-2">
                       <span className="text-xs font-bold text-blue-800">
                         3. Pemecahan Episode Readmisi &le; 30 Hari
                       </span>
-                      <span className="text-[10.5px] font-mono px-2 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-[4px]">
+                      <span className="inline-flex items-center whitespace-nowrap flex-shrink-0 text-[10.5px] font-mono px-2 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-[4px]">
                         Episode Churning
                       </span>
                     </div>
@@ -586,11 +586,11 @@ export default function PanduanPage() {
 
                   {/* Anomaly 4 */}
                   <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-[4px] space-y-1.5">
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between gap-2">
                       <span className="text-xs font-bold text-purple-800">
                         4. Duplikasi Catatan Medis (Note Cloning CPPT)
                       </span>
-                      <span className="text-[10.5px] font-mono px-2 py-0.5 bg-purple-50 text-purple-700 border border-purple-200 rounded-[4px]">
+                      <span className="inline-flex items-center whitespace-nowrap flex-shrink-0 text-[10.5px] font-mono px-2 py-0.5 bg-purple-50 text-purple-700 border border-purple-200 rounded-[4px]">
                         Integritas RME Terkompromi
                       </span>
                     </div>
@@ -843,94 +843,95 @@ export default function PanduanPage() {
               <span className="text-xs text-slate-500">Dasar Hukum Penolakan & Koreksi</span>
             </div>
 
-            <div className="bg-white border border-slate-200 rounded-[6px] overflow-hidden border-slate-200">
-              <div className="p-4 border-b border-slate-100 bg-slate-50/50">
+            <div className="bg-white border border-slate-200 rounded-[6px] overflow-hidden">
+              <div className="p-4 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
                 <h3 className="text-xs font-bold text-slate-800">
                   Tabel Rujukan Resmi Regulasi Verifikasi Klaim BPJS Kesehatan
                 </h3>
+                <span className="text-[11px] text-slate-500">Standar Kaidah INA-CBG & KMKB</span>
               </div>
               <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs border-collapse">
+                <table className="w-full min-w-[720px] text-left text-xs border-collapse">
                   <thead>
                     <tr className="bg-slate-50 border-b border-slate-200 text-slate-600 font-medium">
-                      <th className="py-2.5 px-3.5">Regulasi Terkait</th>
-                      <th className="py-2.5 px-3.5">Pasal / Butir</th>
-                      <th className="py-2.5 px-3.5">Ketentuan Medis / Administratif</th>
-                      <th className="py-2.5 px-3.5">Aksi Verifikator</th>
+                      <th className="py-2.5 px-3.5 whitespace-nowrap w-[22%]">Regulasi Terkait</th>
+                      <th className="py-2.5 px-3.5 whitespace-nowrap w-[18%]">Pasal / Butir</th>
+                      <th className="py-2.5 px-3.5 w-[38%] min-w-[260px]">Ketentuan Medis / Administratif</th>
+                      <th className="py-2.5 px-3.5 whitespace-nowrap w-[22%]">Aksi Verifikator</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 text-slate-700">
                     <tr className="hover:bg-slate-50/50">
-                      <td className="py-2.5 px-3.5 font-semibold text-slate-900">
+                      <td className="py-3 px-3.5 font-semibold text-slate-900 align-top">
                         Permenkes No. 3 Tahun 2023
                       </td>
-                      <td className="py-2.5 px-3.5 font-mono text-[11px]">Pasal 24</td>
-                      <td className="py-2.5 px-3.5 text-[11.5px] leading-relaxed">
+                      <td className="py-3 px-3.5 font-mono text-[11px] text-slate-600 align-top">Pasal 24</td>
+                      <td className="py-3 px-3.5 text-[11.5px] leading-relaxed align-top">
                         Alkes implan (stent jantung, plate screw, mesh) telah termasuk dalam tarif paket
                         INA-CBG dan dilarang ditagihkan terpisah.
                       </td>
-                      <td className="py-2.5 px-3.5">
-                        <span className="px-2 py-0.5 bg-rose-50 text-rose-800 border border-rose-200 rounded-[4px] font-medium text-[11px]">
+                      <td className="py-3 px-3.5 align-top whitespace-nowrap">
+                        <span className="inline-flex items-center whitespace-nowrap px-2.5 py-1 bg-rose-50 text-rose-800 border border-rose-200 rounded-[4px] font-medium text-[11px]">
                           Koreksi Unbundling
                         </span>
                       </td>
                     </tr>
                     <tr className="hover:bg-slate-50/50">
-                      <td className="py-2.5 px-3.5 font-semibold text-slate-900">
+                      <td className="py-3 px-3.5 font-semibold text-slate-900 align-top">
                         Permenkes No. 3 Tahun 2023
                       </td>
-                      <td className="py-2.5 px-3.5 font-mono text-[11px]">Lampiran II</td>
-                      <td className="py-2.5 px-3.5 text-[11.5px] leading-relaxed">
+                      <td className="py-3 px-3.5 font-mono text-[11px] text-slate-600 align-top">Lampiran II</td>
+                      <td className="py-3 px-3.5 text-[11.5px] leading-relaxed align-top">
                         Pasien rawat inap yang kembali masuk dalam jangka waktu &le; 30 hari dengan episode
                         penyakit sama dihitung sebagai satu kesatuan episode.
                       </td>
-                      <td className="py-2.5 px-3.5">
-                        <span className="px-2 py-0.5 bg-amber-50 text-amber-800 border border-amber-200 rounded-[4px] font-medium text-[11px]">
+                      <td className="py-3 px-3.5 align-top whitespace-nowrap">
+                        <span className="inline-flex items-center whitespace-nowrap px-2.5 py-1 bg-amber-50 text-amber-800 border border-amber-200 rounded-[4px] font-medium text-[11px]">
                           Gabung Episode Klaim
                         </span>
                       </td>
                     </tr>
                     <tr className="hover:bg-slate-50/50">
-                      <td className="py-2.5 px-3.5 font-semibold text-slate-900">
+                      <td className="py-3 px-3.5 font-semibold text-slate-900 align-top">
                         Permenkes No. 24 Tahun 2022
                       </td>
-                      <td className="py-2.5 px-3.5 font-mono text-[11px]">Pasal 25</td>
-                      <td className="py-2.5 px-3.5 text-[11.5px] leading-relaxed">
+                      <td className="py-3 px-3.5 font-mono text-[11px] text-slate-600 align-top">Pasal 25</td>
+                      <td className="py-3 px-3.5 text-[11.5px] leading-relaxed align-top">
                         Kewajiban autentisitas dan integritas rekam medis elektronik. Praktik copy-paste (note
                         cloning) tanpa asesmen baru dikategorikan pelanggaran etik & administratif.
                       </td>
-                      <td className="py-2.5 px-3.5">
-                        <span className="px-2 py-0.5 bg-purple-50 text-purple-800 border border-purple-200 rounded-[4px] font-medium text-[11px]">
+                      <td className="py-3 px-3.5 align-top whitespace-nowrap">
+                        <span className="inline-flex items-center whitespace-nowrap px-2.5 py-1 bg-purple-50 text-purple-800 border border-purple-200 rounded-[4px] font-medium text-[11px]">
                           Klarifikasi CPPT RS
                         </span>
                       </td>
                     </tr>
                     <tr className="hover:bg-slate-50/50">
-                      <td className="py-2.5 px-3.5 font-semibold text-slate-900">PNPK Sepsis 2020</td>
-                      <td className="py-2.5 px-3.5 font-mono text-[11px]">
+                      <td className="py-3 px-3.5 font-semibold text-slate-900 align-top">PNPK Sepsis 2020</td>
+                      <td className="py-3 px-3.5 font-mono text-[11px] text-slate-600 align-top">
                         HK.01.07/MENKES/2020
                       </td>
-                      <td className="py-2.5 px-3.5 text-[11.5px] leading-relaxed">
+                      <td className="py-3 px-3.5 text-[11.5px] leading-relaxed align-top">
                         Penegakan diagnosis sepsis mensyaratkan bukti disfungsi organ (peningkatan skor SOFA
                         &ge; 2 atau qSOFA &ge; 2) disertai infeksi terbukti.
                       </td>
-                      <td className="py-2.5 px-3.5">
-                        <span className="px-2 py-0.5 bg-blue-50 text-blue-800 border border-blue-200 rounded-[4px] font-medium text-[11px]">
+                      <td className="py-3 px-3.5 align-top whitespace-nowrap">
+                        <span className="inline-flex items-center whitespace-nowrap px-2.5 py-1 bg-blue-50 text-blue-800 border border-blue-200 rounded-[4px] font-medium text-[11px]">
                           Downcoding Tingkat I
                         </span>
                       </td>
                     </tr>
                     <tr className="hover:bg-slate-50/50">
-                      <td className="py-2.5 px-3.5 font-semibold text-slate-900">
+                      <td className="py-3 px-3.5 font-semibold text-slate-900 align-top">
                         UU No. 27 Tahun 2022
                       </td>
-                      <td className="py-2.5 px-3.5 font-mono text-[11px]">Pasal 35 & 39</td>
-                      <td className="py-2.5 px-3.5 text-[11.5px] leading-relaxed">
+                      <td className="py-3 px-3.5 font-mono text-[11px] text-slate-600 align-top">Pasal 35 & 39</td>
+                      <td className="py-3 px-3.5 text-[11.5px] leading-relaxed align-top">
                         Data kesehatan perseorangan merupakan data pribadi spesifik yang wajib dilindungi
                         melalui enkripsi dan penyamaran (masking) identitas.
                       </td>
-                      <td className="py-2.5 px-3.5">
-                        <span className="px-2 py-0.5 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-[4px] font-medium text-[11px]">
+                      <td className="py-3 px-3.5 align-top whitespace-nowrap">
+                        <span className="inline-flex items-center whitespace-nowrap px-2.5 py-1 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-[4px] font-medium text-[11px]">
                           Masking NIK / No. Kartu
                         </span>
                       </td>
@@ -1029,3 +1030,4 @@ export default function PanduanPage() {
     </div>
   );
 }
+
