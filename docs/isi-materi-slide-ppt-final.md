@@ -163,36 +163,36 @@
 
 #### SECTION 1 (KIRI): Copilot & Studio Multi-Agent Architecture
 * **Badge Header Kolom:** `[Icon Robot / Sparkles] Copilot & Studio Architecture`
-* **Diagram Alir Blok (Wireframe):**
-```
-+-----------------------------------------------------------------------+
-|  User (Verifikator Medis)            Tools (Deterministic Registry)   |
-|  +---------------------+             +-----------------------------+  |
-|  | Verifikator Medis   |             | INA-CBG Tariff Delta Tool   |  |
-|  | (Kueri / Klik Layar)|             +-----------------------------+  |
-|  +----------+----------+             | Kemenkes Rule Knowledge     |  |
-|             |                        | (PMK 3/2023, PNPK Sepsis)   |  |
-|             v                        +-----------------------------+  |
-|  +---------------------+             | 30-Day Readmission Tracker  |  |
-|  | Context-Aware Agent |<----------->| (Delta Hari <= 30)          |  |
-|  | - Micro Copilot     |             +-----------------------------+  |
-|  |   (Ctrl+K Viewport) |             | Cosine Similarity Engine    |  |
-|  | - Macro Studio      |             | (CPPT Note Cloning >= 90%)  |  |
-|  +----------+----------+             +-----------------------------+  |
-|             |                                       |                 |
-|             v                                       v                 |
-|  +---------------------+             +-----------------------------+  |
-|  | Multi-Model Router  |             | PostgreSQL & Screen State   |  |
-|  | Gemini 2.0 Flash /  |<----------->| - Append-Only Audit Trail   |  |
-|  | Groq LPU (<400ms)   |             | - Zustand Live Screen State |  |
-|  +----------+----------+             +-----------------------------+  |
-|             |                                                         |
-|             v                                                         |
-|  +---------------------+                                              |
-|  | Interactive Action  |                                              |
-|  | (Dossier Decision)  |                                              |
-|  +---------------------+                                              |
-+-----------------------------------------------------------------------+
+* **Diagram Alir Arsitektur (Mermaid):**
+```mermaid
+flowchart LR
+    subgraph USER_COL["Verifikator Medis"]
+        direction TB
+        U["Kueri / Interaksi Layar"] --> AGT["Context-Aware Agent<br/>(Copilot Ctrl+K / Studio)"]
+        AGT --> RTR["Multi-Model Router<br/>(Gemini 2.0 Flash / Groq LPU)"]
+        RTR --> OUT["Rekomendasi Putusan<br/>& Naskah Dinas Resmi"]
+    end
+
+    subgraph TOOLS_COL["Deterministic Tools"]
+        direction TB
+        T1["Kalkulator Tarif INA-CBG"]
+        T2["Rule Engine PMK 3/2023"]
+        T3["Readmisi Tracker (≤30 Hari)"]
+        T4["Cosine Similarity Engine (CPPT)"]
+    end
+
+    subgraph DATA_COL["Data & State"]
+        direction TB
+        DB1[("PostgreSQL<br/>Append-Only Audit Log")]
+        DB2[("Zustand Screen State<br/>(Active DOM Context)")]
+    end
+
+    AGT <--> T1
+    AGT <--> T2
+    AGT <--> T3
+    AGT <--> T4
+    TOOLS_COL <--> DB1
+    AGT <--> DB2
 ```
 * **3 Poin Penjelasan (Bullets dengan Bold Highlights):**
   * **Shows the high-level system for handling verification workflows:** Memisahkan *Floating Copilot* untuk telaah mikro berkas per berkas (`Ctrl + K`) dan *Clarix AI Studio* (`/clarix-ai`) untuk investigasi makro komparatif tren anomali lintas 3.221 FKRTL.
@@ -203,29 +203,23 @@
 
 #### SECTION 2 (TENGAH): Clinical Reasoning & Tool-Calling Flow
 * **Badge Header Kolom:** `[Icon Brain / Flow] Clinical Reasoning & Tool-Calling Flow`
-* **Diagram Alir Blok (Wireframe):**
-```
-+-----------------------------------------------------------------------+
-|  Clinical Reasoning Agent                                             |
-|  +---------------+    +-------------------+    +--------------------+ |
-|  | Claim Dossier |    | Hypothesis        |    | Tool Selection &   | |
-|  | & Screen State|--->| Formulation       |--->| Deterministic Call | |
-|  | Ingestion     |    | (Sepsis/Stent/etc)|    | (Calc/Rule/Sim)    | |
-|  +---------------+    +-------------------+    +---------+----------+ |
-|                                                          |            |
-|                                                          v            |
-|                                                +--------------------+ |
-|                                                | Disparity & Fact   | |
-|                                                | Extraction Output  | |
-|                                                +---------+----------+ |
-|                                                          |            |
-|  Decision Synthesis & Action Agent                       |            |
-|  +---------------+    +-------------------+              |            |
-|  | Structured    |    | Context Building  |<-------------+            |
-|  | Medico-Legal  |<---| & Legal Clause    |                           |
-|  | Action Output |    | Grounding (PMK)   |                           |
-|  +---------------+    +-------------------+                           |
-+-----------------------------------------------------------------------+
+* **Diagram Alir Penalaran (Mermaid):**
+```mermaid
+flowchart TD
+    subgraph REASONING["Clinical Reasoning Agent"]
+        direction LR
+        INP["Berkas Klaim &<br/>Kueri Layar"] --> HYP["Hypothesis Formulation<br/>(Sepsis/Stent/Unbundling)"]
+        HYP --> TOOL["Dynamic Tool Call<br/>(Kalkulator & Rule Engine)"]
+        TOOL --> FACT["Disparity Fact Output<br/>(Selisih Rp & Bukti Lab)"]
+        FACT --> OUT1["Validated Anomaly Facts"]
+    end
+
+    subgraph SYNTHESIS["Decision Synthesis & Action Agent"]
+        direction LR
+        OUT1 --> CTX["Context Building & Legal Grounding<br/>(Pasal PMK 3/2023 & PNPK)"]
+        CTX --> ACT["Bounded Action Formulation<br/>(Setujui/Klarifikasi/Downcode/Eskalasi)"]
+        ACT --> DEC["Draf Putusan & Berita Acara Rekonsiliasi"]
+    end
 ```
 * **3 Poin Penjelasan (Bullets dengan Bold Highlights):**
   * **The core agentic process that ensures decisions are fact-based:** Menggantikan tebakan generatif LLM dengan penelaahan hipotesis klinis bertahap (*multi-step reasoning*) yang berorientasi pada pembuktian objektif medis.
@@ -236,29 +230,23 @@
 
 #### SECTION 3 (KANAN): Document Compliance Checking & Grounding Flow
 * **Badge Header Kolom:** `[Icon FileCheck / Shield] Document Compliance & Grounding Flow`
-* **Diagram Alir Blok (Wireframe):**
-```
-+-----------------------------------------------------------------------+
-|  Document Extraction & Privacy Ingestion                              |
-|  +---------------+    +-------------------+    +--------------------+ |
-|  | Berkas FPK    |    | Preprocessing &   |    | Multimodal Context | |
-|  | (.xlsx) &     |--->| Regex PII Masking |--->| Extraction         | |
-|  | RME PDF Files |    | (UU PDP 27/2022)  |    | (Gemini 2.0 Flash) | |
-|  +---------------+    +-------------------+    +---------+----------+ |
-|                                                          |            |
-|                                                          v            |
-|                                                +--------------------+ |
-|                                                | Structured Clinical| |
-|                                                | Entities (JSON)    | |
-|                                                +---------+----------+ |
-|                                                          |            |
-|  Compliance Evaluation & Verbatim Grounding              |            |
-|  +--------------------+    +-------------------+         |            |
-|  | Highlighted PDF &  |    | 100% Verbatim     |<--------+            |
-|  | Official Letter/BAR|<---| Substring Ground  |                      |
-|  | Ready to Sign      |    | (DocID/Page/Text) |                      |
-|  +--------------------+    +-------------------+                      |
-+-----------------------------------------------------------------------+
+* **Diagram Alir Kepatuhan Dokumen (Mermaid):**
+```mermaid
+flowchart TD
+    subgraph EXTRACTION["Document Extraction & Privacy Ingestion"]
+        direction LR
+        DOC["Berkas FPK (.xlsx)<br/>& RME PDF Asli"] --> PRE["Preprocessing & PII Masking<br/>(UU PDP No. 27/2022)"]
+        PRE --> OCR["Multimodal Context Ingestion<br/>(Gemini 2.0 Flash)"]
+        OCR --> STRUCT["Clinical Entity Structuring<br/>(Lab, Alkes, Prosedur)"]
+        STRUCT --> SDATA["Structured Clinical Data"]
+    end
+
+    subgraph EVALUATION["Compliance Evaluation & Verbatim Grounding"]
+        direction LR
+        SDATA --> COMP["Compliance Checking<br/>(Kaidah Koding & PNPK)"]
+        COMP --> LOC["100% Verbatim Grounding<br/>(docId, pageNumber, exactText)"]
+        LOC --> OUT3["Evaluated Dossier + Highlighted PDF<br/>& Draf Berita Acara Rekonsiliasi"]
+    end
 ```
 * **3 Poin Penjelasan (Bullets dengan Bold Highlights):**
   * **An automated workflow for analyzing clinical documents against regulations:** Memproses multi-dokumen (Resume Medis, Laporan Operasi, Hasil Lab, Billing) sekaligus menyamarkan NIK 16-digit demi kepatuhan mutlak UU PDP No. 27/2022.
