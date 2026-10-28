@@ -195,9 +195,9 @@ flowchart LR
     AGT <--> DB2
 ```
 * **3 Poin Penjelasan (Ringkas & Padat Sesuai Template):**
-  * Shows the high-level system for **handling clinical verification workflows**
-  * **Context-Aware Agent:** Menyerap *live screen state* verifikator dan memanggil *deterministic tools* (Tarif, Regulasi, Plagiarisme).
-  * **Multi-Model Router:** Menghubungkan *Gemini 2.0 Flash* (telaah dokumen) dan *Groq LPU* untuk **respons cepat (<400ms)**.
+  * Menampilkan sistem utama dalam **menangani alur verifikasi klaim klinis**
+  * **Context-Aware Agent:** Menyerap *live screen state* verifikator dan mengeksekusi *deterministic tools* (Tarif, Regulasi, Plagiarisme).
+  * **Multi-Model Router:** Mengarahkan *query* ke Gemini Flash dan Groq LPU untuk **meracik respons cepat & akurat (<400ms)**.
 
 ---
 
@@ -222,9 +222,9 @@ flowchart TD
     end
 ```
 * **3 Poin Penjelasan (Ringkas & Padat Sesuai Template):**
-  * The core agentic process that ensures **decisions are fact-based and non-hallucinated**
+  * Proses inti Agentic AI yang menjamin **putusan berbasis bukti dan bebas halusinasi**
   * **Clinical Reasoning:** Membedah klaim menjadi hipotesis medis dan memvalidasi selisih tarif via kalkulator deterministik.
-  * **Decision Synthesis:** Mengikat temuan ke pasal PMK 3/2023 untuk **merumuskan draf putusan resmi**.
+  * **Decision Synthesis:** Mengikat temuan ke pasal PMK 3/2023 untuk **merumuskan rekomendasi putusan resmi**.
 
 ---
 
@@ -249,9 +249,9 @@ flowchart TD
     end
 ```
 * **3 Poin Penjelasan (Ringkas & Padat Sesuai Template):**
-  * An automated workflow for **analyzing clinical documents against regulations**
-  * **Document Extraction:** Membaca berkas FPK & PDF dengan penyamaran NIK otomatis sesuai **UU PDP No. 27/2022**.
-  * **Document Evaluation:** Mengaudit kepatuhan lewat **100% Verbatim Grounding** dengan penyorotan interaktif di PDF.
+  * Alur kerja otomatis untuk **menganalisis dokumen rekam medis** terhadap regulasi JKN
+  * **Document Extraction:** Mengekstrak berkas FPK & RME PDF dengan *masking* NIK otomatis sesuai **UU PDP No. 27/2022**.
+  * **Document Evaluation:** Mengaudit kepatuhan via **100% Verbatim Grounding** dengan penyorotan interaktif di PDF.
 
 ---
 
