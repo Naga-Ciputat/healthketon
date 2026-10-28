@@ -1,6 +1,8 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { HelpCircle, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -25,6 +27,9 @@ export function TopHeader({
   rightActions,
   className,
 }: TopHeaderProps) {
+  const pathname = usePathname();
+  const isPanduanActive = pathname?.startsWith("/panduan");
+
   return (
     <header
       className={cn(
@@ -59,13 +64,24 @@ export function TopHeader({
         {rightActions}
 
         {showHelp && (
-          <button
-            type="button"
-            className="flex items-center gap-1.5 text-xs text-slate-600 hover:text-slate-900 px-2 py-1 rounded-[4px] border border-slate-200 hover:bg-slate-50 transition-colors"
+          <Link
+            href="/panduan"
+            className={cn(
+              "flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-[4px] border transition-colors",
+              isPanduanActive
+                ? "bg-blue-50 text-blue-700 border-blue-300 font-semibold"
+                : "text-slate-600 hover:text-slate-900 border-slate-200 hover:bg-slate-50 font-medium"
+            )}
+            title="Buka Halaman Panduan Operasional TELISIK"
           >
-            <HelpCircle className="w-3.5 h-3.5 text-slate-400" />
+            <HelpCircle
+              className={cn(
+                "w-3.5 h-3.5",
+                isPanduanActive ? "text-blue-600" : "text-slate-400"
+              )}
+            />
             <span>Panduan</span>
-          </button>
+          </Link>
         )}
 
         {showBranchTag && (
