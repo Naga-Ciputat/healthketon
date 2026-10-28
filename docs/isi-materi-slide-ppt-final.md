@@ -148,44 +148,133 @@
 
 ---
 
-## SLIDE 4: Arsitektur Agentic AI Workflow & Integrasi BEA (Durasi: 90 Detik)
+## SLIDE 4: Detail Technical Solution: A Peek Inside Our AI Engine (Durasi: 90 Detik)
 
-### 1. Apa Isi Teks dan Datanya
-* **Headline:** *"Arsitektur Agentic AI: Siklus Otonom Persepsi, Penalaran, dan Eksekusi"*
-* **5 Tahapan Siklus Agentic AI TELISIK:**
-  1. **Perception (Multimodal Ingestion & Masking):**
-     * Agen menerima berkas FPK (`.xlsx`) dan rekam medis digital (PDF resume medis, laporan operasi, lab kultur darah, billing).
-     * Modul penyamaran PII otomatis menyamarkan identitas pasien (UU PDP No. 27/2022).
-  2. **Multi-Step Reasoning (Penalaran Klinis Berjenjang):**
-     * Agen membedah klaim menjadi hipotesis audit: *Apakah kriteria sepsis terpenuhi? Apakah stent ditagihkan ganda? Apakah ada readmisi < 30 hari?*
-  3. **Deterministic Tool Invocation (Pemanggilan Alat Bantu):**
-     * Agen memanggil *Tariff Calculator Tool* untuk menghitung selisih rupiah penyesuaian tarif INA-CBG.
-     * Agen memanggil *Regulation Knowledge Tool* untuk mengonfirmasi pasal Permenkes 3/2023 & Permenkes 24/2022.
-  4. **Self-Reflection & Verbatim Grounding:**
-     * Agen memeriksa silang hasil temuan dengan kutipan dokumen asli (mengunci nomor halaman dan teks verbatim bukti).
-  5. **Bounded Agency & Action Formulation:**
-     * Agen memformulasikan 4 opsi rekomendasi putusan dan menyusun draf Berita Acara Rekonsiliasi untuk dieksekusi oleh verifikator (*Human-in-the-Loop*).
-* **Titik Integrasi Modul Business Enterprise Architecture (BEA) BPJS Kesehatan:**
-  * **Modul BEA C03.04 (Klaim FKRTL):** Bertindak sebagai *agentic gateway* yang menyinkronkan data VClaim, VIDI, dan RME rumah sakit.
-  * **Modul BEA S06 (Keuangan & Akuntansi):** Meneruskan klaim berstatus lolos/bersih langsung ke modul pembayaran *In-Monica*.
+> **Catatan Layout Presenter:** Slide ini menggunakan **Tata Letak 3 Kolom Vertikal (3-Section Architecture Layout)** yang dipisahkan oleh dua garis vertikal putus-putus (*dashed lines*), dengan progress tracker aktif di bagian footer: `Background and Analysis` | `Solution (Active)` | `Implementation and Impact`. Seluruh diagram, komponen, nama tool, dan alur data dipetakan 100% langsung dari kode aplikasi berjalan (*as-is codebase*: FastAPI backend, Google Gemini 2.0 Flash, Groq LPU, Smart Document Viewer, dan PostgreSQL audit store).
 
-### 2. Pakai Visualisasi Apa
-* **Diagram Arsitektur Agentic Loop (Perception $\rightarrow$ Reasoning $\rightarrow$ Tool Invocation $\rightarrow$ Action Proposal):** Diagram melingkar modern dengan panah berputar yang memperlihatkan siklus kerja agen klinis.
-* **Diagram Arsitektur Integrasi BEA (Mini Block Diagram):** Menunjukkan koneksi API antara `SIMRS Mitra` $\rightarrow$ `TELISIK Agentic Engine (C03.04)` $\rightarrow$ `VClaim / VIDI BPJS` $\rightarrow$ `S06 Keuangan`.
-* **Badge Bounded Agency:** Menegaskan bahwa agen tidak mengeksekusi transfer uang tanpa otorisasi manusia.
+### 1. Header & Identitas Slide
+* **Kategori (Eyebrow):** `Detail Technical Solution`
+* **Judul Utama (Title):** `A Peek Inside Our AI Engine for Pre-Payment Compliance & Dispute Prevention...`
+* **Elemen Sudut Kanan Atas:** Logo resmi **BPJS Kesehatan**, logo **HEALTHKATHON 2026**, dan Badge Nomor Slide **`4`**.
 
-### 3. Layoutnya Gimana
-* **Tata Letak:** *Stack Horizontal (Atas Alur Agentic Loop, Bawah Arsitektur BEA)*:
-  * **Bagian Atas (60% slide):** Diagram 5 tahap arsitektur kerja Agentic AI dengan rincian pemanggilan tools.
-  * **Bagian Bawah (40% slide):** Diagram integrasi sistem BEA BPJS Kesehatan dengan kode modul resmi (`C03.04` dan `S06`) serta tanda panah alur integrasi API.
+---
 
-### 4. Ada Ilustrasi / Icon Apa
-* `Eye` pada Perception.
-* `Brain` pada Multi-Step Reasoning.
-* `Wrench` pada Tool Invocation.
-* `FileSearch` pada Verbatim Grounding.
-* `UserCheck` pada Bounded Agency (Human-in-the-Loop).
-* `Server` & `ArrowLeftRight` pada diagram modul BEA.
+### 2. Isi & Diagram 3 Section Vertikal
+
+#### SECTION 1 (KIRI): Copilot & Studio Multi-Agent Architecture
+* **Badge Header Kolom:** `[Icon Robot / Sparkles] Copilot & Studio Architecture`
+* **Diagram Alir Blok (Wireframe):**
+```
++-----------------------------------------------------------------------+
+|  User (Verifikator Medis)            Tools (Deterministic Registry)   |
+|  +---------------------+             +-----------------------------+  |
+|  | Verifikator Medis   |             | INA-CBG Tariff Delta Tool   |  |
+|  | (Kueri / Klik Layar)|             +-----------------------------+  |
+|  +----------+----------+             | Kemenkes Rule Knowledge     |  |
+|             |                        | (PMK 3/2023, PNPK Sepsis)   |  |
+|             v                        +-----------------------------+  |
+|  +---------------------+             | 30-Day Readmission Tracker  |  |
+|  | Context-Aware Agent |<----------->| (Delta Hari <= 30)          |  |
+|  | - Micro Copilot     |             +-----------------------------+  |
+|  |   (Ctrl+K Viewport) |             | Cosine Similarity Engine    |  |
+|  | - Macro Studio      |             | (CPPT Note Cloning >= 90%)  |  |
+|  +----------+----------+             +-----------------------------+  |
+|             |                                       |                 |
+|             v                                       v                 |
+|  +---------------------+             +-----------------------------+  |
+|  | Multi-Model Router  |             | PostgreSQL & Screen State   |  |
+|  | Gemini 2.0 Flash /  |<----------->| - Append-Only Audit Trail   |  |
+|  | Groq LPU (<400ms)   |             | - Zustand Live Screen State |  |
+|  +----------+----------+             +-----------------------------+  |
+|             |                                                         |
+|             v                                                         |
+|  +---------------------+                                              |
+|  | Interactive Action  |                                              |
+|  | (Dossier Decision)  |                                              |
+|  +---------------------+                                              |
++-----------------------------------------------------------------------+
+```
+* **3 Poin Penjelasan (Bullets dengan Bold Highlights):**
+  * **Shows the high-level system for handling verification workflows:** Memisahkan *Floating Copilot* untuk telaah mikro berkas per berkas (`Ctrl + K`) dan *Clarix AI Studio* (`/clarix-ai`) untuk investigasi makro komparatif tren anomali lintas 3.221 FKRTL.
+  * **Screen Context Ingestion:** Agen menyerap *real-time DOM snapshot* layar aktif verifikator (`pathname`, `activeClaim`, metrik efisiensi, dan tab rekam medis terbuka) sehingga verifikator tidak perlu menyalin data secara manual.
+  * **Dynamic Multi-Model Router:** Mengarahkan komputasi penalaran klinis multi-halaman ke *Google Gemini 2.0 Flash*, serta memicu *Groq LPU (LLaMA 3.3 70B)* untuk penyusunan draf respon dan surat dinas berlatensi ultra-rendah (<400ms).
+
+---
+
+#### SECTION 2 (TENGAH): Clinical Reasoning & Tool-Calling Flow
+* **Badge Header Kolom:** `[Icon Brain / Flow] Clinical Reasoning & Tool-Calling Flow`
+* **Diagram Alir Blok (Wireframe):**
+```
++-----------------------------------------------------------------------+
+|  Clinical Reasoning Agent                                             |
+|  +---------------+    +-------------------+    +--------------------+ |
+|  | Claim Dossier |    | Hypothesis        |    | Tool Selection &   | |
+|  | & Screen State|--->| Formulation       |--->| Deterministic Call | |
+|  | Ingestion     |    | (Sepsis/Stent/etc)|    | (Calc/Rule/Sim)    | |
+|  +---------------+    +-------------------+    +---------+----------+ |
+|                                                          |            |
+|                                                          v            |
+|                                                +--------------------+ |
+|                                                | Disparity & Fact   | |
+|                                                | Extraction Output  | |
+|                                                +---------+----------+ |
+|                                                          |            |
+|  Decision Synthesis & Action Agent                       |            |
+|  +---------------+    +-------------------+              |            |
+|  | Structured    |    | Context Building  |<-------------+            |
+|  | Medico-Legal  |<---| & Legal Clause    |                           |
+|  | Action Output |    | Grounding (PMK)   |                           |
+|  +---------------+    +-------------------+                           |
++-----------------------------------------------------------------------+
+```
+* **3 Poin Penjelasan (Bullets dengan Bold Highlights):**
+  * **The core agentic process that ensures decisions are fact-based:** Menggantikan tebakan generatif LLM dengan penelaahan hipotesis klinis bertahap (*multi-step reasoning*) yang berorientasi pada pembuktian objektif medis.
+  * **Deterministic Tool Calling:** Agen secara mandiri menguji klaim terhadap *Rule Engine PMK 3/2023*, menghitung selisih nominal pada *Kalkulator Tarif INA-CBG*, dan mengukur vektor kemiripan kosinus (*Cosine Similarity*) catatan CPPT dokter.
+  * **Bounded Medico-Legal Formulation:** Menghasilkan 4 rekomendasi putusan definitif (*Setujui*, *Klarifikasi RS 3x24 Jam*, *Penyesuaian Tarif/Downcoding*, atau *Eskalasi PK-JKN*) lengkap dengan dasar pasal hukum tanpa halusinasi.
+
+---
+
+#### SECTION 3 (KANAN): Document Compliance Checking & Grounding Flow
+* **Badge Header Kolom:** `[Icon FileCheck / Shield] Document Compliance & Grounding Flow`
+* **Diagram Alir Blok (Wireframe):**
+```
++-----------------------------------------------------------------------+
+|  Document Extraction & Privacy Ingestion                              |
+|  +---------------+    +-------------------+    +--------------------+ |
+|  | Berkas FPK    |    | Preprocessing &   |    | Multimodal Context | |
+|  | (.xlsx) &     |--->| Regex PII Masking |--->| Extraction         | |
+|  | RME PDF Files |    | (UU PDP 27/2022)  |    | (Gemini 2.0 Flash) | |
+|  +---------------+    +-------------------+    +---------+----------+ |
+|                                                          |            |
+|                                                          v            |
+|                                                +--------------------+ |
+|                                                | Structured Clinical| |
+|                                                | Entities (JSON)    | |
+|                                                +---------+----------+ |
+|                                                          |            |
+|  Compliance Evaluation & Verbatim Grounding              |            |
+|  +--------------------+    +-------------------+         |            |
+|  | Highlighted PDF &  |    | 100% Verbatim     |<--------+            |
+|  | Official Letter/BAR|<---| Substring Ground  |                      |
+|  | Ready to Sign      |    | (DocID/Page/Text) |                      |
+|  +--------------------+    +-------------------+                      |
++-----------------------------------------------------------------------+
+```
+* **3 Poin Penjelasan (Bullets dengan Bold Highlights):**
+  * **An automated workflow for analyzing clinical documents against regulations:** Memproses multi-dokumen (Resume Medis, Laporan Operasi, Hasil Lab, Billing) sekaligus menyamarkan NIK 16-digit demi kepatuhan mutlak UU PDP No. 27/2022.
+  * **100% Verbatim Substring Grounding:** Mengunci kebenaran fakta 1:1 pada lembar dokumen (`documentId`, `pageNumber`, `exactSubstring`) sehingga bukti klinis dapat dibuktikan seketika dan bebas risiko halusinasi generatif.
+  * **Interactive Highlighting & Dispute Prevention:** Memberikan penyorotan teks otomatis pada Smart Document Viewer dan menerbitkan draf Berita Acara Rekonsiliasi resmi sebelum dana ditransfer (pra-bayar).
+
+---
+
+### 3. Footer Progress Tracker (Bottom Bar)
+* `Background and Analysis`  |  **`Solution`** *(Highlighted Emerald Line & Bold)*  |  `Implementation and Impact`
+
+---
+
+### 4. Titik Integrasi Modul Business Enterprise Architecture (BEA) BPJS Kesehatan (Catatan Arsitektur)
+* **Modul BEA C03.04 (Klaim FKRTL):** Berfungsi sebagai *agentic gateway* yang menyinkronkan data VClaim, VIDI, dan RME rumah sakit langsung ke pipeline intake TELISIK.
+* **Modul BEA S06 (Keuangan & Akuntansi):** Meneruskan klaim berstatus lolos/bersih langsung ke modul pembayaran *In-Monica* secara otomatis setelah putusan verifikator disahkan.
 
 ---
 
