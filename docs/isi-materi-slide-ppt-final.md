@@ -77,16 +77,12 @@
 * **Headline:** *"Mengapa Harus Agentic AI?"*
 * **Satu Kalimat Nilai Utama (Value Proposition):**
   > **"TELISIK mentransformasi verifikasi klaim BPJS Kesehatan melalui arsitektur Agentic AI: agen klinis otonom berpenalaran multi-tahap (multi-step reasoning) yang menginvestigasi bukti rekam medis, memvalidasi kaidah koding, dan mengkalkulasi selisih tarif secara mandiri tanpa menghilangkan kendali mutlak verifikator manusia."**
-* **Deskripsi Singkat Sistem (Arsitektur As-Is Aplikasi TELISIK):**
-  * Platform *Agentic Decision Support System* berbasis **Tri-Engine AI Specialization** yang secara mandiri mengorkestrasi 3 model AI terspesialisasi dan 4 tools deterministik:
-    * **Engine 1 — Google Gemini 2.0 Flash:** Multimodal Large Context Window untuk penelaahan berkas PDF multi-halaman (Resume, Laporan Operasi, Lab, Kuitansi Billing) dan ekstraksi bukti sitasi verbatim 1:1 beserta nomor halaman rujukan.
-    * **Engine 2 — Groq LPU (LLaMA 3.3 70B):** Mesin penalaran cepat (< 400ms) untuk *Live Screen-Context Ingestion* pada Clarix Copilot dan penyusunan instan 4 draf naskah dinas resmi (Surat Klarifikasi RS, Rekonsiliasi, Penyesuaian Tarif, Eskalasi PK-JKN).
-    * **Engine 3 — NVIDIA NIM (nv-embedqa-e5-v5):** Vektor embeddings semantik untuk pembuktian matematis kesamaan teks CPPT (*cosine similarity* $\ge 90\%$) guna mendeteksi plagiarisme *note cloning*.
-    * **4 Fast-Filter & Tools Deterministik As-Is:**
-      1. *Kalkulator Tarif INA-CBG:* Menghitung otomatis selisih penurunan tingkat keparahan (*severity downcoding* III $\rightarrow$ I) dengan formula matematis pasti.
-      2. *Detektor Unbundling Alkes Implan:* Menguji kepatuhan Pasal 24 & Lampiran II Permenkes 3/2023 (larangan klaim stent jantung terpisah).
-      3. *Detektor Readmisi $\le 30$ Hari:* Formula $\Delta\text{Hari} \le 30$ untuk mendeteksi kesengajaan fragmentasi episode rawat berulang.
-      4. *Privacy Guard Heuristik (UU PDP No. 27/2022):* Regex penyamaran NIK 16 digit & PII otomatis sebelum berkas diproses ke model bahasa.
+* **Deskripsi Singkat Sistem (4 Menu Operasional Utama di Aplikasi):**
+  * Platform *Agentic Decision Support System* yang dioperasikan melalui **4 Menu Operasional Terintegrasi** pada antarmuka aplikasi TELISIK:
+    1. **Triage & Antrean Klaim (`/claims/triage`):** Screening otonom dan klasifikasi prioritas risiko berkas FPK masuk, terhubung langsung ke **Ruang Telaah Dossier Bukti Klinis** (`/claims/[id]/dossier`) dengan Smart Document Viewer 4 tab & Kalkulator Selisih Tarif INA-CBG.
+    2. **Audit Trail & Arsip (`/claims/audit-trail`):** Repositori log putusan append-only dengan kepatuhan UU PDP (masking NIK/No. Kartu), matriks Heatmap Rekonsiliasi 28 Hari, dan penerbitan Berita Acara resmi.
+    3. **Uji Kasus Benchmark (`/benchmark`):** Suite evaluasi ilmiah untuk membuktikan performa AI kepada dewan juri dan auditor teknis (Recall $\ge 85\%$, Toleransi FPR $\le 15\%$, Grounding Verbatim 100%, dan Confusion Matrix).
+    4. **Clarix AI Studio (`/clarix-ai`):** Konsol investigasi forensik makro lintas faskes untuk analisis tren fraud dan simulasi regulasi, didampingi **Floating Clarix Copilot (`Ctrl + K`)** untuk telaah mikro dengan context-awareness layar aktif.
 * **3 Tujuan Spesifik & Terukur (SMART Goals):**
   1. **Memangkas Durasi Telaah:** Dari rata-rata **25 menit menjadi < 3 menit** per berkas (Efisiensi 88%) karena agen mengumpulkan bukti dan mengkalkulasi selisih secara otomatis.
   2. **Presisi Deteksi Anomali $\ge 85\%$ (Toleransi FPR $\le 15\%$):** Agen mengeliminasi lolosnya upcoding terselubung tanpa mengorbankan faskes yang patuh.
@@ -158,20 +154,17 @@
 * **Headline:** *"Arsitektur Agentic AI: Siklus Otonom Persepsi, Penalaran, dan Eksekusi"*
 * **5 Tahapan Siklus Agentic AI TELISIK:**
   1. **Perception (Multimodal Ingestion & Masking):**
-     * Input berkas FPK (`.xlsx`) dan rekam medis digital (PDF resume medis, laporan operasi, lab kultur darah, billing).
+     * Agen menerima berkas FPK (`.xlsx`) dan rekam medis digital (PDF resume medis, laporan operasi, lab kultur darah, billing).
      * Modul penyamaran PII otomatis menyamarkan identitas pasien (UU PDP No. 27/2022).
-  2. **Multi-Step Reasoning (Tri-Engine AI Specialization):**
-     * **Gemini 2.0 Flash:** Membaca dokumen panjang multimodal dan mengekstrak bukti verbatim 1:1 beserta nomor halaman.
-     * **NVIDIA NIM (nv-embedqa-e5-v5):** Menghitung *cosine similarity* catatan CPPT untuk membuktikan plagiarisme *note cloning*.
-     * **Groq LPU (LLaMA 3.3 70B):** Menjalankan *live screen-context ingestion* (< 400ms) pada Clarix Copilot.
+  2. **Multi-Step Reasoning (Penalaran Klinis Berjenjang):**
+     * Agen membedah klaim menjadi hipotesis audit: *Apakah kriteria sepsis terpenuhi? Apakah stent ditagihkan ganda? Apakah ada readmisi < 30 hari?*
   3. **Deterministic Tool Invocation (Pemanggilan Alat Bantu):**
-     * Agen memanggil *Tariff Calculator Tool* untuk menghitung selisih rupiah penyesuaian tarif INA-CBG (Severity III $\rightarrow$ I).
-     * Agen memanggil *Regulation Knowledge Engine* untuk mengonfirmasi pasal Permenkes 3/2023 & PNPK Sepsis Kemenkes.
-     * Agen memanggil *Readmission Filter* ($\Delta\text{Hari} \le 30$) untuk mendeteksi unbundling episode klaim.
+     * Agen memanggil *Tariff Calculator Tool* untuk menghitung selisih rupiah penyesuaian tarif INA-CBG.
+     * Agen memanggil *Regulation Knowledge Tool* untuk mengonfirmasi pasal Permenkes 3/2023 & Permenkes 24/2022.
   4. **Self-Reflection & Verbatim Grounding:**
-     * Agen memeriksa silang hasil temuan dengan kutipan dokumen asli (mengunci 100% kutipan teks rekam medis asli).
+     * Agen memeriksa silang hasil temuan dengan kutipan dokumen asli (mengunci nomor halaman dan teks verbatim bukti).
   5. **Bounded Agency & Action Formulation:**
-     * Agen menyusun 4 rekomendasi putusan (Setujui, Klarifikasi RS, Penyesuaian Tarif, Eskalasi PK-JKN) serta draf Berita Acara Rekonsiliasi resmi untuk divalidasi oleh verifikator (*Human-in-the-Loop*).
+     * Agen memformulasikan 4 opsi rekomendasi putusan dan menyusun draf Berita Acara Rekonsiliasi untuk dieksekusi oleh verifikator (*Human-in-the-Loop*).
 * **Titik Integrasi Modul Business Enterprise Architecture (BEA) BPJS Kesehatan:**
   * **Modul BEA C03.04 (Klaim FKRTL):** Bertindak sebagai *agentic gateway* yang menyinkronkan data VClaim, VIDI, dan RME rumah sakit.
   * **Modul BEA S06 (Keuangan & Akuntansi):** Meneruskan klaim berstatus lolos/bersih langsung ke modul pembayaran *In-Monica*.
@@ -241,36 +234,36 @@
 
 ---
 
-## SLIDE 6: Penjelasan 4 Fitur Kunci Berbasis Agentic Architecture (Durasi: 90 Detik)
+## SLIDE 6: Penjelasan 4 Fitur Kunci Sesuai Menu Operasional Aplikasi (Durasi: 90 Detik)
 
 ### 1. Apa Isi Teks dan Datanya
-* **Headline:** *"Empat Fitur Kunci Berbasis Arsitektur Multi-Agent"*
-* **Fitur 1: Autonomous Claim Triage & Anomaly Scoring Agent**
-  * *Peran Agentic:* Agen memindai seluruh klaim masuk, memecah berkas ke dalam komponen klinis, dan menghitung skor risiko kebocoran kas secara mandiri.
-  * *Menjawab Masalah BPJS:* Mengakhiri verifikasi manual acak (*random sampling*); verifikator langsung difokuskan pada berkas dengan risiko anomali tertinggi.
-* **Fitur 2: Dual-Pane Evidence Dossier with Tool-Grounded Reasoning**
-  * *Peran Agentic:* Agen menjajarkan dokumen rekam medis dengan kartu anomali, mengoperasikan kalkulator tarif INA-CBG, dan menyajikan sitasi bukti verbatim.
-  * *Menjawab Masalah BPJS:* Mengeliminasi kelelahan memeriksa dokumen fisik ratusan lembar; verifikator cukup memvalidasi temuan agen dalam hitungan detik.
-* **Fitur 3: Immutable Audit Trail & Reconciliation Drafter Agent**
-  * *Peran Agentic:* Agen menyusun draf Berita Acara Rekonsiliasi resmi secara otomatis berdasarkan keputusan verifikator dan mencatatnya ke log append-only.
-  * *Menjawab Masalah BPJS:* Menghilangkan perselisihan administratif antara faskes dan BPJS melalui pembuktian medikolegal yang transparan dan tidak dapat diubah.
-* **Fitur 4: Context-Aware Copilot & Macro Forensic Studio Agent**
-  * *Peran Agentic:* Sistem dwi-agen (Dual-Agent): Agen mikro (*Floating Copilot*) yang menyerap konteks layar verifikator secara live, dan agen makro (*Studio*) untuk kueri agregat lintas faskes.
-  * *Menjawab Masalah BPJS:* Membantu verifikator mengonfirmasi keraguan koding secara instan di meja kerja sekaligus memberi komando audit bagi pimpinan cabang.
+* **Headline:** *"Empat Modul Operasional Pengendali Mutu & Biaya (KMKB)"*
+* **Fitur 1: Triage & Antrean Klaim (dengan Ruang Telaah Dossier Bukti Klinis)**
+  * *Peran di Aplikasi:* Mengelompokkan klaim FPK berdasarkan tingkat risiko anomali secara otonom, lalu membuka **Ruang Telaah Dossier** dengan Smart Document Viewer 4 tab (Resume, Laporan Operasi, Lab, Billing) dan Kalkulator Selisih Tarif INA-CBG.
+  * *Menjawab Masalah BPJS:* Mengakhiri verifikasi acak (*random sampling*); verifikator langsung memprioritaskan klaim yang berpotensi merugikan kas JKN terbesar dan memvalidasi bukti klinis dalam hitungan detik.
+* **Fitur 2: Audit Trail & Arsip Rekonsiliasi**
+  * *Peran di Aplikasi:* Pencatatan log putusan verifikator append-only (tidak dapat dimanipulasi) dengan penyamaran NIK/No. Kartu sesuai UU PDP, visualisasi Heatmap Rekonsiliasi 28 Hari, dan generator cetak Berita Acara resmi.
+  * *Menjawab Masalah BPJS:* Mencegah sengketa berlarut antara faskes dan BPJS Kesehatan melalui transparansi rekam jejak yang sah secara medikolegal.
+* **Fitur 3: Uji Kasus Benchmark & Evaluasi AI**
+  * *Peran di Aplikasi:* Suite pengujian ilmiah transparan terhadap 45 berkas klaim sintetis klaster RS mitra untuk memvalidasi performa deteksi AI (Precision 94,1%, Recall $\ge 85\%$, FPR $\le 15\%$, dan Grounding Verbatim 100%).
+  * *Menjawab Masalah BPJS:* Menjamin akuntabilitas dan objektivitas model AI di hadapan auditor teknis BPJS bahwa sistem anti-halusinasi dan tidak merugikan faskes yang patuh.
+* **Fitur 4: Clarix AI Studio & Floating Copilot (`Ctrl + K`)**
+  * *Peran di Aplikasi:* Konsol investigasi forensik makro untuk analisis tren fraud dan komparasi biaya antar-faskes di Studio, didampingi **Floating Copilot** yang membaca konteks layar aktif secara live untuk konsultasi regulasi seketika.
+  * *Menjawab Masalah BPJS:* Membantu verifikator mengonfirmasi keraguan koding secara instan di meja kerja sekaligus memberi komando audit strategis bagi pimpinan cabang BPJS.
 
 ### 2. Pakai Visualisasi Apa
-* **4-Card Feature Grid:** 4 kartu kokoh bersudut lengkung 6px dengan garis pemisah tipis slate, masing-masing berisi badge peran agen, judul fitur tebal, rincian fungsionalitas, dan box solusi masalah (latar belakang hijau muda halus).
+* **4-Card Feature Grid:** 4 kartu kokoh bersudut lengkung 6px dengan garis pemisah tipis slate, masing-masing berisi icon menu operasional asli aplikasi, judul modul tebal, rincian fungsionalitas, dan box solusi masalah (latar belakang hijau muda halus).
 
 ### 3. Layoutnya Gimana
 * **Tata Letak:** *2 x 2 Balanced Grid*:
   * Lebar kolom seimbang (50% : 50%) dengan jarak antar kartu (gap 24px).
-  * Setiap kartu memiliki struktur hierarki yang konsisten: Header Fitur $\rightarrow$ Deskripsi Peran Agentic $\rightarrow$ Garis Hairline $\rightarrow$ Label *"Penyelesaian Masalah BPJS"*.
+  * Setiap kartu memiliki struktur hierarki yang konsisten: Header Menu Operasional $\rightarrow$ Deskripsi Fungsi Aplikasi $\rightarrow$ Garis Hairline $\rightarrow$ Label *"Penyelesaian Masalah BPJS"*.
 
-### 4. Ada Ilustrasi / Icon Apa
-* `ListOrdered` pada Fitur 1 (Triage Agent).
-* `SplitSquareVertical` / `FileSearch` pada Fitur 2 (Dual-Pane Evidence Dossier).
-* `FileText` / `History` pada Fitur 3 (Reconciliation Drafter).
-* `Bot` / `Sparkles` pada Fitur 4 (Dual-Agent System).
+### 4. Ada Ilustrasi / Icon Apa (Sesuai Icon Menu Aplikasi)
+* `Activity` / `Pulse` pada Fitur 1 (Triage & Antrean Klaim).
+* `FileCheck2` pada Fitur 2 (Audit Trail & Arsip).
+* `FlaskConical` pada Fitur 3 (Uji Kasus Benchmark).
+* `Sparkles` / `Bot` pada Fitur 4 (Clarix AI Studio).
 
 ---
 
