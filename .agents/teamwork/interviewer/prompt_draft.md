@@ -1,30 +1,38 @@
-Implement Proposal 1: "Modul Mediasi & Arbitrase Sengketa Klaim (Dispute & BAK Resolver)" alongside the 4 existing modules in the sidebar of the TELISIK platform (Powered by Clarix AI) to resolve pending and disputed JKN claims against Berita Acara Kesepakatan (BAK) Kemenkes and clinical guidelines. [OPEN: What is the primary purpose and target environment?]
+Implement Proposal 1: "Modul Mediasi & Arbitrase Sengketa Klaim (Dispute & BAK Resolver)" as a capability showcase alongside the existing 4 modules in the sidebar of the TELISIK platform (Powered by Clarix AI) for hospital clinical audit and dispute mediation workflows.
 
-Integrity mode: [OPEN: Which of these should the team NOT be allowed to do?]
+Integrity mode: development
 
-Reference material: docs/0-grounding.md, docs/1-research-brief.md
+## Verification Resources
+- `docs/0-grounding.md`: Grounding on JKN pending/dispute claim rate (10%-25%), dispute causes (49% medical indication, 37.4% coding/BAK Kemenkes), and regulatory dispute timeline context.
+- `docs/1-research-brief.md`: Detailed research brief on dispute arbitration and BAK matching rationale.
+- `frontend/components/widgets/ClarixSidebar.tsx`: Existing navigation structure and sidebar item patterns.
 
 ## Requirements
 
-### R1. Dispute & BAK Resolver Module
-Implement the dispute mediation and arbitration workspace accessible via sidebar navigation (e.g. `/claims/disputes`) for claims with status PENDING_KLARIFIKASI_RS or DISPUTE, providing side-by-side comparison of hospital rebuttal/appeals against BPJS audit findings and generating structured arbitration decisions aligned with BAK Kemenkes (2020-2024) and PNPK.
+### R1. Mediasi & Arbitrase Sengketa Klaim Workspace
+Add a dedicated dispute resolution module accessible from the primary sidebar navigation in `frontend/components/widgets/ClarixSidebar.tsx` (routing to `/claims/disputes`). The module must provide a workspace for claims with status PENDING_KLARIFIKASI_RS or DISPUTE, enabling side-by-side review of hospital appeals/rebuttals versus BPJS audit findings, matching against BAK Kemenkes (2020-2024) and PNPK standards, and generating structured dispute arbitration agreements.
 
-### R2. Backend API & AI Integration
-Integrate with the backend FastAPI service for dispute data retrieval and AI-powered dispute mediation analysis. The AI mediation engine must use an appropriate model and strictly NOT use Gemini Pro. [OPEN: Which AI provider/model should be prioritized?]
+### R2. Backend Dispute API & AI Mediation Engine
+Implement backend API endpoints under `backend/app/api/v1/` for dispute data retrieval and AI-powered mediation analysis. The dispute analysis engine must use an appropriate fast AI model (such as Groq LPU LLaMA 3.3 70B or Gemini Flash) and must strictly NOT use Gemini Pro.
 
-### R3. Information Security & Zero Leakage
-Do not expose internal secrets, credentials, API keys, or raw internal system prompts to the frontend UI application.
+### R3. Information Security & Zero Secret Leakage
+Ensure that no internal API keys, server credentials, raw backend system prompts, or unnecessary sensitive debug internals are exposed in the client-side UI or frontend bundles.
 
 ### R4. Restrained UI & Anti-Slop Design
-Adhere strictly to zero design waste and anti-slop guidelines: no redundant confirmation banners, no pulsing pings or decorative tags, consistent row styling, clean Plus Jakarta Sans typography, and tabular figures.
+Follow restrained UI and anti-slop guidelines: avoid redundant status banners, notification toasts, glowing borders, pulsing animations, or decorative tags. Maintain clean typography using Plus Jakarta Sans, tabular numerals for monetary and code values, and consistent styling with the existing TELISIK platform.
 
 ## Acceptance Criteria
 
-### Visual & Layout Verification (Playwright)
-- [ ] Playwright test scripts are located strictly in `.playwright-scratch/` within the local workspace, and `.playwright-scratch/` is listed in `.gitignore`.
-- [ ] Playwright tests verify that the dispute module layout is aesthetically clean, responsive, and free of AI-slop artifacts.
+### Navigation & Layout Verification
+- [ ] Navigation sidebar in `frontend/components/widgets/ClarixSidebar.tsx` contains the dispute module entry ("Mediasi & Sengketa Klaim"), routing to `/claims/disputes`.
+- [ ] The dispute workspace presents a clean, readable side-by-side view comparing hospital appeal documentation with BPJS audit findings.
+- [ ] The UI does not display redundant notification banners, glowing accent borders, pulsing dots, or decorative tags.
 
-### Backend & Functional Verification
-- [ ] Dispute mediation endpoint successfully executes arbitration analysis using an approved AI model (excluding Gemini Pro).
-- [ ] Frontend dispute workspace displays claim rebuttals, BAK matching rationale, and arbitration results seamlessly without exposing sensitive credentials or raw prompts.
-- [ ] [OPEN: Are there existing test suites or evaluation references to verify against, or should mock dispute cases be generated?]
+### Functional & AI Integration
+- [ ] Backend FastAPI dispute endpoint successfully processes claim dispute queries and generates structured arbitration recommendations against BAK Kemenkes without using Gemini Pro.
+- [ ] Frontend dispute module communicates with the backend API with graceful local fallback if the backend service is offline.
+- [ ] No API keys, secret credentials, or raw system prompts are rendered or leaked in the client UI.
+
+### Visual & Automated Testing (Playwright)
+- [ ] A dedicated Playwright test script is created strictly within `.playwright-scratch/` in the workspace, and `.playwright-scratch/` is ignored in `.gitignore`.
+- [ ] Running the Playwright test executes successfully and confirms that the dispute module renders without layout breakage, overflow issues, or AI-slop visual anomalies.
