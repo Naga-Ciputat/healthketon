@@ -41,6 +41,31 @@
       padding: 24px;
     }
 
+    body.export-mode {
+      padding: 0 !important;
+      margin: 0 !important;
+      overflow: hidden !important;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    body.export-mode .player-container {
+      max-width: none !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      border-radius: 0 !important;
+      border: none !important;
+      box-shadow: none !important;
+    }
+
+    body.export-mode .chapters-nav {
+      display: none !important;
+    }
+
+    body.export-mode .player-controls {
+      display: none !important;
+    }
+
     /* Video Player Wrapper */
     .player-container {
       width: 100%;
@@ -759,8 +784,13 @@
       }, 1200);
     }
 
-    // Init
-    switchScene(0);
+    // Init & Query params
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('export') === 'true') {
+      document.body.classList.add('export-mode');
+    }
+    const initialScene = params.has('scene') ? parseInt(params.get('scene'), 10) : 0;
+    switchScene(initialScene);
   </script>
 </body>
 </html>
