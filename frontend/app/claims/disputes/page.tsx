@@ -370,8 +370,8 @@ export default function DisputeWorkspacePage() {
             </div>
           </div>
 
-          {/* Queue List Stream */}
-          <div className="flex-1 overflow-y-auto divide-y divide-slate-100">
+          {/* Queue List Stream: Card-based with spacing */}
+          <div className="flex-1 overflow-y-auto p-2.5 space-y-2 bg-slate-50/60">
             {filteredDisputes.length === 0 ? (
               <div className="p-6 text-center text-xs text-slate-400">
                 Tidak ada sengketa klaim yang sesuai dengan kriteria filter.
@@ -386,10 +386,10 @@ export default function DisputeWorkspacePage() {
                     key={item.claimId}
                     onClick={() => setSelectedClaimId(item.claimId)}
                     className={cn(
-                      "w-full text-left p-3 transition-colors flex flex-col gap-1.5 cursor-pointer",
+                      "w-full text-left p-3 transition-all flex flex-col gap-1.5 cursor-pointer rounded-md border",
                       isSelected
-                        ? "bg-blue-50/70 border-l-3 border-blue-600"
-                        : "hover:bg-slate-50/80 border-l-3 border-transparent"
+                        ? "bg-blue-50/80 border-blue-400 shadow-xs ring-1 ring-blue-400/20"
+                        : "bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50/70 shadow-2xs"
                     )}
                   >
                     <div className="flex items-center justify-between">
@@ -415,7 +415,7 @@ export default function DisputeWorkspacePage() {
                       )}
                     </div>
 
-                    <div className="text-xs font-medium text-slate-800 line-clamp-1">
+                    <div className="text-xs font-semibold text-slate-800 line-clamp-1">
                       {item.hospitalName}
                     </div>
 
@@ -423,7 +423,7 @@ export default function DisputeWorkspacePage() {
                       {item.patientName} ({item.patientAge} th, {item.patientGender}) • {item.primaryDiagnosis.code}
                     </div>
 
-                    <div className="flex items-center justify-between text-[11px] pt-0.5 border-t border-slate-100 text-slate-600">
+                    <div className="flex items-center justify-between text-[11px] pt-1.5 border-t border-slate-100 text-slate-600">
                       <span>Selisih Sengketa:</span>
                       <span className="font-semibold text-rose-700 tabular-nums">
                         {formatRupiah(item.deltaTariff)}
