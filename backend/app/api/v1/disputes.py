@@ -58,10 +58,10 @@ def format_wib(dt: Optional[datetime] = None) -> str:
 PROHIBITED_MODEL_KEYWORD = "pro"
 
 ALLOWED_FAST_MODELS = [
+    "qwen/qwen3.8-27b",
     "llama-3.3-70b-versatile",
     "gemini-2.5-flash",
     "gemini-2.0-flash",
-    "qwen/qwen3.8-27b",
 ]
 
 
@@ -688,7 +688,7 @@ def _call_groq_mediation(dispute: DisputeItem, focus: Optional[str] = None) -> O
         f"berdasarkan klausul BAK Kemenkes:\n\n{json.dumps(user_payload, indent=2, ensure_ascii=False)}"
     )
 
-    models_to_try = ["llama-3.3-70b-versatile", "qwen/qwen3.8-27b"]
+    models_to_try = ["qwen/qwen3.8-27b", "llama-3.3-70b-versatile"]
 
     for model_name in models_to_try:
         validate_fast_model(model_name)
