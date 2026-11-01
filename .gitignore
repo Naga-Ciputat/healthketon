@@ -69,3 +69,7 @@ __pycache__/
 # Playwright Local Scratch & Testing Scripts
 .playwright-scratch/
 **/.playwright-scratch/
+
+# Teamwork Agent Run Metadata
+.agents/teamwork/*
+!.agents/teamwork/interviewer/
