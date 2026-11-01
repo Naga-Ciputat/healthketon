@@ -59,6 +59,8 @@ PROHIBITED_MODEL_KEYWORD = "pro"
 
 ALLOWED_FAST_MODELS = [
     "qwen/qwen3.8-27b",
+    "openai/gpt-oss-120b",
+    "openai/gpt-oss-20b",
     "llama-3.3-70b-versatile",
     "gemini-2.5-flash",
     "gemini-2.0-flash",
@@ -688,7 +690,11 @@ def _call_groq_mediation(dispute: DisputeItem, focus: Optional[str] = None) -> O
         f"berdasarkan klausul BAK Kemenkes:\n\n{json.dumps(user_payload, indent=2, ensure_ascii=False)}"
     )
 
-    models_to_try = ["qwen/qwen3.8-27b", "llama-3.3-70b-versatile"]
+    models_to_try = [
+        "qwen/qwen3.8-27b",
+        "openai/gpt-oss-120b",
+        "openai/gpt-oss-20b",
+    ]
 
     for model_name in models_to_try:
         validate_fast_model(model_name)
@@ -705,7 +711,7 @@ def _call_groq_mediation(dispute: DisputeItem, focus: Optional[str] = None) -> O
             content = completion.choices[0].message.content
             if content:
                 data = json.loads(_clean_json_str(content))
-                label = f"Groq LPU LLaMA 3.3 70B ({model_name})" if "llama" in model_name else f"Groq LPU Fast ({model_name})"
+                label = f"Groq LPU Fast ({model_name})"
                 return MediationAnalysisResponse(
                     recommendationType=data.get("recommendationType", "SEPAKAT_DOWNCODE"),
                     recommendedTariff=float(data.get("recommendedTariff", dispute.bpjsProposedTariff)),
