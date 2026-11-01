@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mastering Motion Design: Dari UI Kaku Menjadi Interaksi Berjiwa</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #090a0f;
+      --surface: #12141c;
+      --surface-border: #1e2230;
+      --primary: #38bdf8;
+      --primary-glow: rgba(56, 189, 248, 0.25);
+      --accent: #a855f7;
+      --accent-glow: rgba(168, 85, 247, 0.25);
+      --success: #10b981;
+      --error: #ef4444;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow-x: hidden;
+      padding: 24px;
+    }
+
+    /* Video Player Wrapper */
+    .player-container {
+      width: 100%;
+      max-width: 1120px;
+      aspect-ratio: 16 / 9;
+      background: #000;
+      border-radius: 16px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.9), 0 0 40px rgba(56, 189, 248, 0.12);
+      border: 1px solid var(--surface-border);
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Screen Stage */
+    .screen-stage {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .scene-view {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      transform: scale(0.98);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 40px;
+    }
+
+    .scene-view.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: scale(1);
+    }
+
+    /* Background Visuals */
+    .bg-image {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.38;
+      filter: blur(1px);
+      transition: transform 12s ease-out;
+      transform: scale(1);
+    }
+
+    .scene-view.active .bg-image {
+      transform: scale(1.08);
+    }
+
+    .bg-gradient-overlay {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at center, rgba(18, 20, 28, 0.4) 0%, rgba(9, 10, 15, 0.88) 80%);
+      z-index: 1;
+    }
+
+    .scene-content {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 900px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .scene-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      background: rgba(56, 189, 248, 0.12);
+      color: var(--primary);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      margin-bottom: 16px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .scene-title {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.25;
+      margin-bottom: 20px;
+      background: linear-gradient(135deg, #ffffff 30%, #94a3b8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Interactive Visual Demonstrations */
+    .demo-canvas-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      width: 100%;
+      margin-top: 20px;
+    }
+
+    .demo-card {
+      background: rgba(18, 20, 28, 0.85);
+      border: 1px solid var(--surface-border);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: left;
+      backdrop-filter: blur(12px);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .demo-card:hover {
+      border-color: rgba(56, 189, 248, 0.5);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 24px -8px var(--primary-glow);
+    }
+
+    .demo-card-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .demo-card-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Real-Time Easing Visualizer */
+    .ease-track {
+      width: 100%;
+      height: 36px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      position: relative;
+      margin-top: 12px;
+      overflow: hidden;
+    }
+
+    .ease-ball {
+      position: absolute;
+      top: 6px;
+      left: 6px;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--primary);
+      box-shadow: 0 0 12px var(--primary);
+    }
+
+    .linear-anim {
+      animation: moveLinear 2s infinite alternate linear;
+    }
+
+    .spring-anim {
+      animation: moveSpring 2s infinite alternate cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .decel-anim {
+      animation: moveDecel 2s infinite alternate cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes moveLinear {
+      0% { left: 6px; }
+      100% { left: calc(100% - 30px); }
+    }
+
+    @keyframes moveSpring {
+      0% { left: 6px; }
+      100% { left: calc(100% - 30px); }
+    }
+
+    @keyframes moveDecel {
+      0% { left: 6px; }
+      100% { left: calc(100% - 30px); }
+    }
+
+    /* Live State Morph Button */
+    .state-demo-btn {
+      padding: 14px 28px;
+      border-radius: 9999px;
+      background: var(--primary);
+      color: #000;
+      font-weight: 700;
+      font-size: 14px;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 4px 20px var(--primary-glow);
+      transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .state-demo-btn:active {
+      transform: scale(0.95);
+    }
+
+    .state-demo-btn.success {
+      background: var(--success);
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(16, 185, 129, 0.4);
+    }
+
+    /* Subtitles / Narration Banner */
+    .subtitles-banner {
+      position: absolute;
+      bottom: 60px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90%;
+      max-width: 820px;
+      padding: 12px 20px;
+      background: rgba(9, 10, 15, 0.88);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      font-size: 14px;
+      line-height: 1.6;
+      color: #e2e8f0;
+      text-align: center;
+      z-index: 10;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+      transition: all 0.3s ease;
+    }
+
+    /* Player Controls Bar */
+    .player-controls {
+      height: 52px;
+      background: rgba(14, 16, 23, 0.96);
+      border-top: 1px solid var(--surface-border);
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      gap: 16px;
+      z-index: 20;
+    }
+
+    .ctrl-btn {
+      background: transparent;
+      border: none;
+      color: #fff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      transition: background 0.2s;
+    }
+
+    .ctrl-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .ctrl-btn svg {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+    }
+
+    .time-display {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      min-width: 84px;
+    }
+
+    /* Progress & Scrubber */
+    .progress-bar-container {
+      flex: 1;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 9999px;
+      position: relative;
+      cursor: pointer;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 0%;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      border-radius: 9999px;
+      transition: width 0.1s linear;
+    }
+
+    /* Scene Chapter Indicators */
+    .chapters-nav {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+      width: 100%;
+      max-width: 1120px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+    }
+
+    .chapter-pill {
+      flex: 1;
+      padding: 10px 14px;
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      border-radius: 10px;
+      font-size: 11px;
+      color: var(--text-muted);
+      cursor: pointer;
+      white-space: nowrap;
+      text-align: left;
+      transition: all 0.2s ease;
+    }
+
+    .chapter-pill.active {
+      background: rgba(56, 189, 248, 0.1);
+      border-color: var(--primary);
+      color: #fff;
+    }
+
+    .chapter-pill span {
+      display: block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--primary);
+      margin-bottom: 2px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Video Player Box -->
+  <div class="player-container">
+    <div class="screen-stage" id="screenStage">
+
+      <!-- Scene 1: Prolog & Hook -->
+      <div class="scene-view active" id="scene1">
+        <img src="../assets/scene1_split_contrast.jpg" class="bg-image" alt="Scene 1 Split View">
+        <div class="bg-gradient-overlay"></div>
+        <div class="scene-content">
+          <div class="scene-tag">Scene 01 • 00:00 - 00:25</div>
+          <h1 class="scene-title">UI Tanpa Motion Itu Bisu.<br>Motion Berlebihan Itu Bising.</h1>
+          <div class="demo-card" style="max-width: 540px; margin: 0 auto; text-align: center;">
+            <p style="font-size: 14px; color: #cbd5e1; line-height: 1.6;">
+              Motion bukan sekadar pemanis kosmetik, melainkan jembatan komunikasi antara logika sistem dan persepsi otak manusia.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scene 2: Three Pillars -->
+      <div class="scene-view" id="scene2">
+        <img src="../assets/scene2_three_pillars.jpg" class="bg-image" alt="Scene 2 Pillars">
+        <div class="bg-gradient-overlay"></div>
+        <div class="scene-content">
+          <div class="scene-tag">Scene 02 • 00:25 - 00:55</div>
+          <h2 class="scene-title">Tiga Pilar Ilmiah: Timing, Easing, & Koreografi</h2>
+          <div class="demo-canvas-grid">
+            <div class="demo-card">
+              <div class="demo-card-title">1. Timing <span>100-300ms</span></div>
+              <div class="demo-card-desc">Batas persepsi otak. Di bawah 100ms terasa instan, 200-300ms sweet spot navigasi.</div>
+              <div class="ease-track"><div class="ease-ball linear-anim"></div></div>
+            </div>
+            <div class="demo-card">
+              <div class="demo-card-title">2. Easing <span>Cubic-Bezier</span></div>
+              <div class="demo-card-desc">Memberikan inersia fisik dan gravitasi nyata, mencegah gerak robotik kaku.</div>
+              <div class="ease-track"><div class="ease-ball decel-anim"></div></div>
+            </div>
+            <div class="demo-card">
+              <div class="demo-card-title">3. Koreografi <span>30-50ms Wave</span></div>
+              <div class="demo-card-desc">Mengalirkan fokus mata pengguna secara berjenjang, bukan serentak membuat bingung.</div>
+              <div class="ease-track"><div class="ease-ball spring-anim"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scene 3: Archetypes -->
+      <div class="scene-view" id="scene3">
+        <img src="../assets/scene3_archetypes.jpg" class="bg-image" alt="Scene 3 Archetypes">
+        <div class="bg-gradient-overlay"></div>
+        <div class="scene-content">
+          <div class="scene-tag">Scene 03 • 00:55 - 01:25</div>
+          <h2 class="scene-title">Empat Arketipe Kepribadian Motion</h2>
+          <div class="demo-canvas-grid" style="grid-template-columns: repeat(2, 1fr); max-width: 720px;">
+            <div class="demo-card">
+              <div class="demo-card-title" style="color: var(--primary);">⚡ Productive (150-200ms)</div>
+              <div class="demo-card-desc">Efisien, presisi, minim osilasi. Sangat cocok untuk dashboard data intensif medis (seperti Telisik Dispute).</div>
+            </div>
+            <div class="demo-card">
+              <div class="demo-card-title" style="color: var(--accent);">✨ Expressive (Spring Physics)</div>
+              <div class="demo-card-desc">Pantulan pegas kenyal dan memuaskan untuk interaksi sosial, onboarding, dan selebrasi.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scene 4: Disney Principles -->
+      <div class="scene-view" id="scene4">
+        <div class="bg-gradient-overlay"></div>
+        <div class="scene-content">
+          <div class="scene-tag">Scene 04 • 01:25 - 01:55</div>
+          <h2 class="scene-title">12 Prinsip Disney untuk Rekayasa Frontend</h2>
+          <div class="demo-card" style="max-width: 650px; text-align: left; padding: 24px;">
+            <div style="display: flex; gap: 20px; align-items: center; margin-bottom: 16px;">
+              <div style="background: rgba(56, 189, 248, 0.1); border: 1px solid var(--primary); padding: 12px; border-radius: 8px; font-family: 'JetBrains Mono'; font-size: 13px; color: var(--primary);">
+                anticipation: scale(0.97)<br>follow-through: stagger(35ms)
+              </div>
+              <p style="font-size: 13px; color: #cbd5e1; line-height: 1.5;">
+                Prinsip klasik animasi abad ke-20 diwujudkan langsung dalam transformasi GPU modern: tombol menekan sebelum meletup, bayangan merespons gerakan.
+              </p>
+            </div>
+            <div style="text-align: center; margin-top: 10px;">
+              <button class="state-demo-btn" onclick="triggerAnticipation(this)">
+                <span>Coba Interaksi Anticipation</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scene 5: State Lifecycle -->
+      <div class="scene-view" id="scene5">
+        <div class="bg-gradient-overlay"></div>
+        <div class="scene-content">
+          <div class="scene-tag">Scene 05 • 01:55 - 02:25</div>
+          <h2 class="scene-title">Anatomi Siklus State Komponen Formulir</h2>
+          <div class="demo-card" style="max-width: 580px; text-align: center; padding: 30px;">
+            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 24px;">
+              Morphing satu tombol: Idle ➔ Hover ➔ Loading Spinner ➔ Success Checkmark tanpa reload layar.
+            </p>
+            <button class="state-demo-btn" id="morphBtn" onclick="runMorphDemo()">
+              <span id="btnLabel">Sepakati Berita Acara (Simulasi)</span>
+            </button>
+            <div id="demoStatus" style="font-family: 'JetBrains Mono'; font-size: 12px; color: var(--text-muted); margin-top: 16px;">
+              Status: IDLE (Klik tombol di atas)
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scene 6: Performance & A11y -->
+      <div class="scene-view" id="scene6">
+        <div class="bg-gradient-overlay"></div>
+        <div class="scene-content">
+          <div class="scene-tag">Scene 06 • 02:25 - 02:45</div>
+          <h2 class="scene-title">Performa Ekstrem 60 FPS & Aksesibilitas</h2>
+          <div class="demo-canvas-grid" style="grid-template-columns: repeat(2, 1fr); max-width: 680px;">
+            <div class="demo-card">
+              <div class="demo-card-title" style="color: var(--success);">🟢 60-120 FPS GPU Accelerated</div>
+              <div class="demo-card-desc">Hanya menganimasikan <code>transform</code> & <code>opacity</code>. Nol layout thrashing, hemat konsumsi daya baterai.</div>
+            </div>
+            <div class="demo-card">
+              <div class="demo-card-title" style="color: #38bdf8;">♿ Prefers-Reduced-Motion</div>
+              <div class="demo-card-desc">Otomatis mengganti transisi fisik menjadi cross-fade instan bagi pengguna dengan sensitivitas vestibular.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scene 7: Outro -->
+      <div class="scene-view" id="scene7">
+        <div class="bg-gradient-overlay"></div>
+        <div class="scene-content">
+          <div class="scene-tag">Scene 07 • 02:45 - 03:00</div>
+          <h2 class="scene-title" style="font-size: 38px;">Build Intentional Interfaces.<br>Motion with Purpose.</h2>
+          <div class="demo-card" style="max-width: 520px; text-align: center; border-color: rgba(56, 189, 248, 0.4);">
+            <div style="font-size: 14px; color: #f8fafc; font-weight: 600; margin-bottom: 6px;">
+              Skill 'motion-design' Siap Digunakan
+            </div>
+            <div style="font-family: 'JetBrains Mono'; font-size: 12px; color: var(--primary);">
+              .agents/skills/motion-design/SKILL.md
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Subtitles Banner -->
+      <div class="subtitles-banner" id="subtitleBox">
+        Memuat voiceover narasi audio...
+      </div>
+    </div>
+
+    <!-- Controls Bar -->
+    <div class="player-controls">
+      <button class="ctrl-btn" id="playPauseBtn" onclick="togglePlay()">
+        <svg id="playIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        <svg id="pauseIcon" viewBox="0 0 24 24" style="display: none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+      </button>
+
+      <span class="time-display" id="timeDisplay">00:00 / 03:00</span>
+
+      <div class="progress-bar-container" id="progressTrack" onclick="seek(event)">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+
+      <button class="ctrl-btn" onclick="toggleMute()" title="Mute/Unmute">
+        <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Chapters Navigation Bar -->
+  <div class="chapters-nav">
+    <button class="chapter-pill active" onclick="jumpToScene(0)">
+      <span>01 • 00:00</span> Prolog & Krisis
+    </button>
+    <button class="chapter-pill" onclick="jumpToScene(1)">
+      <span>02 • 00:25</span> 3 Pilar Gerak
+    </button>
+    <button class="chapter-pill" onclick="jumpToScene(2)">
+      <span>03 • 00:55</span> 4 Arketipe
+    </button>
+    <button class="chapter-pill" onclick="jumpToScene(3)">
+      <span>04 • 01:25</span> Disney 12 Principles
+    </button>
+    <button class="chapter-pill" onclick="jumpToScene(4)">
+      <span>05 • 01:55</span> State Lifecycle
+    </button>
+    <button class="chapter-pill" onclick="jumpToScene(5)">
+      <span>06 • 02:25</span> 60 FPS & A11y
+    </button>
+    <button class="chapter-pill" onclick="jumpToScene(6)">
+      <span>07 • 02:45</span> Penutup
+    </button>
+  </div>
+
+  <!-- Audio Elements for 7 Scenes -->
+  <audio id="audio1" src="../audio/scene_1.wav" preload="auto"></audio>
+  <audio id="audio2" src="../audio/scene_2.wav" preload="auto"></audio>
+  <audio id="audio3" src="../audio/scene_3.wav" preload="auto"></audio>
+  <audio id="audio4" src="../audio/scene_4.wav" preload="auto"></audio>
+  <audio id="audio5" src="../audio/scene_5.wav" preload="auto"></audio>
+  <audio id="audio6" src="../audio/scene_6.wav" preload="auto"></audio>
+  <audio id="audio7" src="../audio/scene_7.wav" preload="auto"></audio>
+
+  <script>
+    const sceneConfigs = [
+      { id: "scene1", startTime: 0, duration: 25, audioId: "audio1", text: "Pernahkah Anda menggunakan aplikasi yang terasa kaku seperti kertas fotokopi? Atau sebaliknya, antarmuka yang penuh animasi lambat dan melompat-lompat hingga membuat pusing? Di era rekayasa perangkat lunak modern, motion bukan sekadar dekorasi kosmetik. Motion adalah bahasa visual yang menerjemahkan niat sistem ke dalam pemahaman manusia secara instan dan tanpa kata-kata." },
+      { id: "scene2", startTime: 25, duration: 30, audioId: "audio2", text: "Skill Motion Design berpijak pada tiga pilar fundamental: Timing, Easing, dan Koreografi. Timing menghormati batas kognitif manusia: perubahan di bawah seratus milidetik terasa instan, sementara durasi dua ratus hingga tiga ratus milidetik adalah titik emas untuk navigasi. Easing memberi bobot fisik nyata, memastikan elemen melambat secara wajar saat berhenti. Dan koreografi menyelaraskan banyak elemen agar mata pengguna diarahkan pada hal yang paling penting." },
+      { id: "scene3", startTime: 55, duration: 30, audioId: "audio3", text: "Tidak ada satu formula gerak untuk semua aplikasi. Skill ini menyediakan empat arketipe kepribadian: Gaya Productive sangat ideal untuk aplikasi enterprise dan analisis data medis yang membutuhkan kecepatan tanpa gangguan. Gaya Expressive memberikan kegembiraan melalui fisika pegas yang memuaskan. Sementara gaya Elegant menghadirkan kemewahan tempo tenang, dan Playful menyuntikkan energi jenaka pada interaksi kasual." },
+      { id: "scene4", startTime: 85, duration: 30, audioId: "audio4", text: "Prinsip animasi legendaris Disney yang berusia hampir satu abad kini diadaptasi langsung ke dalam kode web. Konsep Anticipation mengajarkan tombol untuk sedikit menekan ke dalam sebelum bereaksi, memberi kepastian pada jari pengguna. Follow Through dan Secondary Action memastikan elemen pendukung bereaksi terhadap elemen utama. Hasilnya adalah antarmuka yang terasa organik, intuitif, dan responsif terhadap sentuhan manusia." },
+      { id: "scene5", startTime: 115, duration: 30, audioId: "audio5", text: "Mari bedah anatomi siklus state pada komponen formulir. Ketika pengguna menekan tombol simpan, tombol tidak sekadar memuat teks baru, melainkan bermutasi mulus menjadi indikator proses. Jika verifikasi berhasil, tombol bertransformasi menjadi tanda sukses dengan goresan centang yang hidup. Bila terjadi galat, getaran lateral yang halus memberi tahu pengguna tanpa perlu memunculkan pesan peringatan yang berlebihan." },
+      { id: "scene6", startTime: 145, duration: 20, audioId: "audio6", text: "Keindahan visual tidak boleh mengorbankan performa. Skill motion-design mengunci aturan ketat: animasi hanya menggunakan akselerasi GPU lewat transform dan opacity, menjamin kestabilan enam puluh frame per detik tanpa membebani baterai. Dan yang terpenting, dukungan penuh bagi prefers-reduced-motion memastikan pengalaman tetap ramah dan nyaman bagi seluruh lapisan pengguna." },
+      { id: "scene7", startTime: 165, duration: 15, audioId: "audio7", text: "Dengan skill motion-design yang kini aktif di workspace Anda, agen AI dapat merancang antarmuka yang tidak hanya cerdas dan fungsional, tetapi juga terasa hidup dan berjiwa. Mari bangun pengalaman digital masa depan yang berbobot, terarah, dan bermakna." }
+    ];
+
+    const TOTAL_DURATION = 180;
+    let currentTime = 0;
+    let isPlaying = false;
+    let activeSceneIndex = 0;
+    let playbackInterval = null;
+
+    function formatTime(seconds) {
+      const mins = Math.floor(seconds / 60);
+      const secs = Math.floor(seconds % 60);
+      return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+    }
+
+    function updateUI() {
+      document.getElementById('timeDisplay').innerText = `${formatTime(currentTime)} / ${formatTime(TOTAL_DURATION)}`;
+      const pct = (currentTime / TOTAL_DURATION) * 100;
+      document.getElementById('progressFill').style.width = `${pct}%`;
+
+      // Find active scene
+      let newSceneIndex = 0;
+      for (let i = sceneConfigs.length - 1; i >= 0; i--) {
+        if (currentTime >= sceneConfigs[i].startTime) {
+          newSceneIndex = i;
+          break;
+        }
+      }
+
+      if (newSceneIndex !== activeSceneIndex) {
+        switchScene(newSceneIndex);
+      }
+    }
+
+    function switchScene(index) {
+      // Pause all audios
+      sceneConfigs.forEach(cfg => {
+        const aud = document.getElementById(cfg.audioId);
+        if (aud) {
+          aud.pause();
+        }
+        document.getElementById(cfg.id).classList.remove('active');
+      });
+
+      activeSceneIndex = index;
+      const targetCfg = sceneConfigs[index];
+      document.getElementById(targetCfg.id).classList.add('active');
+      document.getElementById('subtitleBox').innerText = targetCfg.text;
+
+      // Update chapter pills
+      document.querySelectorAll('.chapter-pill').forEach((pill, idx) => {
+        pill.classList.toggle('active', idx === index);
+      });
+
+      // Play corresponding audio if playing
+      if (isPlaying) {
+        const aud = document.getElementById(targetCfg.audioId);
+        if (aud) {
+          const offset = currentTime - targetCfg.startTime;
+          aud.currentTime = Math.max(0, offset);
+          aud.play().catch(e => console.log('Audio autoplay prevented:', e));
+        }
+      }
+    }
+
+    function togglePlay() {
+      isPlaying = !isPlaying;
+      document.getElementById('playIcon').style.display = isPlaying ? 'none' : 'block';
+      document.getElementById('pauseIcon').style.display = isPlaying ? 'block' : 'none';
+
+      if (isPlaying) {
+        const curCfg = sceneConfigs[activeSceneIndex];
+        const aud = document.getElementById(curCfg.audioId);
+        if (aud) {
+          const offset = currentTime - curCfg.startTime;
+          aud.currentTime = Math.max(0, offset);
+          aud.play().catch(e => console.log(e));
+        }
+
+        playbackInterval = setInterval(() => {
+          currentTime += 0.2;
+          if (currentTime >= TOTAL_DURATION) {
+            currentTime = 0;
+            togglePlay();
+          }
+          updateUI();
+        }, 200);
+      } else {
+        clearInterval(playbackInterval);
+        sceneConfigs.forEach(cfg => {
+          const aud = document.getElementById(cfg.audioId);
+          if (aud) aud.pause();
+        });
+      }
+    }
+
+    function jumpToScene(index) {
+      currentTime = sceneConfigs[index].startTime;
+      updateUI();
+      switchScene(index);
+    }
+
+    function seek(e) {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const pct = clickX / rect.width;
+      currentTime = pct * TOTAL_DURATION;
+      updateUI();
+      switchScene(activeSceneIndex);
+    }
+
+    function toggleMute() {
+      sceneConfigs.forEach(cfg => {
+        const aud = document.getElementById(cfg.audioId);
+        if (aud) aud.muted = !aud.muted;
+      });
+    }
+
+    function triggerAnticipation(btn) {
+      btn.style.transform = 'scale(0.92)';
+      setTimeout(() => {
+        btn.style.transform = 'scale(1.05)';
+        setTimeout(() => {
+          btn.style.transform = 'scale(1)';
+        }, 150);
+      }, 100);
+    }
+
+    function runMorphDemo() {
+      const btn = document.getElementById('morphBtn');
+      const label = document.getElementById('btnLabel');
+      const status = document.getElementById('demoStatus');
+
+      label.innerText = 'Memproses Konsensus...';
+      btn.style.opacity = '0.7';
+      status.innerText = 'Status: LOADING (Verifikasi Klaim Dispute)';
+
+      setTimeout(() => {
+        btn.classList.add('success');
+        btn.style.opacity = '1';
+        label.innerText = '✓ Berita Acara Disepakati!';
+        status.innerText = 'Status: SUCCESS (State Morphed Seamlessly)';
+
+        setTimeout(() => {
+          btn.classList.remove('success');
+          label.innerText = 'Sepakati Berita Acara (Simulasi)';
+          status.innerText = 'Status: IDLE';
+        }, 3000);
+      }, 1200);
+    }
+
+    // Init
+    switchScene(0);
+  </script>
+</body>
+</html>
