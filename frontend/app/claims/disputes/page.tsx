@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
+import { TopHeader } from "@/components/widgets/TopHeader";
 import {
   Scale,
   Search,
@@ -281,54 +282,38 @@ export default function DisputeWorkspacePage() {
 
   return (
     <div className="flex-1 flex flex-col min-w-0 bg-slate-50 text-slate-800 font-sans h-screen overflow-hidden">
-      {/* Top Header Strip */}
-      <header className="px-5 py-3 border-b border-slate-200 bg-white flex items-center justify-between flex-shrink-0">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-[4px] bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-700">
-            <Scale className="w-4 h-4" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-sm font-bold text-slate-900 tracking-tight">
-                Mediasi & Arbitrase Sengketa Klaim JKN
-              </h1>
-              <span className="text-[10px] bg-slate-100 text-slate-600 font-medium px-2 py-0.5 rounded-[4px] border border-slate-200">
-                BAK Kemenkes 2020–2024
+      {/* Top Header */}
+      <TopHeader
+        title="Mediasi & Arbitrase Sengketa Klaim"
+        subtitle="Konsensus BAK Kemenkes"
+        rightActions={
+          <div className="flex items-center gap-3 text-xs mr-2">
+            <div className="flex items-center gap-1.5 border-r border-slate-200 pr-3">
+              <span className="text-[11px] text-slate-500 font-medium">Total Sengketa:</span>
+              <span className="text-xs font-bold text-slate-900 tabular-nums">
+                {formatRupiah(stats.totalVariance)}
               </span>
             </div>
-            <p className="text-[11px] text-slate-500">
-              Ruang telaah komparatif sanggahan rumah sakit vs keberatan audit BPJS Kesehatan berdasar konsensus regulasi
-            </p>
+            <div className="flex items-center gap-1.5 border-r border-slate-200 pr-3">
+              <span className="text-[11px] text-slate-500 font-medium">Batas SLA:</span>
+              <span
+                className={cn(
+                  "text-xs font-bold tabular-nums",
+                  stats.shortestSla <= 3 ? "text-rose-700" : "text-amber-700"
+                )}
+              >
+                {stats.shortestSla} Hari
+              </span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span className="text-[11px] text-slate-500 font-medium">Kasus Aktif:</span>
+              <span className="text-xs font-bold text-slate-900 tabular-nums">
+                {stats.disputeCount + stats.pendingCount}
+              </span>
+            </div>
           </div>
-        </div>
-
-        {/* Aggregate KPI Strip (tabular-nums, restrained, no glowing/pulsing) */}
-        <div className="flex items-center gap-4 text-xs">
-          <div className="flex flex-col items-end border-r border-slate-200 pr-4">
-            <span className="text-[10px] text-slate-500 font-medium">Total Nilai Sengketa</span>
-            <span className="text-xs font-bold text-slate-900 tabular-nums">
-              {formatRupiah(stats.totalVariance)}
-            </span>
-          </div>
-          <div className="flex flex-col items-end border-r border-slate-200 pr-4">
-            <span className="text-[10px] text-slate-500 font-medium">Batas Terkritis (SLA)</span>
-            <span
-              className={cn(
-                "text-xs font-bold tabular-nums",
-                stats.shortestSla <= 3 ? "text-rose-700" : "text-amber-700"
-              )}
-            >
-              {stats.shortestSla} Hari Kalender
-            </span>
-          </div>
-          <div className="flex flex-col items-end">
-            <span className="text-[10px] text-slate-500 font-medium">Status Sengketa Aktif</span>
-            <span className="text-xs font-bold text-slate-900 tabular-nums">
-              {stats.disputeCount + stats.pendingCount} Kasus
-            </span>
-          </div>
-        </div>
-      </header>
+        }
+      />
 
       {/* Main Workspace: Left Sidebar Queue & Right Workspace */}
       <div className="flex-1 flex min-h-0 overflow-hidden">
