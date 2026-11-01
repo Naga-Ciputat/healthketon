@@ -13,6 +13,7 @@ import {
   ChevronsUpDown,
   Check,
   UserCheck,
+  Scale,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useUser } from "@/lib/userContext";
@@ -20,11 +21,13 @@ import { useUser } from "@/lib/userContext";
 export interface ClarixSidebarProps {
   className?: string;
   pendingClaimsCount?: number;
+  disputeClaimsCount?: number;
 }
 
 export function ClarixSidebar({
   className,
   pendingClaimsCount = 2,
+  disputeClaimsCount = 3,
 }: ClarixSidebarProps) {
   const pathname = usePathname();
   const { currentUser, switchUser, availableUsers } = useUser();
@@ -49,6 +52,13 @@ export function ClarixSidebar({
       icon: Activity,
       badge: pendingClaimsCount > 0 ? pendingClaimsCount : undefined,
       match: (path: string) => path === "/claims/triage" || path === "/" || path.includes("/dossier"),
+    },
+    {
+      label: "Mediasi & Sengketa Klaim",
+      href: "/claims/disputes",
+      icon: Scale,
+      badge: disputeClaimsCount > 0 ? disputeClaimsCount : undefined,
+      match: (path: string) => path.startsWith("/claims/disputes"),
     },
     {
       label: "Audit Trail & Arsip",
