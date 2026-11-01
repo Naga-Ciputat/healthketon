@@ -178,6 +178,66 @@ export async function fetchBenchmarkFromBackend(): Promise<BenchmarkResponse | n
 /**
  * Fetch dispute claims list from backend with local fallback
  */
+function enrichDisputeItem(item: any): DisputeItem {
+  const local = getStoredDisputeById(item.claimId);
+  return {
+    ...local,
+    ...item,
+    hospitalClaimed: item.hospitalClaimed || local?.hospitalClaimed || {
+      primaryIcd10: item.primaryDiagnosis || { code: "K29.7", name: "Gastritis" },
+      secondaryIcd10: [],
+      procedures: [],
+      inacbgCode: item.primaryDiagnosis?.code || "INA-CBG",
+      inacbgDescription: item.primaryDiagnosis?.name || "Klaim Faskes",
+      severityLevel: "I",
+      tariff: item.claimedTariff || 0,
+    },
+    bpjsAuditProposed: item.bpjsAuditProposed || local?.bpjsAuditProposed || {
+      primaryIcd10: item.primaryDiagnosis || { code: "K29.7", name: "Gastritis" },
+      secondaryIcd10: [],
+      procedures: [],
+      inacbgCode: item.primaryDiagnosis?.code || "INA-CBG",
+      inacbgDescription: item.bpjsFinding?.findingType || "Penyesuaian Audit",
+      severityLevel: "I",
+      tariff: item.bpjsProposedTariff || 0,
+    },
+    hospitalRebuttal: item.hospitalRebuttal || local?.hospitalRebuttal || {
+      statement: item.disputeReason || "Sanggahan rumah sakit diajukan untuk telaah ulang klaim.",
+      submittedAt: "2026-10-25 14:15 WIB",
+      submittedBy: "Tim Mediasi RS",
+      dpjpName: item.dpjpName || "DPJP Terkait",
+      dpjpSpecialty: item.dpjpSpecialty || "Spesialis Terkait",
+      dpjpNotes: item.disputeReason || "Catatan klinis rekam medis",
+      supportingEvidence: ["Resume Medis Tambahan", "Laporan Hasil Pemeriksaan"],
+      demandedTariff: item.claimedTariff || 0,
+    },
+    bpjsFinding: item.bpjsFinding || local?.bpjsFinding || {
+      findingType: "UPCODING",
+      title: "Ketidaksesuaian Klaim dengan Regulasi",
+      description: item.disputeReason || "Temuan diskrepansi verifikasi klaim BPJS Kesehatan",
+      verbatimQuote: "Kutipan berkas audit verifikator",
+      sourceDocument: "Resume Medis & Bukti Pelayanan",
+      auditorName: "dr. Siti Aminah",
+      objectionDate: "2026-10-24 10:30 WIB",
+      regulationReference: "BAK Kemenkes 2020-2024",
+      proposedTariff: item.bpjsProposedTariff || 0,
+      claimedDeltaTariff: item.deltaTariff || 0,
+    },
+    matchedBak: item.matchedBak || local?.matchedBak || {
+      regulationCode: "BAK-KEMENKES-2023",
+      year: 2023,
+      title: "Konsensus BAK Kemenkes (2020-2024)",
+      topicCategory: "SEPSIS_CRITERIA_BIOMARKER",
+      relevantClause: "Klaim wajib berpedoman pada kesepakatan Berita Acara Kemenkes RI.",
+      rulingInterpretation: "Klaim disepakati untuk penyesuaian sesuai bukti objektif.",
+      pnpkReference: "Standar PNPK Kemenkes RI",
+    },
+  };
+}
+
+/**
+ * Fetch dispute claims list from backend with local fallback
+ */
 export async function fetchDisputes(filters?: {
   status?: string;
   search?: string;
@@ -193,7 +253,7 @@ export async function fetchDisputes(filters?: {
     if (!res.ok) throw new Error(`Backend returned status ${res.status}`);
     const json = await res.json();
     if (Array.isArray(json.data) && json.data.length > 0) {
-      return json.data;
+      return json.data.map(enrichDisputeItem);
     }
     return getStoredDisputes();
   } catch (err) {
@@ -226,7 +286,10 @@ export async function fetchDisputeDetail(claimId: string): Promise<DisputeItem |
     });
     if (!res.ok) throw new Error(`Backend returned status ${res.status}`);
     const json = await res.json();
-    return json.data || getStoredDisputeById(claimId) || null;
+    if (json.data) {
+      return enrichDisputeItem(json.data);
+    }
+    return getStoredDisputeById(claimId) || null;
   } catch (err) {
     console.warn(`[API] fetchDisputeDetail(${claimId}) offline/fallback:`, err);
     return getStoredDisputeById(claimId) || null;
