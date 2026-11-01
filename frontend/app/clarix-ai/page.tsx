@@ -1001,7 +1001,7 @@ export default function ClarixAiStudioPage() {
                     <img
                       src="/images/clarix-ai-icon.png"
                       alt="Clarix AI"
-                      className="w-5 h-5 object-contain animate-spin"
+                      className="w-5 h-5 object-contain"
                     />
                   </div>
                   <div className="bg-white border border-slate-200 rounded-2xl rounded-tl-xs px-4 py-3 shadow-2xs flex items-center gap-2.5 text-xs text-slate-600">
