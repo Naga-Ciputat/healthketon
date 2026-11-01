@@ -80,6 +80,9 @@ export default function DisputeWorkspacePage() {
   const [mediatorNotes, setMediatorNotes] = useState<string>("");
   const [isSubmittingAgreement, setIsSubmittingAgreement] = useState<boolean>(false);
 
+  // Ref untuk auto-scroll ke hasil konsensus mediasi AI
+  const consensusSectionRef = React.useRef<HTMLDivElement>(null);
+
   // Initial load
   useEffect(() => {
     async function loadData() {
@@ -162,6 +165,14 @@ export default function DisputeWorkspacePage() {
       setDisputes((prev) =>
         prev.map((d) => (d.claimId === selectedDispute.claimId ? { ...d, aiMediationAnalysis: result } : d))
       );
+
+      // Auto scroll ke bawah (hasil konsensus) secara smooth
+      setTimeout(() => {
+        consensusSectionRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }, 100);
     } catch (err) {
       console.warn("Error running AI mediation analysis:", err);
     } finally {
@@ -666,7 +677,7 @@ export default function DisputeWorkspacePage() {
             </div>
 
             {/* AI Mediation Consensus Console (Fast model Groq LLaMA 3.3 / Gemini Flash) */}
-            <div className="px-4 pb-6">
+            <div ref={consensusSectionRef} className="px-4 pb-6 scroll-mt-4">
               <div className="bg-white border border-slate-200 rounded-[4px] p-4 space-y-3">
                 <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
                   <div className="flex items-center gap-2">
