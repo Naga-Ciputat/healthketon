@@ -236,12 +236,41 @@ export default function DisputeWorkspacePage() {
       });
 
       // Update local state quietly without decorative toast
-      const updatedList = getStoredDisputes();
-      setDisputes(updatedList);
-      const updatedItem = updatedList.find((d) => d.claimId === selectedDispute.claimId);
-      if (updatedItem) {
-        setSelectedDispute(updatedItem);
-      }
+      const newStatus =
+        resolutionType === "LAYAK"
+          ? "RESOLVED_LAYAK"
+          : resolutionType === "TIDAK_LAYAK"
+          ? "RESOLVED_TIDAK_LAYAK"
+          : "RESOLVED_KOREKSI";
+
+      setDisputes((prev) =>
+        prev.map((d) =>
+          d.claimId === selectedDispute.claimId
+            ? {
+                ...d,
+                disputeStatus: newStatus,
+                claimedTariff: agreedTariff,
+              }
+            : d
+        )
+      );
+      setSelectedDispute((prev) =>
+        prev
+          ? {
+              ...prev,
+              disputeStatus: newStatus,
+              claimedTariff: agreedTariff,
+              resolutionResult: {
+                resolvedAt: now.toISOString(),
+                resolutionType,
+                finalTariff: agreedTariff,
+                officialLetterNumber,
+                agreementSummary: mediatorNotes,
+                arbitrationAgreement: agreementPayload,
+              },
+            }
+          : prev
+      );
       setIsAgreementModalOpen(false);
     } catch (err) {
       console.error("Error finalizing arbitration agreement:", err);
@@ -673,7 +702,7 @@ export default function DisputeWorkspacePage() {
                     <div className="flex items-center gap-2 text-xs">
                       <span className="text-slate-500">Tingkat Keyakinan:</span>
                       <span className="font-bold text-emerald-700 tabular-nums bg-emerald-50 px-2 py-0.5 rounded-[3px] border border-emerald-200">
-                        {aiAnalysis.confidenceScore}%
+                        {Math.round(aiAnalysis.confidenceScore <= 1 ? aiAnalysis.confidenceScore * 100 : aiAnalysis.confidenceScore)}%
                       </span>
                     </div>
                   )}

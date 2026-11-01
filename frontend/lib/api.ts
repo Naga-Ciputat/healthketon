@@ -312,8 +312,12 @@ export async function analyzeDisputeWithAI(
     });
     if (!res.ok) throw new Error(`Backend returned status ${res.status}`);
     const json = await res.json();
-    const result: MediationAnalysisResponse = json.data;
-    saveAiAnalysis(claimId, result);
+    const result: MediationAnalysisResponse = json.data || json;
+    try {
+      saveAiAnalysis(claimId, result);
+    } catch {
+      // Local cache might not contain dynamic backend claims
+    }
     return result;
   } catch (err) {
     console.warn(`[API] analyzeDisputeWithAI(${claimId}) offline/fallback to deterministic BAK matcher:`, err);
@@ -446,7 +450,7 @@ export async function generateDisputeAgreement(
     });
     if (!res.ok) throw new Error(`Backend returned status ${res.status}`);
     const json = await res.json();
-    return json.data;
+    return json.data || json;
   } catch (err) {
     console.warn(`[API] generateDisputeAgreement(${claimId}) offline/fallback:`, err);
 
@@ -517,7 +521,20 @@ export async function resolveDispute(
     });
     if (!res.ok) throw new Error(`Backend returned status ${res.status}`);
     const json = await res.json();
-    return json;
+    try {
+      saveDisputeResolution(claimId, {
+        resolutionType: payload.resolutionType,
+        finalTariff: payload.finalTariff,
+        officialLetterNumber: payload.officialLetterNumber,
+        agreementSummary: payload.notes,
+        agreedIcd10: payload.agreedIcd10,
+        agreedInacbg: payload.agreedInacbg,
+        arbitrationAgreement: payload.arbitrationAgreement,
+      });
+    } catch {
+      // Local cache might not have dynamic backend claims; safe to ignore
+    }
+    return json.data || json;
   } catch (err) {
     console.warn(`[API] resolveDispute(${claimId}) offline/fallback to local store:`, err);
 
